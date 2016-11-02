@@ -1,0 +1,4 @@
+test:
+  override:
+    - mvn package
+    - mvn exec:java -Dexec.mainClass="com.slicingdice.jslicer.RunQueryTests" -Dexec.classpathScope=test
