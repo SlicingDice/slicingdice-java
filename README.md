@@ -1,4 +1,5 @@
 # SlicingDice Official Java Client (v1.0)
+![](https://circleci.com/gh/SlicingDice/slicingdice-java/tree/master.svg?style=shield)
 
 Official Java client for [SlicingDice](http://www.slicingdice.com/), Data Warehouse and Analytics Database as a Service.
 
