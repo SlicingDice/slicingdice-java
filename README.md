@@ -11,7 +11,7 @@ Please refer to the [SlicingDice official documentation](http://panel.slicingdic
 
 ## Tests and Examples
 
-Whether you want to test the client installation or simply check more examples on how the client works, take a look at [tests and examples directory](src/test/java/com/simbiose/jslicer/).
+Whether you want to test the client installation or simply check more examples on how the client works, take a look at [tests and examples directory](src/test/java/com/slicingdice/jslicer/).
 
 ## Installing
 
@@ -21,9 +21,9 @@ Also, our Java client can be installed via [Maven](https://maven.apache.org/) by
 
 ```xml
 <dependency>
-    <groupId>com.simbioseventures</groupId>
+    <groupId>com.slicingdice</groupId>
     <artifactId>jslicer</artifactId>
-    <version>0.1</version>
+    <version>1.0.0</version>
     <scope>test</scope>
 </dependency>
 ```
@@ -118,7 +118,7 @@ Get all created projects, both active and inactive ones. This method corresponds
 ```java
 import org.json.JSONArray;
 import org.json.JSONObject;
-import com.simbiose.jslicer;
+import com.slicingdice.jslicer;
 
 import java.io.IOException;
 
@@ -163,7 +163,7 @@ Get all created fields, both active and inactive ones. This method corresponds t
 ```java
 import org.json.JSONArray;
 import org.json.JSONObject;
-import com.simbiose.jslicer;
+import com.slicingdice.jslicer;
 
 import java.io.IOException;
 
@@ -213,7 +213,7 @@ Create a new field. This method corresponds to a [POST request at /field](http:/
 ```java
 import org.json.JSONArray;
 import org.json.JSONObject;
-import com.simbiose.jslicer;
+import com.slicingdice.jslicer;
 
 import java.io.IOException;
 
@@ -250,7 +250,7 @@ Index data to existing entities or create new entities, if necessary. This metho
 ```java
 import org.json.JSONArray;
 import org.json.JSONObject;
-import com.simbiose.jslicer;
+import com.slicingdice.jslicer;
 
 import java.io.IOException;
 
@@ -308,7 +308,7 @@ Verify which entities exist in a project given a list of entity IDs. This method
 
 ```java
 import org.json.JSONArray;
-import com.simbiose.jslicer;
+import com.slicingdice.jslicer;
 
 import java.io.IOException;
 
@@ -348,7 +348,7 @@ Count the number of indexed entities. This method corresponds to a [GET request 
 #### Request example
 
 ```java
-import com.simbiose.jslicer;
+import com.slicingdice.jslicer;
 
 import java.io.IOException;
 
@@ -382,7 +382,7 @@ Count the number of entities attending the given query. This method corresponds 
 ```java
 import org.json.JSONArray;
 import org.json.JSONObject;
-import com.simbiose.jslicer;
+import com.slicingdice.jslicer;
 
 import java.io.IOException;
 
@@ -431,7 +431,7 @@ Count the number of occurrences for time-series events attending the given query
 ```java
 import org.json.JSONArray;
 import org.json.JSONObject;
-import com.simbiose.jslicer;
+import com.slicingdice.jslicer;
 
 import java.io.IOException;
 
@@ -483,7 +483,7 @@ Return the top values for entities attending the given query. This method corres
 ```java
 import org.json.JSONArray;
 import org.json.JSONObject;
-import com.simbiose.jslicer;
+import com.slicingdice.jslicer;
 
 import java.io.IOException;
 
@@ -565,7 +565,7 @@ Return the aggregation of all fields in the given query. This method corresponds
 ```java
 import org.json.JSONArray;
 import org.json.JSONObject;
-import com.simbiose.jslicer;
+import com.slicingdice.jslicer;
 
 import java.io.IOException;
 
@@ -664,7 +664,7 @@ Get all saved queries. This method corresponds to a [GET request at /query/saved
 ```java
 import org.json.JSONArray;
 import org.json.JSONObject;
-import com.simbiose.jslicer;
+import com.slicingdice.jslicer;
 
 import java.io.IOException;
 
@@ -726,7 +726,7 @@ Create a saved query at SlicingDice. This method corresponds to a [POST request 
 ```java
 import org.json.JSONArray;
 import org.json.JSONObject;
-import com.simbiose.jslicer;
+import com.slicingdice.jslicer;
 
 import java.io.IOException;
 
@@ -785,7 +785,7 @@ Update an existing saved query at SlicingDice. This method corresponds to a [PUT
 ```java
 import org.json.JSONArray;
 import org.json.JSONObject;
-import com.simbiose.jslicer;
+import com.slicingdice.jslicer;
 
 import java.io.IOException;
 
@@ -843,7 +843,7 @@ Executed a saved query at SlicingDice. This method corresponds to a [GET request
 ```java
 import org.json.JSONArray;
 import org.json.JSONObject;
-import com.simbiose.jslicer;
+import com.slicingdice.jslicer;
 
 import java.io.IOException;
 
@@ -891,7 +891,7 @@ Delete a saved query at SlicingDice. This method corresponds to a [DELETE reques
 ```java
 import org.json.JSONArray;
 import org.json.JSONObject;
-import com.simbiose.jslicer;
+import com.slicingdice.jslicer;
 
 import java.io.IOException;
 
@@ -937,7 +937,7 @@ Retrieve indexed values for entities attending the given query. This method corr
 ```java
 import org.json.JSONArray;
 import org.json.JSONObject;
-import com.simbiose.jslicer;
+import com.slicingdice.jslicer;
 
 import java.io.IOException;
 
@@ -991,7 +991,7 @@ Retrieve indexed values as well as their relevance for entities attending the gi
 ```java
 import org.json.JSONArray;
 import org.json.JSONObject;
-import com.simbiose.jslicer;
+import com.slicingdice.jslicer;
 
 import java.io.IOException;
 
