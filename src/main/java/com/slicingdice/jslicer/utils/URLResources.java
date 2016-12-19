@@ -32,8 +32,8 @@ public enum URLResources {
     QUERY_TOP_VALUES("/query/top_values/"),
     QUERY_EXISTS_ENTITY("/query/exists/entity/"),
     QUERY_SAVED("/query/saved/"),
-    QUERY_DATA_EXTRACTION_RESULT("/query/data_extraction/result/"),
-    QUERY_DATA_EXTRACTION_SCORE("/query/data_extraction/score/"),
+    QUERY_DATA_EXTRACTION_RESULT("/data_extraction/result/"),
+    QUERY_DATA_EXTRACTION_SCORE("/data_extraction/score/"),
     PROJECT("/project/");
 
     public final String url;

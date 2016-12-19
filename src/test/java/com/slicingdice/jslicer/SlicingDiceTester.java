@@ -194,6 +194,10 @@ public class SlicingDiceTester {
             result = this.client.topValues(queryData, true);
         } else if (queryType.equals("aggregation")){
             result = this.client.aggregation(queryData, true);
+        } else if (queryType.equals("result")){
+            result = this.client.result(queryData, true);
+        } else if (queryType.equals("score")){
+            result = this.client.score(queryData, true);
         }
 
         return result;

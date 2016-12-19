@@ -16,6 +16,8 @@ public class RunQueryTests {
             add("count_event");
             add("top_values");
             add("aggregation");
+            add("result");
+            add("score");
         }};
 
         // Testing class with demo API key
