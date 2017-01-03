@@ -1,4 +1,4 @@
-package com.slicingdice.jslicer.exceptions.api.query;
+package com.slicingdice.jslicer.exceptions.api.index;
 
 import com.slicingdice.jslicer.exceptions.api.SlicingDiceException;
 
