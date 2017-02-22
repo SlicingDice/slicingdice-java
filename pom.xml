@@ -4,7 +4,7 @@
 
     <groupId>com.slicingdice</groupId>
     <artifactId>jslicer</artifactId>
-    <version>0.1</version>
+    <version>1.0.0</version>
 
     <name>jslicer</name>
     <url>http://www.slicingdice.com</url>
@@ -124,7 +124,7 @@
             </activation>
         </profile>
     </profiles>
-    <description>JOfficial JavaScript client for SlicingDice, Data Warehouse and Analytics Database as a Service.</description>
+    <description>Official Java client for SlicingDice, Data Warehouse and Analytics Database as a Service.</description>
     <developers>
         <developer>
             <name>SlicingDice</name>
