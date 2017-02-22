@@ -16,14 +16,8 @@
 package com.slicingdice.jslicer.core;
 
 import com.slicingdice.jslicer.exceptions.api.FieldCreateInternalException;
-import com.slicingdice.jslicer.exceptions.api.account.AccountBannedException;
-import com.slicingdice.jslicer.exceptions.api.account.AccountDisabledException;
-import com.slicingdice.jslicer.exceptions.api.account.AccountMissingPaymentMethodException;
-import com.slicingdice.jslicer.exceptions.api.account.AccountPaymentRequiredException;
-import com.slicingdice.jslicer.exceptions.api.request.RequestIncorrectContentTypeValueException;
-import com.slicingdice.jslicer.exceptions.api.request.RequestInvalidJsonException;
-import com.slicingdice.jslicer.exceptions.api.request.RequestMissingContentTypeException;
-import com.slicingdice.jslicer.exceptions.api.request.RequestRateLimitException;
+import com.slicingdice.jslicer.exceptions.api.account.*;
+import com.slicingdice.jslicer.exceptions.api.request.*;
 import com.slicingdice.jslicer.exceptions.api.InternalException;
 import com.slicingdice.jslicer.exceptions.api.auth.*;
 import com.slicingdice.jslicer.exceptions.api.field.*;
