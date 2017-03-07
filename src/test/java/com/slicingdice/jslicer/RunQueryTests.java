@@ -6,7 +6,7 @@ public class RunQueryTests {
     // Your demo api key, to get a valid demo API key you can use:
     // http://panel.slicingdice.com/docs/#api-details-api-connection-api-keys-demo-key
     private static final String DEMO_API_KEY =
-            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfX3NhbHQiOiJkZW1vMW0iLCJwZXJtaXNzaW9uX2xldmVsIjozLCJwcm9qZWN0X2lkIjoyMCwiY2xpZW50X2lkIjoxMH0.xRBHeDxTzYAgFyuU94SWFbjITeoxgyRCQGdIee8qrLA";
+            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfX3NhbHQiOiJkZW1vMG0iLCJwZXJtaXNzaW9uX2xldmVsIjozLCJwcm9qZWN0X2lkIjoxNjEsImNsaWVudF9pZCI6MTB9.vt5eGeQb0AUKu2o075vEzaC5m-XgD4ohgJkDZYBmFu8";
 
     private static Thread mainThread;
 
