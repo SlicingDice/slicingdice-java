@@ -268,8 +268,7 @@ public class SlicingDice {
      * @throws IOException
      */
     public JSONObject createField(final JSONObject data, final boolean test) throws IOException {
-        String url = this.wrapperTest(test);
-        url += URLResources.FIELD.url;
+        final String url = this.wrapperTest(test) + URLResources.FIELD.url;
         return this.wrapperCreateField(data, url);
     }
 
@@ -292,8 +291,7 @@ public class SlicingDice {
      * @throws IOException
      */
     public JSONObject getFields(final boolean test) throws IOException {
-        String url = this.wrapperTest(test);
-        url += URLResources.FIELD.url;
+        final String url = this.wrapperTest(test) + URLResources.FIELD.url;
         return this.makeRequest(url, 2);
     }
 
@@ -320,8 +318,7 @@ public class SlicingDice {
      * @throws IOException
      */
     public JSONObject index(final JSONObject data, final boolean test) throws IOException {
-        String url = this.wrapperTest(test);
-        url += URLResources.INDEX.url;
+        final String url = this.wrapperTest(test) + URLResources.INDEX.url;
         return this.makeRequest(url, data, POST, 1);
     }
 
@@ -338,8 +335,7 @@ public class SlicingDice {
     public JSONObject index(final JSONObject data, final boolean autoCreateFields,
                             final boolean test) throws IOException {
         data.put("auto-create-fields", autoCreateFields);
-        String url = this.wrapperTest(test);
-        url += URLResources.INDEX.url;
+        final String url = this.wrapperTest(test) + URLResources.INDEX.url;
         return this.makeRequest(url, data, POST, 1);
     }
 
@@ -396,8 +392,7 @@ public class SlicingDice {
      * @throws IOException
      */
     public JSONObject getProjects(final boolean test) throws IOException {
-        String url = this.wrapperTest(test);
-        url += URLResources.PROJECT.url;
+        final String url = this.wrapperTest(test) + URLResources.PROJECT.url;
         return this.makeRequest(url, 2);
     }
 
@@ -422,8 +417,7 @@ public class SlicingDice {
      * @throws IOException
      */
     public JSONObject countEntity(final JSONObject query, final boolean test) throws IOException {
-        String url = this.wrapperTest(test);
-        url += URLResources.QUERY_COUNT_ENTITY.url;
+        final String url = this.wrapperTest(test) + URLResources.QUERY_COUNT_ENTITY.url;
         return countQueryWrapper(url, query);
     }
 
@@ -446,8 +440,7 @@ public class SlicingDice {
      * @throws IOException
      */
     public JSONObject countEntityTotal(final boolean test) throws IOException {
-        String url = this.wrapperTest(test);
-        url += URLResources.QUERY_COUNT_ENTITY_TOTAL.url;
+        final String url = this.wrapperTest(test) + URLResources.QUERY_COUNT_ENTITY_TOTAL.url;
         return this.makeRequest(url, 0);
     }
 
@@ -472,8 +465,7 @@ public class SlicingDice {
      * @throws IOException
      */
     public JSONObject countEvent(final JSONObject query, final boolean test) throws IOException {
-        String url = this.wrapperTest(test);
-        url += URLResources.QUERY_COUNT_EVENT.url;
+        final String url = this.wrapperTest(test) + URLResources.QUERY_COUNT_EVENT.url;
         return countQueryWrapper(url, query);
     }
 
@@ -516,8 +508,7 @@ public class SlicingDice {
      * @throws IOException
      */
     public JSONObject aggregation(final JSONObject query, final boolean test) throws IOException {
-        String url = this.wrapperTest(test);
-        url += URLResources.QUERY_AGGREGATION.url;
+        final String url = this.wrapperTest(test) + URLResources.QUERY_AGGREGATION.url;
         return this.wrapperAggregation(query, url);
     }
 
@@ -558,8 +549,7 @@ public class SlicingDice {
      * @throws IOException
      */
     public JSONObject topValues(final JSONObject query, final boolean test) throws IOException {
-        String url = this.wrapperTest(test);
-        url += URLResources.QUERY_TOP_VALUES.url;
+        final String url = this.wrapperTest(test) + URLResources.QUERY_TOP_VALUES.url;
         return this.wrapperTopValues(query, url);
     }
 
@@ -600,8 +590,7 @@ public class SlicingDice {
      * @throws IOException
      */
     public JSONObject existsEntity(final JSONArray ids, final boolean test) throws IOException {
-        String url = this.wrapperTest(test);
-        url += URLResources.QUERY_EXISTS_ENTITY.url;
+        final String url = this.wrapperTest(test) + URLResources.QUERY_EXISTS_ENTITY.url;
         return this.wrapperExistsEntity(ids, url);
     }
 
@@ -626,8 +615,7 @@ public class SlicingDice {
      * @throws IOException
      */
     public JSONObject getSavedQuery(final String queryName, final boolean test) throws IOException {
-        String url = this.wrapperTest(test);
-        url += URLResources.QUERY_SAVED.url + queryName;
+        final String url = this.wrapperTest(test) + URLResources.QUERY_SAVED.url + queryName;
         return this.makeRequest(url, 0);
     }
 
@@ -650,8 +638,7 @@ public class SlicingDice {
      * @throws IOException
      */
     public JSONObject getSavedQueries(final boolean test) throws IOException {
-        String url = this.wrapperTest(test);
-        url += URLResources.QUERY_SAVED.url;
+        final String url = this.wrapperTest(test) + URLResources.QUERY_SAVED.url;
         return this.makeRequest(url, 2);
     }
 
@@ -677,8 +664,7 @@ public class SlicingDice {
      */
     public JSONObject deleteSavedQuery(final String queryName, final boolean test)
             throws IOException {
-        String url = this.wrapperTest(test);
-        url += URLResources.QUERY_SAVED.url + queryName;
+        final String url = this.wrapperTest(test) + URLResources.QUERY_SAVED.url + queryName;
         return this.makeRequest(url, null, DELETE, 2);
     }
 
@@ -724,8 +710,7 @@ public class SlicingDice {
      */
     public JSONObject createSavedQuery(final JSONObject query, final boolean test)
             throws IOException {
-        String url = this.wrapperTest(test);
-        url += URLResources.QUERY_SAVED.url;
+        final String url = this.wrapperTest(test) + URLResources.QUERY_SAVED.url;
         return this.wrapperCreateSavedQuery(query, url);
     }
 
@@ -754,8 +739,7 @@ public class SlicingDice {
      */
     public JSONObject updateSavedQuery(final String queryName, final JSONObject query,
                                        final boolean test) throws IOException {
-        String url = this.wrapperTest(test);
-        url += URLResources.QUERY_SAVED.url + queryName;
+        final String url = this.wrapperTest(test) + URLResources.QUERY_SAVED.url + queryName;
         return this.makeRequest(url, query, PUT, 2);
     }
 
@@ -780,8 +764,7 @@ public class SlicingDice {
      * @throws IOException
      */
     public JSONObject score(final JSONObject query, final boolean test) throws IOException {
-        String url = this.wrapperTest(test);
-        url += URLResources.QUERY_DATA_EXTRACTION_SCORE.url;
+        final String url = this.wrapperTest(test) + URLResources.QUERY_DATA_EXTRACTION_SCORE.url;
         return dataExtractionWrapper(url, query);
     }
 
@@ -806,8 +789,7 @@ public class SlicingDice {
      * @throws IOException
      */
     public JSONObject result(final JSONObject query, final boolean test) throws IOException {
-        String url = this.wrapperTest(test);
-        url += URLResources.QUERY_DATA_EXTRACTION_RESULT.url;
+        final String url = this.wrapperTest(test) + URLResources.QUERY_DATA_EXTRACTION_RESULT.url;
         return dataExtractionWrapper(url, query);
     }
 }
