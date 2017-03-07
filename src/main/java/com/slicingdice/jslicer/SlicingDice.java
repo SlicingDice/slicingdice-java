@@ -52,12 +52,12 @@ public class SlicingDice {
     private static final String PUT = "put";
     private static final String DELETE = "delete";
 
-    private String _apiKey;
-    private String _masterKey;
-    private String _customKey;
-    private String _writeKey;
-    private String _readKey;
-    private int _timeout;
+    private String apiKey;
+    private String masterKey;
+    private String customKey;
+    private String writeKey;
+    private String readKey;
+    private int timeout;
 
     /**
      * A String list with all types of query supported
@@ -76,26 +76,26 @@ public class SlicingDice {
     private Headers headers;
 
     public SlicingDice(final String masterKey) {
-        this._masterKey = masterKey;
-        _timeout = 60;
+        this.masterKey = masterKey;
+        this.timeout = 60;
     }
 
     public SlicingDice(final String masterKey, final String customKey, final String writeKey,
                        final String readKey) {
-        this._masterKey = masterKey;
-        this._customKey = customKey;
-        this._writeKey = writeKey;
-        this._readKey = readKey;
-        _timeout = 60;
+        this.masterKey = masterKey;
+        this.customKey = customKey;
+        this.writeKey = writeKey;
+        this.readKey = readKey;
+        this.timeout = 60;
     }
 
     public SlicingDice(final String masterKey, final String customKey, final String writeKey,
                        final String readKey, final int timeout) {
-        this._masterKey = masterKey;
-        this._customKey = customKey;
-        this._writeKey = writeKey;
-        this._readKey = readKey;
-        _timeout = timeout;
+        this.masterKey = masterKey;
+        this.customKey = customKey;
+        this.writeKey = writeKey;
+        this.readKey = readKey;
+        this.timeout = timeout;
     }
 
     public int getStatusCode() {
@@ -107,29 +107,30 @@ public class SlicingDice {
     }
 
     private ArrayList<Object> getCurrentKey() throws SlicingDiceKeyException {
-        if (this._masterKey != null){
-            final ArrayList<Object> result = new ArrayList<>();
-            result.add(this._masterKey);
-            result.add(2);
-            return result;
-        } else if (this._customKey != null){
-            final ArrayList<Object> result = new ArrayList<>();
-            result.add(this._customKey);
-            result.add(2);
-            return result;
-        } else if (this._writeKey != null){
-            final ArrayList<Object> result = new ArrayList<>();
-            result.add(this._writeKey);
-            result.add(1);
-            return result;
-        } else if (this._readKey != null){
-            final ArrayList<Object> result = new ArrayList<>();
-            result.add(this._readKey);
-            result.add(0);
-            return result;
+        final String key;
+        final int keyLevel;
+
+        if (this.masterKey != null){
+            key = this.masterKey;
+            keyLevel = 2;
+        } else if (this.customKey != null){
+            key = this.customKey;
+            keyLevel = 2;
+        } else if (this.writeKey != null) {
+            key = this.writeKey;
+            keyLevel = 1;
+        } else if (this.readKey != null){
+            key = this.readKey;
+            keyLevel = 0;
+        } else {
+            throw new SlicingDiceKeyException("You need put a key.");
         }
 
-        throw new SlicingDiceKeyException("You need put a key.");
+        final ArrayList<Object> result = new ArrayList<>();
+        result.add(key);
+        result.add(keyLevel);
+
+        return result;
     }
 
     private String getKey(final int levelKey) throws SlicingDiceKeyException {
@@ -148,7 +149,7 @@ public class SlicingDice {
      *
      * @param url  A url String to make request
      * @param data A JSONObject to send in request
-     * @return A String with json request result
+     * @return A JSONObject with json request result
      * @throws IOException
      */
     private JSONObject makeRequest(final String url, final JSONObject data, final String reqType,
@@ -157,11 +158,11 @@ public class SlicingDice {
         Response resp = null;
 
         if (reqType.equals(POST)) {
-            resp = Requester.post(url, data.toString(), apiKey, _timeout);
+            resp = Requester.post(url, data.toString(), apiKey, timeout);
         } else if (reqType.equals(PUT)) {
-            resp = Requester.put(url, data.toString(), apiKey, _timeout);
+            resp = Requester.put(url, data.toString(), apiKey, timeout);
         } else if (reqType.equals(DELETE)) {
-            resp = Requester.delete(url, apiKey, _timeout);
+            resp = Requester.delete(url, apiKey, timeout);
         }
 
         return handlerResponse(resp);
@@ -169,7 +170,7 @@ public class SlicingDice {
 
     private JSONObject makeRequest(final String url, final int keyLevel) throws IOException {
         final String apiKey = this.getKey(keyLevel);
-        final Response resp = Requester.get(url, apiKey, _timeout);
+        final Response resp = Requester.get(url, apiKey, timeout);
 
         return handlerResponse(resp);
     }
@@ -231,7 +232,7 @@ public class SlicingDice {
      * Create field in Slicing Dice
      *
      * @param data A JSONObject in the Slicing Dice field format
-     * @return A String with json request result if your field is valid
+     * @return A JSONObject with json request result if your field is valid
      * @throws IOException
      */
     private JSONObject wrapperCreateField(final JSONObject data, final String url)
@@ -249,7 +250,7 @@ public class SlicingDice {
      * Create field in Slicing Dice
      *
      * @param data A JSONObject in the Slicing Dice field format
-     * @return A String with json request result if your field is valid
+     * @return A JSONObject with json request result if your field is valid
      * @throws IOException
      */
     public JSONObject createField(final JSONObject data) throws IOException {
@@ -263,7 +264,7 @@ public class SlicingDice {
      * @param data A JSONObject in the Slicing Dice field format
      * @param test if true the field will be created on test end-point otherwise on production
      *             end-point
-     * @return A String with json request result if your field is valid
+     * @return A JSONObject with json request result if your field is valid
      * @throws IOException
      */
     public JSONObject createField(final JSONObject data, final boolean test) throws IOException {
@@ -301,7 +302,7 @@ public class SlicingDice {
      * to a POST request at /index.
      *
      * @param data A JSON object in the SlicingDice index format
-     * @return A String with json request result if your indexation is valid
+     * @return A JSONObject with json request result if your indexation is valid
      * @throws IOException
      */
     public JSONObject index(final JSONObject data) throws IOException {
@@ -315,7 +316,7 @@ public class SlicingDice {
      *
      * @param data A JSON object in the SlicingDice index format
      * @param test if true the request will be to test end-point
-     * @return A String with json request result if your indexation is valid
+     * @return A JSONObject with json request result if your indexation is valid
      * @throws IOException
      */
     public JSONObject index(final JSONObject data, final boolean test) throws IOException {
@@ -331,7 +332,7 @@ public class SlicingDice {
      * @param data A JSON object in the SlicingDice index format
      * @param autoCreateFields if true the indexation will automatically create non-existent fields
      * @param test if true the request will be to test end-point
-     * @return A String with json request result if your indexation is valid
+     * @return A JSONObject with json request result if your indexation is valid
      * @throws IOException
      */
     public JSONObject index(final JSONObject data, final boolean autoCreateFields,
@@ -347,7 +348,7 @@ public class SlicingDice {
      *
      * @param url   A url to make request
      * @param query A JSONObject count query
-     * @return A String with count query result
+     * @return A JSONObject with count query result
      * @throws IOException
      */
     private JSONObject countQueryWrapper(final String url, final JSONObject query)
@@ -364,7 +365,7 @@ public class SlicingDice {
      *
      * @param url   A url to make request
      * @param query A JSONObject data extraction query
-     * @return A String with data extraction query result
+     * @return A JSONObject with data extraction query result
      * @throws IOException
      */
     private JSONObject dataExtractionWrapper(final String url, final JSONObject query)
@@ -404,7 +405,7 @@ public class SlicingDice {
      * Make a count entity query in Slicing Dice API
      *
      * @param query A JSONObject count entity query
-     * @return A String with count entity query result
+     * @return A JSONObject with count entity query result
      * @throws IOException
      */
     public JSONObject countEntity(final JSONObject query) throws IOException {
@@ -417,7 +418,7 @@ public class SlicingDice {
      *
      * @param query A JSONObject count entity query
      * @param test if true the request will be to test end-point
-     * @return A String with count entity query result
+     * @return A JSONObject with count entity query result
      * @throws IOException
      */
     public JSONObject countEntity(final JSONObject query, final boolean test) throws IOException {
@@ -429,7 +430,7 @@ public class SlicingDice {
     /**
      * Make a total query in Slicing Dice API
      *
-     * @return A String with total query result
+     * @return A JSONObject with total query result
      * @throws IOException
      */
     public JSONObject countEntityTotal() throws IOException {
@@ -441,7 +442,7 @@ public class SlicingDice {
      * Make a total query in Slicing Dice API
      *
      * @param test if true the request will be to test end-point
-     * @return A String with total query result
+     * @return A JSONObject with total query result
      * @throws IOException
      */
     public JSONObject countEntityTotal(final boolean test) throws IOException {
@@ -454,7 +455,7 @@ public class SlicingDice {
      * Make a count event query in Slicing Dice API
      *
      * @param query A JSONObject count event query
-     * @return A String with count event query result
+     * @return A JSONObject with count event query result
      * @throws IOException
      */
     public JSONObject countEvent(final JSONObject query) throws IOException {
@@ -467,7 +468,7 @@ public class SlicingDice {
      *
      * @param query A JSONObject count event query
      * @param test if true the request will be to test end-point
-     * @return A String with count event query result
+     * @return A JSONObject with count event query result
      * @throws IOException
      */
     public JSONObject countEvent(final JSONObject query, final boolean test) throws IOException {
@@ -480,7 +481,7 @@ public class SlicingDice {
      * Make a aggregation query in Slicing Dice API
      *
      * @param query A JSONObject aggregation query
-     * @return A String with aggregation query result
+     * @return A JSONObject with aggregation query result
      * @throws IOException
      */
     private JSONObject wrapperAggregation(final JSONObject query, final String url)
@@ -498,7 +499,7 @@ public class SlicingDice {
      * Make a aggregation query in Slicing Dice API
      *
      * @param query A JSONObject aggregation query
-     * @return A String with aggregation query result
+     * @return A JSONObject with aggregation query result
      * @throws IOException
      */
     public JSONObject aggregation(final JSONObject query) throws IOException {
@@ -511,7 +512,7 @@ public class SlicingDice {
      *
      * @param query A JSONObject aggregation query
      * @param test if true the request will be to test end-point
-     * @return A String with aggregation query result
+     * @return A JSONObject with aggregation query result
      * @throws IOException
      */
     public JSONObject aggregation(final JSONObject query, final boolean test) throws IOException {
@@ -524,7 +525,7 @@ public class SlicingDice {
      * Make a top values query in Slicing Dice API
      *
      * @param query A JSONObject top values query
-     * @return A String with top values query result
+     * @return A JSONObject with top values query result
      * @throws IOException
      */
     private JSONObject wrapperTopValues(final JSONObject query, final String url)
@@ -540,7 +541,7 @@ public class SlicingDice {
      * Make a top values query in Slicing Dice API
      *
      * @param query A JSONObject top values query
-     * @return A String with top values query result
+     * @return A JSONObject with top values query result
      * @throws IOException
      */
     public JSONObject topValues(final JSONObject query) throws IOException {
@@ -553,7 +554,7 @@ public class SlicingDice {
      *
      * @param query A JSONObject top values query
      * @param test if true the request will be to test end-point
-     * @return A String with top values query result
+     * @return A JSONObject with top values query result
      * @throws IOException
      */
     public JSONObject topValues(final JSONObject query, final boolean test) throws IOException {
@@ -566,7 +567,7 @@ public class SlicingDice {
      * Make a exists entity query in Slicing Dice API
      *
      * @param ids A JSONArray exists entity query
-     * @return A String with exists entity query result
+     * @return A JSONObject with exists entity query result
      * @throws IOException
      */
     private JSONObject wrapperExistsEntity(final JSONArray ids, final String url)
@@ -582,7 +583,7 @@ public class SlicingDice {
      * Make a exists entity query in Slicing Dice API
      *
      * @param ids A JSONArray exists entity query
-     * @return A String with exists entity query result
+     * @return A JSONObject with exists entity query result
      * @throws IOException
      */
     public JSONObject existsEntity(final JSONArray ids) throws IOException {
@@ -595,7 +596,7 @@ public class SlicingDice {
      *
      * @param ids A JSONArray exists entity query
      * @param test if true the request will be to test end-point
-     * @return A String with exists entity query result
+     * @return A JSONObject with exists entity query result
      * @throws IOException
      */
     public JSONObject existsEntity(final JSONArray ids, final boolean test) throws IOException {
@@ -608,7 +609,7 @@ public class SlicingDice {
      * Query SlicingDice API for saved queries
      *
      * @param queryName the name of the saved query that you want to retrieve
-     * @return A String with get saved query result
+     * @return A JSONObject with get saved query result
      * @throws IOException
      */
     public JSONObject getSavedQuery(final String queryName) throws IOException {
@@ -621,7 +622,7 @@ public class SlicingDice {
      *
      * @param queryName the name of the saved query that you want to retrieve
      * @param test if true the request will be to test end-point
-     * @return A String with get saved query result
+     * @return A JSONObject with get saved query result
      * @throws IOException
      */
     public JSONObject getSavedQuery(final String queryName, final boolean test) throws IOException {
@@ -633,7 +634,7 @@ public class SlicingDice {
     /**
      * Query SlicingDice API for all saved queries
      *
-     * @return A String with get saved query result
+     * @return A JSONObject with get saved query result
      * @throws IOException
      */
     public JSONObject getSavedQueries() throws IOException {
@@ -645,7 +646,7 @@ public class SlicingDice {
      * Query SlicingDice API for all saved queries
      *
      * @param test if true the request will be to test end-point
-     * @return A String with get saved query result
+     * @return A JSONObject with get saved query result
      * @throws IOException
      */
     public JSONObject getSavedQueries(final boolean test) throws IOException {
@@ -658,7 +659,7 @@ public class SlicingDice {
      * Delete a previous saved query on SlicingDice API
      *
      * @param queryName the name of the saved query that you want to retrieve
-     * @return A String with get saved query result
+     * @return A JSONObject with get saved query result
      * @throws IOException
      */
     public JSONObject deleteSavedQuery(final String queryName) throws IOException {
@@ -671,7 +672,7 @@ public class SlicingDice {
      *
      * @param queryName the name of the saved query that you want to retrieve
      * @param test if true the request will be to test end-point
-     * @return A String with get saved query result
+     * @return A JSONObject with get saved query result
      * @throws IOException
      */
     public JSONObject deleteSavedQuery(final String queryName, final boolean test)
@@ -685,7 +686,7 @@ public class SlicingDice {
      * Create a saved query in Slicing Dice API
      *
      * @param query A JSONObject saved query
-     * @return A String with saved query if request was successful
+     * @return A JSONObject with saved query if request was successful
      * @throws IOException
      */
     private JSONObject wrapperCreateSavedQuery(final JSONObject query, final String url)
@@ -705,7 +706,7 @@ public class SlicingDice {
      * Create a saved query in Slicing Dice API
      *
      * @param query A JSONObject saved query
-     * @return A String with saved query if request was successful
+     * @return A JSONObject with saved query if request was successful
      * @throws IOException
      */
     public JSONObject createSavedQuery(final JSONObject query) throws IOException {
@@ -718,7 +719,7 @@ public class SlicingDice {
      *
      * @param query A JSONObject saved query
      * @param test if true the request will be to test end-point
-     * @return A String with saved query if request was successful
+     * @return A JSONObject with saved query if request was successful
      * @throws IOException
      */
     public JSONObject createSavedQuery(final JSONObject query, final boolean test)
@@ -733,7 +734,7 @@ public class SlicingDice {
      *
      * @param queryName the name of the saved query that you want to retrieve
      * @param query A JSONObject saved query
-     * @return A String with new saved query if request was successful
+     * @return A JSONObject with new saved query if request was successful
      * @throws IOException
      */
     public JSONObject updateSavedQuery(final String queryName, final JSONObject query)
@@ -748,7 +749,7 @@ public class SlicingDice {
      * @param queryName the name of the saved query that you want to retrieve
      * @param query A JSONObject saved query
      * @param test if true the request will be to test end-point
-     * @return A String with new saved query if request was successful
+     * @return A JSONObject with new saved query if request was successful
      * @throws IOException
      */
     public JSONObject updateSavedQuery(final String queryName, final JSONObject query,
@@ -762,7 +763,7 @@ public class SlicingDice {
      * Make a data extraction score query in Slicing Dice API
      *
      * @param query A JSONObject data extraction score query
-     * @return A String with data extraction score query result
+     * @return A JSONObject with data extraction score query result
      * @throws IOException
      */
     public JSONObject score(final JSONObject query) throws IOException {
@@ -775,7 +776,7 @@ public class SlicingDice {
      *
      * @param query A JSONObject data extraction score query
      * @param test if true the request will be to test end-point
-     * @return A String with data extraction score query result
+     * @return A JSONObject with data extraction score query result
      * @throws IOException
      */
     public JSONObject score(final JSONObject query, final boolean test) throws IOException {
@@ -788,7 +789,7 @@ public class SlicingDice {
      * Make a data extraction result query in Slicing Dice API
      *
      * @param query A JSONObject data extraction result query
-     * @return A String with result of data extraction result query
+     * @return A JSONObject with result of data extraction result query
      * @throws IOException
      */
     public JSONObject result(final JSONObject query) throws IOException {
@@ -801,7 +802,7 @@ public class SlicingDice {
      *
      * @param query A JSONObject data extraction result query
      * @param test if true the request will be to test end-point
-     * @return A String with result of data extraction result query
+     * @return A JSONObject with result of data extraction result query
      * @throws IOException
      */
     public JSONObject result(final JSONObject query, final boolean test) throws IOException {
