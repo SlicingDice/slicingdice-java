@@ -29,19 +29,20 @@ import java.util.Iterator;
  * @since 2016-08-10
  */
 public class QueryDataExtractionValidator {
-    private JSONObject data;
+    private final JSONObject data;
 
-    public QueryDataExtractionValidator(JSONObject data) {
+    public QueryDataExtractionValidator(final JSONObject data) {
         this.data = data;
     }
 
     /**
      * Check if all keys in JSONObject are valid.
+     * @return true if all keys in JSONObject are valid and false otherwise
      */
     private boolean validKeys() {
-        Iterator<?> keys = this.data.keys();
+        final Iterator<?> keys = this.data.keys();
         while (keys.hasNext()) {
-            String key = (String) keys.next();
+            final String key = (String) keys.next();
             if (key.equals("query")) {
 
             } else if (keys.equals("limit")) {
@@ -53,16 +54,19 @@ public class QueryDataExtractionValidator {
                 }
             } else if (keys.equals("fields")) {
                 if (this.data.getJSONArray("fields").length() > 10) {
-                    throw new MaxLimitException("The key 'fields' in data extraction result must have up to 10 fields.");
+                    throw new MaxLimitException("The key 'fields' in data extraction result must" +
+                            " have up to 10 fields.");
                 }
             }
         }
         return true;
     }
 
+    /**
+     * Validate data extraction query
+     * @return true if data extraction query is valid and false otherwise
+     */
     public boolean validator() {
-        if (this.validKeys())
-            return true;
-        return false;
+        return this.validKeys();
     }
 }

@@ -30,39 +30,34 @@ import java.util.List;
  */
 public class TopValuesValidator {
 
-
-    /**
-     * A String list with all types of query supported
-     */
-    private List<String> queryTypes;
-
     /**
      * A String list with all operations supported
      */
-    private JSONObject data;
+    private final JSONObject data;
 
-    public TopValuesValidator(JSONObject data) {
+    public TopValuesValidator(final JSONObject data) {
         this.data = data;
     }
 
     /**
      * Check if the queries in query exceeds limits of Slicing Dice API
+     * @return true if exceeds query limit and false otherwise
      */
     private boolean exceedsQueriesLimit() {
-        if (this.data.length() > 5)
-            return true;
-        return false;
+        return this.data.length() > 5;
     }
 
     /**
      * Check if the fields in query exceeds limits per request of Slicing Dice API
+     * @return false if not exceeds field limit
      */
-    private boolean exceedsFieldsLimit() {
-        Iterator<?> keys = this.data.keys();
+    private boolean exceedsFieldsLimit() throws MaxLimitException {
+        final Iterator<?> keys = this.data.keys();
         while (keys.hasNext()) {
-            String key = (String) keys.next();
+            final String key = (String) keys.next();
             if (this.data.getJSONObject(key).length() > 6) {
-                throw new MaxLimitException("The query " + "exceeds the limit of fields per query in request");
+                throw new MaxLimitException("The query " +
+                        "exceeds the limit of fields per query in request");
             }
         }
         return false;
@@ -70,24 +65,28 @@ public class TopValuesValidator {
 
     /**
      * Check if the contains values in query exceeds limits of Slicing Dice API
+     * @return false if not exceeds contains limit
      */
-    private boolean exceedsValuesContainsLimit() {
-        Iterator<?> keys = this.data.keys();
+    private boolean exceedsValuesContainsLimit() throws MaxLimitException {
+        final Iterator<?> keys = this.data.keys();
         while (keys.hasNext()) {
-            String key = (String) keys.next();
-            JSONObject queryField = this.data.getJSONObject(key);
+            final String key = (String) keys.next();
+            final JSONObject queryField = this.data.getJSONObject(key);
             if (queryField.has("contains")) {
                 if (queryField.getJSONArray("contains").length() > 5) {
-                    throw new MaxLimitException("The query " + "exceeds the limit of contains per query in request");
+                    throw new MaxLimitException("The query " +
+                            "exceeds the limit of contains per query in request");
                 }
             }
         }
         return false;
     }
 
+    /**
+     * Validate top values query
+     * @return true if top values query is valid and false otherwise
+     */
     public boolean validator() {
-        if (!exceedsQueriesLimit() && !exceedsFieldsLimit() && !exceedsValuesContainsLimit())
-            return true;
-        return false;
+        return !exceedsQueriesLimit() && !exceedsFieldsLimit() && !exceedsValuesContainsLimit();
     }
 }

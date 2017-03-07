@@ -18,8 +18,6 @@ package com.slicingdice.jslicer.utils.validators;
 import com.slicingdice.jslicer.exceptions.client.MaxLimitException;
 import org.json.JSONObject;
 
-import java.util.List;
-
 /**
  * Slicing Dice validator to query JSONObject.
  *
@@ -29,24 +27,25 @@ import java.util.List;
  */
 public class QueryCountValidator {
 
-
-    /**
-     * A String list with all types of query supported
-     */
-    private List<String> queryTypes;
-
     /**
      * A String list with all operations supported
      */
-    private JSONObject data;
+    private final JSONObject data;
 
-    public QueryCountValidator(JSONObject data) {
+    public QueryCountValidator(final JSONObject data) {
         this.data = data;
     }
 
+    /**
+     * Validate the count query
+     * @return true if count query is valid and false otherwise
+     */
     public boolean validator() {
-        if (this.data.length() > 10)
-            throw new MaxLimitException("The query count entity has a limit of 10 queries by request.");
+        if (this.data.length() > 10) {
+            throw new MaxLimitException(
+                    "The query count entity has a limit of 10 queries by request.");
+        }
+
         return true;
     }
 }
