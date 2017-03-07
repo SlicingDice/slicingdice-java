@@ -33,10 +33,10 @@ import java.util.List;
  */
 public class FieldValidator {
 
-    private JSONObject data;
-    private List<String> validTypeFields;
+    private final JSONObject data;
+    private final List<String> validTypeFields;
 
-    public FieldValidator(JSONObject data) {
+    public FieldValidator(final JSONObject data) {
         this.data = data;
         this.validTypeFields = Arrays.asList(
                 "unique-id", "boolean", "string", "integer", "decimal",
@@ -48,15 +48,16 @@ public class FieldValidator {
     /**
      * Checks if field has a name and if name has a length less than 80 chars.
      */
-    private void validateFieldName() {
+    private void validateFieldName() throws InvalidFieldException, InvalidFieldNameException {
         if (!this.data.has("name")) {
             throw new InvalidFieldException("The field should have a name.");
         } else {
-            String name = this.data.getString("name");
+            final String name = this.data.getString("name");
             if (name.trim().length() == 0) {
                 throw new InvalidFieldNameException("The field's name can't be empty/None.");
             } else if (name.length() > 80) {
-                throw new InvalidFieldNameException("The field's name have a very big name.(Max: 80 chars)");
+                throw new InvalidFieldNameException(
+                        "The field's name have a very big name.(Max: 80 chars)");
             }
         }
     }
@@ -64,39 +65,45 @@ public class FieldValidator {
     /**
      * Checks if field has a type valid.
      */
-    private void validateFieldType() {
+    private void validateFieldType() throws InvalidFieldException, InvalidFieldTypeException {
         if (!this.data.has("type")) {
             throw new InvalidFieldException("The field should have a type.");
         }
-        String typeField = this.data.getString("type");
+        final String typeField = this.data.getString("type");
         if (!this.validTypeFields.contains(typeField)) {
             throw new InvalidFieldTypeException("This field have a invalid type.");
         }
     }
 
     /**
-     * Checks if field has a descript and if description has a length less than 300 chars.
+     * Checks if field has a description and if description has a length less than 300 chars.
      */
-    private void validateFieldDescription() {
-        String description = this.data.getString("description");
+    private void validateFieldDescription() throws InvalidFieldDescriptionException {
+        final String description = this.data.getString("description");
         if (description.trim().length() == 0) {
-            throw new InvalidFieldDescriptionException("The field's description can't be empty/None.");
+            throw new InvalidFieldDescriptionException(
+                    "The field's description can't be empty/None.");
         } else if (description.length() > 300) {
-            throw new InvalidFieldDescriptionException("The field's description have a very big name.(Max: 300 chars)");
+            throw new InvalidFieldDescriptionException(
+                    "The field's description have a very big content. (Max: 300 chars)");
         }
     }
 
-    private void validateFieldDecimalPlaces() {
-        List<String> decimalTypes = Arrays.asList("decimal", "decimal-time-series");
+    /**
+     * Check the decimal type
+     * @throws InvalidFieldException
+     */
+    private void validateFieldDecimalType() throws InvalidFieldException {
+        final List<String> decimalTypes = Arrays.asList("decimal", "decimal-time-series");
         if (!decimalTypes.contains(this.data.getString("type"))) {
-            throw new InvalidFieldException("The 'enumerate' type needs of the 'range' parameter.");
+            throw new InvalidFieldException("The decimal type is not a valid one");
         }
     }
 
     /**
      * Checks if enumerated field is valid
      */
-    private void validateEnumeratedType() {
+    private void validateEnumeratedType() throws InvalidFieldException {
         if (!this.data.has("range")) {
             throw new InvalidFieldException("The 'enumerate' type needs of the 'range' parameter.");
         }
@@ -105,16 +112,22 @@ public class FieldValidator {
     /**
      * Checks if a field of type 'string' has the key 'cardinality'.
      */
-    private void checkStringTypeIntegrity() {
+    private void checkStringTypeIntegrity() throws InvalidFieldException {
         if (!this.data.has("cardinality")) {
-            throw new InvalidFieldException("The field with type string should have 'cardinality' key.");
+            throw new InvalidFieldException(
+                    "The field with type string should have 'cardinality' key.");
         }
     }
 
+    /**
+     * Validate the field
+     *
+     * @return true if field is valid and false otherwise
+     */
     public boolean validator() {
         this.validateFieldName();
         this.validateFieldType();
-        String type = this.data.getString("type");
+        final String type = this.data.getString("type");
         if (type.equals("string")) {
             this.checkStringTypeIntegrity();
         }
@@ -125,7 +138,7 @@ public class FieldValidator {
             this.validateFieldDescription();
         }
         if (this.data.has("decimal-place")) {
-            this.validateFieldDecimalPlaces();
+            this.validateFieldDecimalType();
         }
         return true;
     }

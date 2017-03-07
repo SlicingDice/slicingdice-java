@@ -48,48 +48,54 @@ import okhttp3.Response;
  */
 public class SlicingDice {
 
-    private String _apiKey;
-    private String _masterKey;
-    private String _customKey;
-    private String _writeKey;
-    private String _readKey;
-    private int _timeout;
+    private static final String POST = "post";
+    private static final String PUT = "put";
+    private static final String DELETE = "delete";
+
+    private String apiKey;
+    private String masterKey;
+    private String customKey;
+    private String writeKey;
+    private String readKey;
+    private int timeout;
 
     /**
      * A String list with all types of query supported
      */
-    private List<String> queryTypes = Arrays.asList(
+    private final List<String> queryTypes = Arrays.asList(
             "count/entity", "count/event", "count/entity/total",
             "aggregation", "top_values");
     /**
      * This variable get from enviroment the Slicing Dice API url. If enviroment is
      * empty, his set the url 'https://api.slicingdice.com' how your value.
      */
-    private String BaseURL = (System.getenv("SD_API_ADDRESS") != null) ? System.getenv("SD_API_ADDRESS")
-            : "https://api.slicingdice.com/v1";
+    private final String baseURL = (System.getenv("SD_API_ADDRESS") != null) ?
+            System.getenv("SD_API_ADDRESS") : "https://api.slicingdice.com/v1";
 
     private int statusCode;
     private Headers headers;
 
-    public SlicingDice(String masterKey) {
-        this._masterKey = masterKey;
-        _timeout = 60;
+    public SlicingDice(final String masterKey) {
+        this.masterKey = masterKey;
+        this.timeout = 60;
     }
 
-    public SlicingDice(String masterKey, String customKey, String writeKey, String readKey) {
-        this._masterKey = masterKey;
-        this._customKey = customKey;
-        this._writeKey = writeKey;
-        this._readKey = readKey;
-        _timeout = 60;
+    public SlicingDice(final String masterKey, final String customKey, final String writeKey,
+                       final String readKey) {
+        this.masterKey = masterKey;
+        this.customKey = customKey;
+        this.writeKey = writeKey;
+        this.readKey = readKey;
+        this.timeout = 60;
     }
 
-    public SlicingDice(String masterKey, String customKey, String writeKey, String readKey, int timeout) {
-        this._masterKey = masterKey;
-        this._customKey = customKey;
-        this._writeKey = writeKey;
-        this._readKey = readKey;
-        _timeout = timeout;
+    public SlicingDice(final String masterKey, final String customKey, final String writeKey,
+                       final String readKey, final int timeout) {
+        this.masterKey = masterKey;
+        this.customKey = customKey;
+        this.writeKey = writeKey;
+        this.readKey = readKey;
+        this.timeout = timeout;
     }
 
     public int getStatusCode() {
@@ -100,33 +106,35 @@ public class SlicingDice {
         return this.headers;
     }
 
-    private ArrayList<Object> getCurrentKey(){
-        if (this._masterKey != null){
-            ArrayList<Object> result = new ArrayList<Object>();
-            result.add(this._masterKey);
-            result.add(2);
-            return result;
-        } else if (this._customKey != null){
-            ArrayList<Object> result = new ArrayList<Object>();
-            result.add(this._customKey);
-            result.add(2);
-            return result;
-        } else if (this._writeKey != null){
-            ArrayList<Object> result = new ArrayList<Object>();
-            result.add(this._writeKey);
-            result.add(1);
-            return result;
-        } else if (this._readKey != null){
-            ArrayList<Object> result = new ArrayList<Object>();
-            result.add(this._readKey);
-            result.add(0);
-            return result;
+    private ArrayList<Object> getCurrentKey() throws SlicingDiceKeyException {
+        final String key;
+        final int keyLevel;
+
+        if (this.masterKey != null){
+            key = this.masterKey;
+            keyLevel = 2;
+        } else if (this.customKey != null){
+            key = this.customKey;
+            keyLevel = 2;
+        } else if (this.writeKey != null) {
+            key = this.writeKey;
+            keyLevel = 1;
+        } else if (this.readKey != null){
+            key = this.readKey;
+            keyLevel = 0;
+        } else {
+            throw new SlicingDiceKeyException("You need put a key.");
         }
-        throw new SlicingDiceKeyException("You need put a key.");
+
+        final ArrayList<Object> result = new ArrayList<>();
+        result.add(key);
+        result.add(keyLevel);
+
+        return result;
     }
 
-    private String getKey(int levelKey) {
-        List<Object> currentLevelKey = this.getCurrentKey();
+    private String getKey(final int levelKey) throws SlicingDiceKeyException {
+        final List<Object> currentLevelKey = this.getCurrentKey();
         if ((Integer)currentLevelKey.get(1) == 2){
             return (String)currentLevelKey.get(0);
         }
@@ -141,32 +149,34 @@ public class SlicingDice {
      *
      * @param url  A url String to make request
      * @param data A JSONObject to send in request
-     * @return A String with json request result
+     * @return A JSONObject with json request result
      * @throws IOException
      */
-    private JSONObject makeRequest(String url, JSONObject data, String reqType, int keyLevel)
-            throws IOException {
-        String apiKey = this.getKey(keyLevel);
+    private JSONObject makeRequest(final String url, final JSONObject data, final String reqType,
+                                   final int keyLevel) throws IOException {
+        final String apiKey = this.getKey(keyLevel);
         Response resp = null;
-        if (reqType.equals("post")) {
-            resp = Requester.post(url, data.toString(), apiKey, _timeout);
-        } else if (reqType.equals("put")) {
-            resp = Requester.put(url, data.toString(), apiKey, _timeout);
-        } else if (reqType.equals("delete")) {
-            resp = Requester.delete(url, apiKey, _timeout);
+
+        if (reqType.equals(POST)) {
+            resp = Requester.post(url, data.toString(), apiKey, timeout);
+        } else if (reqType.equals(PUT)) {
+            resp = Requester.put(url, data.toString(), apiKey, timeout);
+        } else if (reqType.equals(DELETE)) {
+            resp = Requester.delete(url, apiKey, timeout);
         }
+
         return handlerResponse(resp);
     }
 
-    private JSONObject makeRequest(String url, int keyLevel)
-            throws IOException {
-        String apiKey = this.getKey(keyLevel);
-        Response resp = Requester.get(url, apiKey, _timeout);
+    private JSONObject makeRequest(final String url, final int keyLevel) throws IOException {
+        final String apiKey = this.getKey(keyLevel);
+        final Response resp = Requester.get(url, apiKey, timeout);
+
         return handlerResponse(resp);
     }
 
-    private JSONObject handlerResponse(Response resp) throws IOException {
-        HandlerResponse responseData = new HandlerResponse(resp.body().string(),
+    private JSONObject handlerResponse(final Response resp) throws IOException {
+        final HandlerResponse responseData = new HandlerResponse(resp.body().string(),
                 resp.headers(), resp.code());
 
         if (responseData.requestSuccessful()) {
@@ -175,6 +185,7 @@ public class SlicingDice {
                 return new JSONObject(responseData.getResult());
             }
         }
+
         return null;
     }
 
@@ -185,13 +196,15 @@ public class SlicingDice {
      * @return true if the request don't have errors in client or server
      * @throws SDHttpError
      */
-    private boolean checkRequest(Response response) throws SDHttpError {
+    private boolean checkRequest(final Response response) throws SDHttpError {
         if (!response.isSuccessful()) {
             if (response.code() >= 400 && response.code() <= 499) {
-                throw new SDHttpError("Client Error " + response.code() + "(" + response.message() + ")");
+                throw new SDHttpError("Client Error " + response.code() + "(" + response.message()
+                        + ")");
             }
             if (response.code() >= 500 && response.code() <= 600) {
-                throw new SDHttpError("Server Error " + response.code() + "(" + response.message() + ")");
+                throw new SDHttpError("Server Error " + response.code() + "(" + response.message()
+                        + ")");
             }
         }
         return true;
@@ -203,39 +216,62 @@ public class SlicingDice {
      * @param response A okhttp3.Response object of Slicing Dice request
      * @throws IOException
      */
-    private void populateResult(HandlerResponse response) throws IOException {
+    private void populateResult(final HandlerResponse response) throws IOException {
         this.statusCode = response.getStatusCode();
         this.headers = response.getHeaders();
     }
 
-    private String wrapperTest(boolean test) throws IOException {
-        if (test) return this.BaseURL + "/test";
-        return this.BaseURL;
+    private String wrapperTest(final boolean test) throws IOException {
+        if (test) {
+            return this.baseURL + "/test";
+        }
+        return this.baseURL;
     }
+
     /**
      * Create field in Slicing Dice
      *
      * @param data A JSONObject in the Slicing Dice field format
-     * @return A String with json request result if your field is valid
+     * @return A JSONObject with json request result if your field is valid
      * @throws IOException
      */
-    private JSONObject wrapperCreateField(JSONObject data, String url) throws IOException {
-        FieldValidator fieldValidator = new FieldValidator(data);
+    private JSONObject wrapperCreateField(final JSONObject data, final String url)
+            throws IOException {
+        final FieldValidator fieldValidator = new FieldValidator(data);
+
         if (fieldValidator.validator()) {
-            return this.makeRequest(url, data, "post", 2);
+            return this.makeRequest(url, data, POST, 2);
         }
+
         return null;
     }
-    public JSONObject createField(JSONObject data) throws IOException {
-        String url = BaseURL + URLResources.FIELD.url;
+
+    /**
+     * Create field in Slicing Dice
+     *
+     * @param data A JSONObject in the Slicing Dice field format
+     * @return A JSONObject with json request result if your field is valid
+     * @throws IOException
+     */
+    public JSONObject createField(final JSONObject data) throws IOException {
+        final String url = baseURL + URLResources.FIELD.url;
         return this.wrapperCreateField(data, url);
     }
 
-    public JSONObject createField(JSONObject data, boolean test) throws IOException {
-        String url = this.wrapperTest(test);
-        url += URLResources.FIELD.url;
+    /**
+     * Create field in Slicing Dice
+     *
+     * @param data A JSONObject in the Slicing Dice field format
+     * @param test if true the field will be created on test end-point otherwise on production
+     *             end-point
+     * @return A JSONObject with json request result if your field is valid
+     * @throws IOException
+     */
+    public JSONObject createField(final JSONObject data, final boolean test) throws IOException {
+        final String url = this.wrapperTest(test) + URLResources.FIELD.url;
         return this.wrapperCreateField(data, url);
     }
+
     /**
      * Get all fields.
      *
@@ -243,32 +279,64 @@ public class SlicingDice {
      * @throws IOException
      */
     public JSONObject getFields() throws IOException {
-        String url = BaseURL + URLResources.FIELD.url;
+        final String url = this.baseURL + URLResources.FIELD.url;
         return this.makeRequest(url, 2);
     }
 
-    public JSONObject getFields(boolean test) throws IOException {
-        String url = this.wrapperTest(test);
-        url += URLResources.FIELD.url;
+    /**
+     * Get all fields.
+     *
+     * @param test if true the request will be to test end-point
+     * @return All fields(active and inactive).
+     * @throws IOException
+     */
+    public JSONObject getFields(final boolean test) throws IOException {
+        final String url = this.wrapperTest(test) + URLResources.FIELD.url;
         return this.makeRequest(url, 2);
     }
 
-    public JSONObject index(JSONObject data) throws IOException {
-        String url = BaseURL + URLResources.INDEX.url;
-        return this.makeRequest(url, data, "post", 1);
+    /**
+     * Index data to existing entities or create new entities, if necessary. This method corresponds
+     * to a POST request at /index.
+     *
+     * @param data A JSON object in the SlicingDice index format
+     * @return A JSONObject with json request result if your indexation is valid
+     * @throws IOException
+     */
+    public JSONObject index(final JSONObject data) throws IOException {
+        final String url = this.baseURL + URLResources.INDEX.url;
+        return this.makeRequest(url, data, POST, 1);
     }
 
-    public JSONObject index(JSONObject data, boolean test) throws IOException {
-        String url = this.wrapperTest(test);
-        url += URLResources.INDEX.url;
-        return this.makeRequest(url, data, "post", 1);
+    /**
+     * Index data to existing entities or create new entities, if necessary. This method corresponds
+     * to a POST request at /index.
+     *
+     * @param data A JSON object in the SlicingDice index format
+     * @param test if true the request will be to test end-point
+     * @return A JSONObject with json request result if your indexation is valid
+     * @throws IOException
+     */
+    public JSONObject index(final JSONObject data, final boolean test) throws IOException {
+        final String url = this.wrapperTest(test) + URLResources.INDEX.url;
+        return this.makeRequest(url, data, POST, 1);
     }
 
-    public JSONObject index(JSONObject data, boolean autoCreateFields, boolean test) throws IOException {
+    /**
+     * Index data to existing entities or create new entities, if necessary. This method corresponds
+     * to a POST request at /index.
+     *
+     * @param data A JSON object in the SlicingDice index format
+     * @param autoCreateFields if true the indexation will automatically create non-existent fields
+     * @param test if true the request will be to test end-point
+     * @return A JSONObject with json request result if your indexation is valid
+     * @throws IOException
+     */
+    public JSONObject index(final JSONObject data, final boolean autoCreateFields,
+                            final boolean test) throws IOException {
         data.put("auto-create-fields", autoCreateFields);
-        String url = this.wrapperTest(test);
-        url += URLResources.INDEX.url;
-        return this.makeRequest(url, data, "post", 1);
+        final String url = this.wrapperTest(test) + URLResources.INDEX.url;
+        return this.makeRequest(url, data, POST, 1);
     }
 
     /**
@@ -276,15 +344,16 @@ public class SlicingDice {
      *
      * @param url   A url to make request
      * @param query A JSONObject count query
-     * @return A String with count query result
+     * @return A JSONObject with count query result
      * @throws IOException
      */
-    private JSONObject countQueryWrapper(String url, JSONObject query) throws IOException {
-        QueryCountValidator queryValidator = new QueryCountValidator(query);
+    private JSONObject countQueryWrapper(final String url, final JSONObject query)
+            throws IOException {
+        final QueryCountValidator queryValidator = new QueryCountValidator(query);
         if (!queryValidator.validator()) {
             return null;
         }
-        return this.makeRequest(url, query, "post", 0);
+        return this.makeRequest(url, query, POST, 0);
     }
 
     /**
@@ -292,15 +361,16 @@ public class SlicingDice {
      *
      * @param url   A url to make request
      * @param query A JSONObject data extraction query
-     * @return A String with data extraction query result
+     * @return A JSONObject with data extraction query result
      * @throws IOException
      */
-    private JSONObject dataExtractionWrapper(String url, JSONObject query) throws IOException {
-        QueryDataExtractionValidator queryValidator = new QueryDataExtractionValidator(query);
+    private JSONObject dataExtractionWrapper(final String url, final JSONObject query)
+            throws IOException {
+        final QueryDataExtractionValidator queryValidator = new QueryDataExtractionValidator(query);
         if (!queryValidator.validator()) {
             return null;
         }
-        return this.makeRequest(url, query, "post", 0);
+        return this.makeRequest(url, query, POST, 0);
     }
 
     /**
@@ -310,40 +380,67 @@ public class SlicingDice {
      * @throws IOException
      */
     public JSONObject getProjects() throws IOException {
-        String url = BaseURL + URLResources.PROJECT.url;
+        final String url = this.baseURL + URLResources.PROJECT.url;
         return this.makeRequest(url, 2);
     }
 
-    public JSONObject getProjects(boolean test) throws IOException {
-        String url = this.wrapperTest(test);
-        url += URLResources.PROJECT.url;
+    /**
+     * Get all getProjects in your account.
+     *
+     * @param test if true the request will be to test end-point
+     * @return All getProjects(active and inactive).
+     * @throws IOException
+     */
+    public JSONObject getProjects(final boolean test) throws IOException {
+        final String url = this.wrapperTest(test) + URLResources.PROJECT.url;
         return this.makeRequest(url, 2);
     }
+
     /**
      * Make a count entity query in Slicing Dice API
      *
      * @param query A JSONObject count entity query
-     * @return A String with count entity query result
+     * @return A JSONObject with count entity query result
      * @throws IOException
      */
-    public JSONObject countEntity(JSONObject query) throws IOException {
-        String url = BaseURL + URLResources.QUERY_COUNT_ENTITY.url;
+    public JSONObject countEntity(final JSONObject query) throws IOException {
+        final String url = this.baseURL + URLResources.QUERY_COUNT_ENTITY.url;
         return countQueryWrapper(url, query);
     }
 
-    public JSONObject countEntity(JSONObject query, boolean test) throws IOException {
-        String url = this.wrapperTest(test);
-        url += URLResources.QUERY_COUNT_ENTITY.url;
+    /**
+     * Make a count entity query in Slicing Dice API
+     *
+     * @param query A JSONObject count entity query
+     * @param test if true the request will be to test end-point
+     * @return A JSONObject with count entity query result
+     * @throws IOException
+     */
+    public JSONObject countEntity(final JSONObject query, final boolean test) throws IOException {
+        final String url = this.wrapperTest(test) + URLResources.QUERY_COUNT_ENTITY.url;
         return countQueryWrapper(url, query);
     }
 
+    /**
+     * Make a total query in Slicing Dice API
+     *
+     * @return A JSONObject with total query result
+     * @throws IOException
+     */
     public JSONObject countEntityTotal() throws IOException {
-        String url = BaseURL + URLResources.QUERY_COUNT_ENTITY_TOTAL.url;
+        final String url = this.baseURL + URLResources.QUERY_COUNT_ENTITY_TOTAL.url;
         return this.makeRequest(url, 0);
     }
-    public JSONObject countEntityTotal(boolean test) throws IOException {
-        String url = this.wrapperTest(test);
-        url += URLResources.QUERY_COUNT_ENTITY_TOTAL.url;
+
+    /**
+     * Make a total query in Slicing Dice API
+     *
+     * @param test if true the request will be to test end-point
+     * @return A JSONObject with total query result
+     * @throws IOException
+     */
+    public JSONObject countEntityTotal(final boolean test) throws IOException {
+        final String url = this.wrapperTest(test) + URLResources.QUERY_COUNT_ENTITY_TOTAL.url;
         return this.makeRequest(url, 0);
     }
 
@@ -351,17 +448,24 @@ public class SlicingDice {
      * Make a count event query in Slicing Dice API
      *
      * @param query A JSONObject count event query
-     * @return A String with count event query result
+     * @return A JSONObject with count event query result
      * @throws IOException
      */
-    public JSONObject countEvent(JSONObject query) throws IOException {
-        String url = BaseURL + URLResources.QUERY_COUNT_EVENT.url;
+    public JSONObject countEvent(final JSONObject query) throws IOException {
+        final String url = this.baseURL + URLResources.QUERY_COUNT_EVENT.url;
         return countQueryWrapper(url, query);
     }
 
-    public JSONObject countEvent(JSONObject query, boolean test) throws IOException {
-        String url = this.wrapperTest(test);
-        url += URLResources.QUERY_COUNT_EVENT.url;
+    /**
+     * Make a count event query in Slicing Dice API
+     *
+     * @param query A JSONObject count event query
+     * @param test if true the request will be to test end-point
+     * @return A JSONObject with count event query result
+     * @throws IOException
+     */
+    public JSONObject countEvent(final JSONObject query, final boolean test) throws IOException {
+        final String url = this.wrapperTest(test) + URLResources.QUERY_COUNT_EVENT.url;
         return countQueryWrapper(url, query);
     }
 
@@ -369,27 +473,42 @@ public class SlicingDice {
      * Make a aggregation query in Slicing Dice API
      *
      * @param query A JSONObject aggregation query
-     * @return A String with aggregation query result
+     * @return A JSONObject with aggregation query result
      * @throws IOException
      */
-    private JSONObject wrapperAggregation(JSONObject query, String url) throws IOException {
+    private JSONObject wrapperAggregation(final JSONObject query, final String url)
+            throws IOException {
         if (!query.has("query")) {
             throw new InvalidQueryException("The aggregation query must have up the key 'query'.");
         }
         if (query.length() > 5) {
             throw new MaxLimitException("The aggregation query must have up to 5 fields per request.");
         }
-        return makeRequest(url, query, "post", 0);
+        return makeRequest(url, query, POST, 0);
     }
 
-    public JSONObject aggregation(JSONObject query) throws IOException {
-        String url = BaseURL + URLResources.QUERY_AGGREGATION.url;
+    /**
+     * Make a aggregation query in Slicing Dice API
+     *
+     * @param query A JSONObject aggregation query
+     * @return A JSONObject with aggregation query result
+     * @throws IOException
+     */
+    public JSONObject aggregation(final JSONObject query) throws IOException {
+        final String url = this.baseURL + URLResources.QUERY_AGGREGATION.url;
         return this.wrapperAggregation(query, url);
     }
 
-    public JSONObject aggregation(JSONObject query, boolean test) throws IOException {
-        String url = this.wrapperTest(test);
-        url += URLResources.QUERY_AGGREGATION.url;
+    /**
+     * Make a aggregation query in Slicing Dice API
+     *
+     * @param query A JSONObject aggregation query
+     * @param test if true the request will be to test end-point
+     * @return A JSONObject with aggregation query result
+     * @throws IOException
+     */
+    public JSONObject aggregation(final JSONObject query, final boolean test) throws IOException {
+        final String url = this.wrapperTest(test) + URLResources.QUERY_AGGREGATION.url;
         return this.wrapperAggregation(query, url);
     }
 
@@ -397,24 +516,40 @@ public class SlicingDice {
      * Make a top values query in Slicing Dice API
      *
      * @param query A JSONObject top values query
-     * @return A String with top values query result
+     * @return A JSONObject with top values query result
      * @throws IOException
      */
-    private JSONObject wrapperTopValues(JSONObject query, String url) throws IOException {
-        TopValuesValidator topValuesValidator = new TopValuesValidator(query);
-        if (topValuesValidator.validator())
-            return makeRequest(url, query, "post", 0);
+    private JSONObject wrapperTopValues(final JSONObject query, final String url)
+            throws IOException {
+        final TopValuesValidator topValuesValidator = new TopValuesValidator(query);
+        if (topValuesValidator.validator()) {
+            return makeRequest(url, query, POST, 0);
+        }
         return null;
     }
 
-    public JSONObject topValues(JSONObject query) throws IOException {
-        String url = BaseURL + URLResources.QUERY_TOP_VALUES.url;
+    /**
+     * Make a top values query in Slicing Dice API
+     *
+     * @param query A JSONObject top values query
+     * @return A JSONObject with top values query result
+     * @throws IOException
+     */
+    public JSONObject topValues(final JSONObject query) throws IOException {
+        final String url = baseURL + URLResources.QUERY_TOP_VALUES.url;
         return this.wrapperTopValues(query, url);
     }
 
-    public JSONObject topValues(JSONObject query, boolean test) throws IOException {
-        String url = this.wrapperTest(test);
-        url += URLResources.QUERY_TOP_VALUES.url;
+    /**
+     * Make a top values query in Slicing Dice API
+     *
+     * @param query A JSONObject top values query
+     * @param test if true the request will be to test end-point
+     * @return A JSONObject with top values query result
+     * @throws IOException
+     */
+    public JSONObject topValues(final JSONObject query, final boolean test) throws IOException {
+        final String url = this.wrapperTest(test) + URLResources.QUERY_TOP_VALUES.url;
         return this.wrapperTopValues(query, url);
     }
 
@@ -422,119 +557,214 @@ public class SlicingDice {
      * Make a exists entity query in Slicing Dice API
      *
      * @param ids A JSONArray exists entity query
-     * @return A String with exists entity query result
+     * @return A JSONObject with exists entity query result
      * @throws IOException
      */
-    private JSONObject wrapperExistsEntity(JSONArray ids, String url) throws IOException {
+    private JSONObject wrapperExistsEntity(final JSONArray ids, final String url)
+            throws IOException, MaxLimitException {
         if (ids.length() > 100) {
             throw new MaxLimitException("The query exists entity must have up to 100 ids.");
         }
-        JSONObject query = new JSONObject()
-                .put("ids", ids);
-        return this.makeRequest(url, query, "post", 0);
+        final JSONObject query = new JSONObject().put("ids", ids);
+        return this.makeRequest(url, query, POST, 0);
     }
-    public JSONObject existsEntity(JSONArray ids) throws IOException {
-        String url = BaseURL + URLResources.QUERY_EXISTS_ENTITY.url;
+
+    /**
+     * Make a exists entity query in Slicing Dice API
+     *
+     * @param ids A JSONArray exists entity query
+     * @return A JSONObject with exists entity query result
+     * @throws IOException
+     */
+    public JSONObject existsEntity(final JSONArray ids) throws IOException {
+        final String url = baseURL + URLResources.QUERY_EXISTS_ENTITY.url;
         return this.wrapperExistsEntity(ids, url);
     }
 
-    public JSONObject existsEntity(JSONArray ids, boolean test) throws IOException {
-        String url = this.wrapperTest(test);
-        url += URLResources.QUERY_EXISTS_ENTITY.url;
+    /**
+     * Make a exists entity query in Slicing Dice API
+     *
+     * @param ids A JSONArray exists entity query
+     * @param test if true the request will be to test end-point
+     * @return A JSONObject with exists entity query result
+     * @throws IOException
+     */
+    public JSONObject existsEntity(final JSONArray ids, final boolean test) throws IOException {
+        final String url = this.wrapperTest(test) + URLResources.QUERY_EXISTS_ENTITY.url;
         return this.wrapperExistsEntity(ids, url);
     }
 
-    public JSONObject getSavedQuery(String queryName) throws IOException {
-        String url = BaseURL + URLResources.QUERY_SAVED.url + queryName;
-        return this.makeRequest(url, 0);
-    }
-    public JSONObject getSavedQuery(String queryName, boolean test) throws IOException {
-        String url = this.wrapperTest(test);
-        url += URLResources.QUERY_SAVED.url + queryName;
+    /**
+     * Query SlicingDice API for saved queries
+     *
+     * @param queryName the name of the saved query that you want to retrieve
+     * @return A JSONObject with get saved query result
+     * @throws IOException
+     */
+    public JSONObject getSavedQuery(final String queryName) throws IOException {
+        final String url = baseURL + URLResources.QUERY_SAVED.url + queryName;
         return this.makeRequest(url, 0);
     }
 
+    /**
+     * Query SlicingDice API for saved queries
+     *
+     * @param queryName the name of the saved query that you want to retrieve
+     * @param test if true the request will be to test end-point
+     * @return A JSONObject with get saved query result
+     * @throws IOException
+     */
+    public JSONObject getSavedQuery(final String queryName, final boolean test) throws IOException {
+        final String url = this.wrapperTest(test) + URLResources.QUERY_SAVED.url + queryName;
+        return this.makeRequest(url, 0);
+    }
+
+    /**
+     * Query SlicingDice API for all saved queries
+     *
+     * @return A JSONObject with get saved query result
+     * @throws IOException
+     */
     public JSONObject getSavedQueries() throws IOException {
-        String url = BaseURL + URLResources.QUERY_SAVED.url;
+        final String url = this.baseURL + URLResources.QUERY_SAVED.url;
         return this.makeRequest(url, 2);
     }
 
-    public JSONObject getSavedQueries(boolean test) throws IOException {
-        String url = this.wrapperTest(test);
-        url += URLResources.QUERY_SAVED.url;
+    /**
+     * Query SlicingDice API for all saved queries
+     *
+     * @param test if true the request will be to test end-point
+     * @return A JSONObject with get saved query result
+     * @throws IOException
+     */
+    public JSONObject getSavedQueries(final boolean test) throws IOException {
+        final String url = this.wrapperTest(test) + URLResources.QUERY_SAVED.url;
         return this.makeRequest(url, 2);
     }
 
-    public JSONObject deleteSavedQuery(String queryName) throws IOException {
-        String url = BaseURL + URLResources.QUERY_SAVED.url;
-        return this.makeRequest(url, null, "delete", 2);
+    /**
+     * Delete a previous saved query on SlicingDice API
+     *
+     * @param queryName the name of the saved query that you want to retrieve
+     * @return A JSONObject with get saved query result
+     * @throws IOException
+     */
+    public JSONObject deleteSavedQuery(final String queryName) throws IOException {
+        final String url = this.baseURL + URLResources.QUERY_SAVED.url + queryName;
+        return this.makeRequest(url, null, DELETE, 2);
     }
 
-    public JSONObject deleteSavedQuery(String queryName, boolean test) throws IOException {
-        String url = this.wrapperTest(test);
-        url += URLResources.QUERY_SAVED.url + queryName;
-        return this.makeRequest(url, null, "delete", 2);
+    /**
+     * Delete a previous saved query on SlicingDice API
+     *
+     * @param queryName the name of the saved query that you want to retrieve
+     * @param test if true the request will be to test end-point
+     * @return A JSONObject with get saved query result
+     * @throws IOException
+     */
+    public JSONObject deleteSavedQuery(final String queryName, final boolean test)
+            throws IOException {
+        final String url = this.wrapperTest(test) + URLResources.QUERY_SAVED.url + queryName;
+        return this.makeRequest(url, null, DELETE, 2);
     }
+
     /**
      * Create a saved query in Slicing Dice API
      *
      * @param query A JSONObject saved query
-     * @return A String with saved query if request was successful
+     * @return A JSONObject with saved query if request was successful
      * @throws IOException
      */
-    private JSONObject wrapperCreateSavedQuery(JSONObject query, String url) throws IOException {
+    private JSONObject wrapperCreateSavedQuery(final JSONObject query, final String url)
+            throws IOException {
         if (query.has("name") && query.has("type") && query.has("query")) {
-            String queryType = query.getString("type");
+            final String queryType = query.getString("type");
             if (!this.queryTypes.contains(queryType)) {
-                throw new InvalidQueryException("The query saved has a invalid type.(" + queryType + ").");
+                throw new InvalidQueryException("The query saved has a invalid type.(" + queryType
+                        + ").");
             }
-            return this.makeRequest(url, query, "post", 1);
+            return this.makeRequest(url, query, POST, 1);
         }
         return null;
     }
-    public JSONObject createSavedQuery(JSONObject query) throws IOException {
-        String url = BaseURL + URLResources.QUERY_SAVED.url;
+
+    /**
+     * Create a saved query in Slicing Dice API
+     *
+     * @param query A JSONObject saved query
+     * @return A JSONObject with saved query if request was successful
+     * @throws IOException
+     */
+    public JSONObject createSavedQuery(final JSONObject query) throws IOException {
+        final String url = this.baseURL + URLResources.QUERY_SAVED.url;
         return this.wrapperCreateSavedQuery(query, url);
     }
-    public JSONObject createSavedQuery(JSONObject query, boolean test) throws IOException {
-        String url = this.wrapperTest(test);
-        url += URLResources.QUERY_SAVED.url;
+
+    /**
+     * Create a saved query in Slicing Dice API
+     *
+     * @param query A JSONObject saved query
+     * @param test if true the request will be to test end-point
+     * @return A JSONObject with saved query if request was successful
+     * @throws IOException
+     */
+    public JSONObject createSavedQuery(final JSONObject query, final boolean test)
+            throws IOException {
+        final String url = this.wrapperTest(test) + URLResources.QUERY_SAVED.url;
         return this.wrapperCreateSavedQuery(query, url);
     }
 
     /**
      * Update a saved query in Slicing Dice API
      *
+     * @param queryName the name of the saved query that you want to retrieve
      * @param query A JSONObject saved query
-     * @return A String with new saved query if request was successful
+     * @return A JSONObject with new saved query if request was successful
      * @throws IOException
      */
-    public JSONObject updateSavedQuery(String queryName, JSONObject query) throws IOException {
-        String url = BaseURL + URLResources.QUERY_SAVED.url + queryName;
-        return this.makeRequest(url, query, "put", 2);
+    public JSONObject updateSavedQuery(final String queryName, final JSONObject query)
+            throws IOException {
+        final String url = this.baseURL + URLResources.QUERY_SAVED.url + queryName;
+        return this.makeRequest(url, query, PUT, 2);
     }
 
-    public JSONObject updateSavedQuery(String queryName, JSONObject query, boolean test) throws IOException {
-        String url = this.wrapperTest(test);
-        url += URLResources.QUERY_SAVED.url + queryName;
-        return this.makeRequest(url, query, "put", 2);
+    /**
+     * Update a saved query in Slicing Dice API
+     *
+     * @param queryName the name of the saved query that you want to retrieve
+     * @param query A JSONObject saved query
+     * @param test if true the request will be to test end-point
+     * @return A JSONObject with new saved query if request was successful
+     * @throws IOException
+     */
+    public JSONObject updateSavedQuery(final String queryName, final JSONObject query,
+                                       final boolean test) throws IOException {
+        final String url = this.wrapperTest(test) + URLResources.QUERY_SAVED.url + queryName;
+        return this.makeRequest(url, query, PUT, 2);
     }
 
     /**
      * Make a data extraction score query in Slicing Dice API
      *
      * @param query A JSONObject data extraction score query
-     * @return A String with data extraction score query result
+     * @return A JSONObject with data extraction score query result
      * @throws IOException
      */
-    public JSONObject score(JSONObject query) throws IOException {
-        String url = BaseURL + URLResources.QUERY_DATA_EXTRACTION_SCORE.url;
+    public JSONObject score(final JSONObject query) throws IOException {
+        final String url = this.baseURL + URLResources.QUERY_DATA_EXTRACTION_SCORE.url;
         return dataExtractionWrapper(url, query);
     }
 
-    public JSONObject score(JSONObject query, boolean test) throws IOException {
-        String url = this.wrapperTest(test);
-        url += URLResources.QUERY_DATA_EXTRACTION_SCORE.url;
+    /**
+     * Make a data extraction score query in Slicing Dice API
+     *
+     * @param query A JSONObject data extraction score query
+     * @param test if true the request will be to test end-point
+     * @return A JSONObject with data extraction score query result
+     * @throws IOException
+     */
+    public JSONObject score(final JSONObject query, final boolean test) throws IOException {
+        final String url = this.wrapperTest(test) + URLResources.QUERY_DATA_EXTRACTION_SCORE.url;
         return dataExtractionWrapper(url, query);
     }
 
@@ -542,16 +772,24 @@ public class SlicingDice {
      * Make a data extraction result query in Slicing Dice API
      *
      * @param query A JSONObject data extraction result query
-     * @return A String with result of data extraction result query
+     * @return A JSONObject with result of data extraction result query
      * @throws IOException
      */
-    public JSONObject result(JSONObject query) throws IOException {
-        String url = BaseURL + URLResources.QUERY_DATA_EXTRACTION_RESULT.url;
+    public JSONObject result(final JSONObject query) throws IOException {
+        final String url = baseURL + URLResources.QUERY_DATA_EXTRACTION_RESULT.url;
         return dataExtractionWrapper(url, query);
     }
-    public JSONObject result(JSONObject query, boolean test) throws IOException {
-        String url = this.wrapperTest(test);
-        url += URLResources.QUERY_DATA_EXTRACTION_RESULT.url;
+
+    /**
+     * Make a data extraction result query in Slicing Dice API
+     *
+     * @param query A JSONObject data extraction result query
+     * @param test if true the request will be to test end-point
+     * @return A JSONObject with result of data extraction result query
+     * @throws IOException
+     */
+    public JSONObject result(final JSONObject query, final boolean test) throws IOException {
+        final String url = this.wrapperTest(test) + URLResources.QUERY_DATA_EXTRACTION_RESULT.url;
         return dataExtractionWrapper(url, query);
     }
 }

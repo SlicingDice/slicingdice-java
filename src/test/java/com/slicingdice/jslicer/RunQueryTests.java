@@ -1,17 +1,20 @@
 package com.slicingdice.jslicer;
 
-import junit.framework.Test;
-
 import java.util.ArrayList;
 
 public class RunQueryTests {
+    // Your demo api key, to get a valid demo API key you can use:
+    // http://panel.slicingdice.com/docs/#api-details-api-connection-api-keys-demo-key
+    private static final String DEMO_API_KEY =
+            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfX3NhbHQiOiJkZW1vMG0iLCJwZXJtaXNzaW9uX2xldmVsIjozLCJwcm9qZWN0X2lkIjoxNjEsImNsaWVudF9pZCI6MTB9.vt5eGeQb0AUKu2o075vEzaC5m-XgD4ohgJkDZYBmFu8";
 
     private static Thread mainThread;
-    public static void main(String[] args) {
+
+    public static void main(final String[] args) {
         mainThread = Thread.currentThread();
 
-
-        ArrayList<String> queryTypes = new ArrayList<String>() {{
+        // the query types to use on tests
+        final ArrayList<String> queryTypes = new ArrayList<String>() {{
             add("count_entity");
             add("count_event");
             add("top_values");
@@ -21,8 +24,7 @@ public class RunQueryTests {
         }};
 
         // Testing class with demo API key
-        // http://panel.slicingdice.com/docs/#api-details-api-connection-api-keys-demo-key
-        final SlicingDiceTester sdTester = new SlicingDiceTester("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfX3NhbHQiOiJkZW1vMG0iLCJwZXJtaXNzaW9uX2xldmVsIjozLCJwcm9qZWN0X2lkIjoxNjEsImNsaWVudF9pZCI6MTB9.vt5eGeQb0AUKu2o075vEzaC5m-XgD4ohgJkDZYBmFu8");
+        final SlicingDiceTester sdTester = new SlicingDiceTester(DEMO_API_KEY);
 
         Runtime.getRuntime().addShutdownHook(new Thread()
         {
@@ -33,34 +35,38 @@ public class RunQueryTests {
             }
         });
 
-        for (String queryType : queryTypes) {
+        // run tests for all query types
+        for (final String queryType : queryTypes) {
             sdTester.runTests(queryType);
         }
+
         showResults(sdTester);
     }
 
     private static void showResults(SlicingDiceTester sdTester){
         System.out.println();
         System.out.println("Results:");
-        System.out.println(String.format("  Successes: %s", sdTester._numSuccesses));
-        System.out.println(String.format("  Fails: %s", sdTester._numFails));
+        System.out.println(String.format("\tSuccesses: %s", sdTester.numberOfSuccesses));
+        System.out.println(String.format("\tFails: %s", sdTester.numberOfFails));
 
-        for(Object testFailed : sdTester._failedTests){
-            System.out.println(String.format("    - %s", testFailed));
+        for(final Object testFailed : sdTester.failedTests){
+            System.out.println(String.format("\t\t- %s", testFailed));
         }
 
         System.out.println();
 
-        if (sdTester._numFails > 0){
-            boolean isSingular = sdTester._numFails == 1;
-            String testsOrTest = null;
+        if (sdTester.numberOfFails > 0){
+            final boolean isSingular = sdTester.numberOfFails == 1;
+            String testsOrTest;
             if(isSingular){
                 testsOrTest = "test has";
             } else {
                 testsOrTest = "tests have";
             }
 
-            System.out.println(String.format("FAIL: %1$s %2$s failed", sdTester._numFails, testsOrTest));
+            System.out.println(String.format("FAIL: %1$s %2$s failed", sdTester.numberOfFails,
+                    testsOrTest));
+            // exit with error code to indicate failure
             System.exit(1);
         }
         else {

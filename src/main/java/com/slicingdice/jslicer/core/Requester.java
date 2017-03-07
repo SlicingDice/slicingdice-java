@@ -37,6 +37,8 @@ public class Requester {
     static OkHttpClient client;
 
     /**
+     * Makes a POST request
+     *
      * @param url     A url String to make request
      * @param data    A JSON to send in request
      * @param token   A token to access URL
@@ -44,73 +46,105 @@ public class Requester {
      * @return A request response
      * @throws IOException
      */
-    public static Response post(String url, String data, String token, int timeout) throws IOException {
-        OkHttpClient clientConfigured = getConfiguredClient()
+    public static Response post(final String url, final String data, final String token,
+                                final int timeout) throws IOException {
+        final OkHttpClient clientConfigured = getConfiguredClient()
                 .newBuilder()
                 .connectTimeout(timeout, TimeUnit.SECONDS)
                 .writeTimeout(timeout, TimeUnit.SECONDS)
                 .readTimeout(timeout, TimeUnit.SECONDS)
                 .build();
-        RequestBody body = RequestBody.create(null, data);
-        Request request = new Request.Builder()
+        final RequestBody body = RequestBody.create(null, data);
+        final Request request = new Request.Builder()
                 .url(url)
                 .header("Authorization", token)
                 .header("Content-Type", "application/json")
                 .post(body)
                 .build();
-        Response response = clientConfigured.newCall(request).execute();
+        final Response response = clientConfigured.newCall(request).execute();
         return response;
     }
 
-    public static Response put(String url, String data, String token, int timeout) throws IOException {
-        OkHttpClient clientConfigured = getConfiguredClient()
+    /**
+     * Makes a PUT request
+     *
+     * @param url     A url String to make request
+     * @param data    A JSON to send in request
+     * @param token   A token to access URL
+     * @param timeout A Integer with time max to API response
+     * @return A request response
+     * @throws IOException
+     */
+    public static Response put(final String url, final String data, final String token,
+                               final int timeout) throws IOException {
+        final OkHttpClient clientConfigured = getConfiguredClient()
                 .newBuilder()
                 .connectTimeout(timeout, TimeUnit.SECONDS)
                 .writeTimeout(timeout, TimeUnit.SECONDS)
                 .readTimeout(timeout, TimeUnit.SECONDS)
                 .build();
 
-        RequestBody body = RequestBody.create(null, data);
-        Request request = new Request.Builder()
+        final RequestBody body = RequestBody.create(null, data);
+        final Request request = new Request.Builder()
                 .url(url)
                 .header("Authorization", token)
                 .header("Content-Type", "application/json")
                 .put(body)
                 .build();
-        Response response = clientConfigured.newCall(request).execute();
+        final Response response = clientConfigured.newCall(request).execute();
         return response;
     }
 
-    public static Response delete(String url, String token, int timeout) throws IOException {
-        OkHttpClient clientConfigured = getConfiguredClient()
+    /**
+     * Makes a DELETE request
+     *
+     * @param url     A url String to make request
+     * @param token   A token to access URL
+     * @param timeout A Integer with time max to API response
+     * @return A request response
+     * @throws IOException
+     */
+    public static Response delete(final String url, final String token, final int timeout)
+            throws IOException {
+        final OkHttpClient clientConfigured = getConfiguredClient()
                 .newBuilder()
                 .connectTimeout(timeout, TimeUnit.SECONDS)
                 .writeTimeout(timeout, TimeUnit.SECONDS)
                 .readTimeout(timeout, TimeUnit.SECONDS)
                 .build();
-        Request request = new Request.Builder()
+        final Request request = new Request.Builder()
                 .url(url)
                 .header("Authorization", token)
                 .header("Content-Type", "application/json")
                 .delete()
                 .build();
-        Response response = clientConfigured.newCall(request).execute();
+        final Response response = clientConfigured.newCall(request).execute();
         return response;
     }
 
-    public static Response get(String url, String token, int timeout) throws IOException {
-        OkHttpClient clientConfigured = getConfiguredClient()
+    /**
+     * Makes a GET request
+     *
+     * @param url     A url String to make request
+     * @param token   A token to access URL
+     * @param timeout A Integer with time max to API response
+     * @return A request response
+     * @throws IOException
+     */
+    public static Response get(final String url, final String token, final int timeout)
+            throws IOException {
+        final OkHttpClient clientConfigured = getConfiguredClient()
                 .newBuilder()
                 .connectTimeout(timeout, TimeUnit.SECONDS)
                 .writeTimeout(timeout, TimeUnit.SECONDS)
                 .readTimeout(timeout, TimeUnit.SECONDS)
                 .build();
-        Request request = new Request.Builder()
+        final Request request = new Request.Builder()
                 .url(url)
                 .header("Authorization", token)
                 .header("Content-Type", "application/json")
                 .build();
-        Response response = clientConfigured.newCall(request).execute();
+        final Response response = clientConfigured.newCall(request).execute();
         return response;
     }
 

@@ -36,11 +36,11 @@ import org.json.JSONException;
  */
 public class HandlerResponse {
 
-    private String result;
-    private Headers headers;
-    private int statusCode;
+    private final String result;
+    private final Headers headers;
+    private final int statusCode;
 
-    public HandlerResponse(String result, Headers headers, int statusCode) {
+    public HandlerResponse(final String result, final Headers headers, final int statusCode) {
         this.result = result;
         this.headers = headers;
         this.statusCode = statusCode;
@@ -63,9 +63,9 @@ public class HandlerResponse {
      *
      * @param error A JSONObject with values from key 'errors'
      */
-    private void raiseError(JSONObject error) {
-        int codeError = error.getInt("code");
-        String message = error.getString("message");
+    private void raiseError(final JSONObject error) {
+        final int codeError = error.getInt("code");
+        final String message = error.getString("message");
         switch (codeError) {
             case 10:
                 throw new AuthMissingHeaderException(message);
@@ -305,19 +305,20 @@ public class HandlerResponse {
      *
      * @return true if the JSON result don't have errors
      */
-    public boolean requestSuccessful() {
-        JSONObject data;
+    public boolean requestSuccessful() throws InternalException {
+        final JSONObject data;
 
         try {
             data = new JSONObject(this.result);
-        } catch (JSONException exception) {
+        } catch (final JSONException exception) {
             throw new InternalException("SlicingDice: Internal error.");
         }
 
         if (data.has("errors")) {
-            JSONObject error = data.getJSONArray("errors").getJSONObject(0);
+            final JSONObject error = data.getJSONArray("errors").getJSONObject(0);
             this.raiseError(error);
         }
+
         return true;
     }
 }
