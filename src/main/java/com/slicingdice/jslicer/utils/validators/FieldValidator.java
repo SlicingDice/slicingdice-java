@@ -85,7 +85,7 @@ public class FieldValidator {
                     "The field's description can't be empty/None.");
         } else if (description.length() > 300) {
             throw new InvalidFieldDescriptionException(
-                    "The field's description have a very big name.(Max: 300 chars)");
+                    "The field's description have a very big content. (Max: 300 chars)");
         }
     }
 
