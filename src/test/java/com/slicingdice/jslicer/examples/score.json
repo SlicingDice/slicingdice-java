@@ -528,7 +528,7 @@
                     "score": 1
                 }
             }, 
-            "page": 1, 
+            "page": "ignore",
             "took": "ignore"
         }
     }, 
@@ -3064,7 +3064,7 @@
                     "range-test-field": "1000000"
                 }
             }, 
-            "page": 1, 
+            "page": "ignore",
             "took": "ignore"
         }
     }, 
@@ -5601,7 +5601,7 @@
                     "boolean-test-field": "true"
                 }
             }, 
-            "page": 1, 
+            "page": "ignore",
             "took": "ignore"
         }
     }

@@ -478,7 +478,7 @@
                     "date-test-field": "2016-07-09"
                 }
             }, 
-            "page": 1, 
+            "page": "ignore",
             "took": "ignore"
         }
     }, 
@@ -2718,7 +2718,7 @@
                     "range-test-field": "1000000"
                 }
             }, 
-            "page": 1, 
+            "page": "ignore",
             "took": "ignore"
         }
     }, 
@@ -4958,7 +4958,7 @@
                     "range-test-field": "1000000"
                 }
             }, 
-            "page": 1, 
+            "page": "ignore",
             "took": "ignore"
         }
     }, 
@@ -7199,7 +7199,7 @@
                     "range-test-field": "1000000"
                 }
             }, 
-            "page": 1, 
+            "page": "ignore",
             "took": "ignore"
         }
     }
