@@ -35,12 +35,12 @@ public class SlicingDiceTester {
     public ArrayList<Object> failedTests;
 
     public SlicingDiceTester(final String apiKey){
-        this.client = new SlicingDice(apiKey);
+        this.client = new SlicingDice(apiKey, true);
         this.loadConfigTest();
     }
 
     public SlicingDiceTester(final String apiKey, final boolean verbose){
-        this.client = new SlicingDice(apiKey);
+        this.client = new SlicingDice(apiKey, true);
         this.verbose = verbose;
         this.loadConfigTest();
     }
@@ -134,7 +134,7 @@ public class SlicingDiceTester {
             this.addTimestampToFieldName(fieldDict);
             // call client command to create fields
             try {
-                this.client.createField(fieldDict, true);
+                this.client.createField(fieldDict);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -237,17 +237,17 @@ public class SlicingDiceTester {
         JSONObject result = null;
         // call client command to make a query
         if (queryType.equals("count_entity")){
-            result = this.client.countEntity(queryData, true);
+            result = this.client.countEntity(queryData);
         } else if (queryType.equals("count_event")){
-            result = this.client.countEvent(queryData, true);
+            result = this.client.countEvent(queryData);
         } else if (queryType.equals("top_values")){
-            result = this.client.topValues(queryData, true);
+            result = this.client.topValues(queryData);
         } else if (queryType.equals("aggregation")){
-            result = this.client.aggregation(queryData, true);
+            result = this.client.aggregation(queryData);
         } else if (queryType.equals("result")){
-            result = this.client.result(queryData, true);
+            result = this.client.result(queryData);
         } else if (queryType.equals("score")){
-            result = this.client.score(queryData, true);
+            result = this.client.score(queryData);
         }
 
         return result;
