@@ -43,16 +43,14 @@ public class QueryDataExtractionValidator {
         final Iterator<?> keys = this.data.keys();
         while (keys.hasNext()) {
             final String key = (String) keys.next();
-            if (key.equals("query")) {
-
-            } else if (keys.equals("limit")) {
+            if (key.equals("limit")) {
                 if (this.data.get(key).getClass() != int.class) {
                     throw new InvalidQueryException("The key 'limit' in query has a invalid value.");
                 }
                 if (this.data.getInt(key) > 100) {
                     throw new InvalidQueryException("The field 'limit' has a value max of 100.");
                 }
-            } else if (keys.equals("fields")) {
+            } else if (key.equals("fields")) {
                 if (this.data.getJSONArray("fields").length() > 10) {
                     throw new MaxLimitException("The key 'fields' in data extraction result must" +
                             " have up to 10 fields.");

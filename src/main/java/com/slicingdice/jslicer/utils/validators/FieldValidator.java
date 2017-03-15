@@ -117,6 +117,11 @@ public class FieldValidator {
             throw new InvalidFieldException(
                     "The field with type string should have 'cardinality' key.");
         }
+        final List<String> cardinalityTypes = Arrays.asList("high", "low");
+
+        if (!cardinalityTypes.contains(this.data.getString("cardinality"))) {
+            throw new InvalidFieldException("The field 'cardinality' has invalid value.");
+        }
     }
 
     /**

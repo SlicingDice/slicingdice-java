@@ -41,7 +41,14 @@ public class QueryCountValidator {
      * @return true if count query is valid and false otherwise
      */
     public boolean validator() {
-        if (this.data.length() > 10) {
+        int querySize = this.data.length();
+
+        // bypass-cache property should not be considered as query;
+        if (this.data.has("bypass-cache")) {
+            querySize--;
+        }
+
+        if (querySize > 10) {
             throw new MaxLimitException(
                     "The query count entity has a limit of 10 queries by request.");
         }
