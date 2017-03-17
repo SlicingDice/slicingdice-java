@@ -44,7 +44,7 @@ public class QueryDataExtractionValidator {
         while (keys.hasNext()) {
             final String key = (String) keys.next();
             if (key.equals("limit")) {
-                if (this.data.get(key).getClass() != int.class) {
+                if (!(this.data.get(key) instanceof Integer)) {
                     throw new InvalidQueryException("The key 'limit' in query has a invalid value.");
                 }
                 if (this.data.getInt(key) > 100) {

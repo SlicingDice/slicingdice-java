@@ -54,36 +54,37 @@ Please note the client has the following dependencies:
 ## Usage
 
 ```java
-import SlicingDice
+import java.io.IOException;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import com.slicingdice.jslicer.SlicingDice;
 
-
-public class App
-{
+public class Example {
     public static void main( String[] args ) throws IOException
     {
-        SlicerDicer client = new SlicerDicer("API_KEY")
+        SlicingDice client = new SlicingDice("API_KEY", false);
 
         // Creating a field
         // Indexing data
         JSONObject indexData = new JSONObject()
-            .put("user1@slicingdice.com",
-                new JSONObject()
-                    .put("age", 22))
-            .put("auto-create-fields", true);
+                .put("user1@slicingdice.com",
+                        new JSONObject()
+                                .put("age", 22))
+                .put("auto-create-fields", true);
         System.out.println(client.index(indexData));
 
         // Querying data
         JSONObject queryData = new JSONObject()
-            .put("users-between-20-and-40",
-                new JSONArray()
-                    .put(new JSONObject()
-                        .put("age",
-                            new JSONObject()
-                                .put("range",
-                                    new JSONArray()
-                                        .put(20)
-                                        .put(40))));
-        System.out.println(client.count_entity(queryData));
+                .put("users-between-20-and-40",
+                        new JSONArray()
+                                .put(new JSONObject()
+                                        .put("age",
+                                                new JSONObject()
+                                                        .put("range",
+                                                                new JSONArray()
+                                                                        .put(20)
+                                                                        .put(40)))));
+        System.out.println(client.countEntity(queryData));
     }
 }
 ```
@@ -98,19 +99,24 @@ public class App
 
 ### Constructors
 
-`SlicingDice(String key, int timeout)`
-* `key (String)` - [API key](http://panel.slicingdice.com/docs/#api-details-api-connection-api-keys) to authenticate requests with the SlicingDice API.
+`SlicingDice(String masterKey, boolean usesTestEndPoint)`
+* `masterKey (String)` - [API key](http://panel.slicingdice.com/docs/#api-details-api-connection-api-keys) to authenticate requests with the SlicingDice API  Master Key.
+* `usesTestEndPoint (boolean)` - If false the client will send requests to production end-point, otherwise to tests end-point.
 
-`SlicingDice(APIKey key, int timeout)`
-* `key (APIKey)` - [API key](http://panel.slicingdice.com/docs/#api-details-api-connection-api-keys) to authenticate requests with the SlicingDice API.
+`SlicingDice(String masterKey, String customKey, String writeKey, String readKey, boolean usesTestEndPoint)`
+* `masterKey (String)` - [API key](http://panel.slicingdice.com/docs/#api-details-api-connection-api-keys) to authenticate requests with the SlicingDice API Master Key.
+* `customKey (String)` - [API key](http://panel.slicingdice.com/docs/#api-details-api-connection-api-keys) to authenticate requests with the SlicingDice API Custom Key.
+* `writeKey (String)` - [API key](http://panel.slicingdice.com/docs/#api-details-api-connection-api-keys) to authenticate requests with the SlicingDice API Write Key.
+* `readKey (String)` - [API key](http://panel.slicingdice.com/docs/#api-details-api-connection-api-keys) to authenticate requests with the SlicingDice API Read Key.
+* `usesTestEndPoint (boolean)` - If false the client will send requests to production end-point, otherwise to tests end-point.
 
-`SlicingDice(String key, int timeout)`
-* `key (String)` - [API key](http://panel.slicingdice.com/docs/#api-details-api-connection-api-keys) to authenticate requests with the SlicingDice API.
+`SlicingDice(String masterKey, String customKey, String writeKey, String readKey, int timeout, boolean usesTestEndPoint)`
+* `masterKey (String)` - [API key](http://panel.slicingdice.com/docs/#api-details-api-connection-api-keys) to authenticate requests with the SlicingDice API Master Key.
+* `customKey (String)` - [API key](http://panel.slicingdice.com/docs/#api-details-api-connection-api-keys) to authenticate requests with the SlicingDice API Custom Key.
+* `writeKey (String)` - [API key](http://panel.slicingdice.com/docs/#api-details-api-connection-api-keys) to authenticate requests with the SlicingDice API Write Key.
+* `readKey (String)` - [API key](http://panel.slicingdice.com/docs/#api-details-api-connection-api-keys) to authenticate requests with the SlicingDice API Read Key.
 * `timeout (int)` - Amount of time, in seconds, to wait for results for each request.
-
-`SlicingDice(APIKey key, int timeout)`
-* `key (APIKey)` - [API key](http://panel.slicingdice.com/docs/#api-details-api-connection-api-keys) to authenticate requests with the SlicingDice API.
-* `timeout (int)` - Amount of time, in seconds, to wait for results for each request.
+* `usesTestEndPoint (boolean)` - If false the client will send requests to production end-point, otherwise to tests end-point.
 
 ### `JSONObject getProjects()`
 Get all created projects, both active and inactive ones. This method corresponds to a [GET request at /project](http://panel.slicingdice.com/docs/#api-details-api-endpoints-get-project).
@@ -118,20 +124,19 @@ Get all created projects, both active and inactive ones. This method corresponds
 #### Request example
 
 ```java
-import org.json.JSONArray;
-import org.json.JSONObject;
-import com.slicingdice.jslicer;
-
 import java.io.IOException;
+import org.json.JSONObject;
+import com.slicingdice.jslicer.SlicingDice;
 
 public class Example {
 
     public static void main(String[] args) throws IOException {
-        SlicingDice slicingDice = new SlicingDice("MASTER_API_KEY");
+        SlicingDice slicingDice = new SlicingDice("MASTER_API_KEY", false);
         JSONObject result = slicingDice.getProjects();
         System.out.println(result.toString());
     }
 }
+
 ```
 
 #### Output example
@@ -163,16 +168,14 @@ Get all created fields, both active and inactive ones. This method corresponds t
 #### Request example
 
 ```java
-import org.json.JSONArray;
-import org.json.JSONObject;
-import com.slicingdice.jslicer;
-
 import java.io.IOException;
+import org.json.JSONObject;
+import com.slicingdice.jslicer.SlicingDice;
 
 public class Example {
 
     public static void main(String[] args) throws IOException {
-        SlicingDice slicingDice = new SlicingDice("MASTER_API_KEY");
+        SlicingDice slicingDice = new SlicingDice("MASTER_API_KEY", false);
         JSONObject result = slicingDice.getFields();
         System.out.println(result.toString());
     }
@@ -213,16 +216,14 @@ Create a new field. This method corresponds to a [POST request at /field](http:/
 #### Request example
 
 ```java
-import org.json.JSONArray;
-import org.json.JSONObject;
-import com.slicingdice.jslicer;
-
 import java.io.IOException;
+import org.json.JSONObject;
+import com.slicingdice.jslicer.SlicingDice;
 
 public class Example {
 
     public static void main(String[] args) throws IOException {
-        SlicingDice slicingDice = new SlicingDice("MASTER_API_KEY");
+        SlicingDice slicingDice = new SlicingDice("MASTER_API_KEY", false);
         JSONObject field = new JSONObject()
                 .put("name", "Year")
                 .put("api-name", "year")
@@ -233,6 +234,7 @@ public class Example {
         System.out.println(result.toString());
     }
 }
+
 ```
 
 #### Output example
@@ -240,7 +242,8 @@ public class Example {
 ```json
 {
     "status": "success",
-    "api-name": "year"
+    "api-name": "year",
+    "took":0.082
 }
 ```
 
@@ -250,16 +253,15 @@ Index data to existing entities or create new entities, if necessary. This metho
 #### Request example
 
 ```java
+import java.io.IOException;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import com.slicingdice.jslicer;
-
-import java.io.IOException;
+import com.slicingdice.jslicer.SlicingDice;
 
 public class Example {
 
     public static void main(String[] args) throws IOException {
-        SlicingDice slicingDice = new SlicingDice("MASTER_OR_WRITE_API_KEY");
+        SlicingDice slicingDice = new SlicingDice("MASTER_OR_WRITE_API_KEY", false);
         JSONObject indexData = new JSONObject()
                 .put("user1@slicingdice.com", new JSONObject()
                         .put("car-model", "Ford Ka")
@@ -271,21 +273,22 @@ public class Example {
                         .put("car-model", "Toyota Corolla")
                         .put("year", 2010)
                         .put("test-drives", new JSONArray()
-                            .put(new JSONObject()
-                                .put("value", "NY")
-                                .put("date", "2016-08-17T13:23:47+00:00"))
-                            .put(new JSONObject()
-                                .put("value", "NY")
-                                .put("date", "2016-08-17T13:23:47+00:00"))
-                            .put(new JSONObject()
-                                .put("value", "NY")
-                                .put("date", "2016-04-05T10:20:30Z"))))
+                                .put(new JSONObject()
+                                        .put("value", "NY")
+                                        .put("date", "2016-08-17T13:23:47+00:00"))
+                                .put(new JSONObject()
+                                        .put("value", "NY")
+                                        .put("date", "2016-08-17T13:23:47+00:00"))
+                                .put(new JSONObject()
+                                        .put("value", "NY")
+                                        .put("date", "2016-04-05T10:20:30Z"))))
                 .put("customer5@mycustomer.com", new JSONObject()
                         .put("car-model", "Ford Ka")
                         .put("year", 2005)
                         .put("test-drives", new JSONObject()
-                            .put("value", "NY")
-                            .put("date", "2016-08-17T13:23:47+00:00")));
+                                .put("value", "NY")
+                                .put("date", "2016-08-17T13:23:47+00:00")))
+                .put("auto-create-fields", true);
         JSONObject result = slicingDice.index(indexData);
         System.out.println(result.toString());
     }
@@ -309,15 +312,15 @@ Verify which entities exist in a project given a list of entity IDs. This method
 #### Request example
 
 ```java
-import org.json.JSONArray;
-import com.slicingdice.jslicer;
-
+import com.slicingdice.jslicer.SlicingDice;
 import java.io.IOException;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 public class Example {
 
     public static void main(String[] args) throws IOException {
-        SlicingDice slicingDice = new SlicingDice("MASTER_OR_READ_API_KEY");
+        SlicingDice slicingDice = new SlicingDice("MASTER_OR_READ_API_KEY", false);
         JSONArray ids = new JSONArray()
                 .put("user1@slicingdice.com")
                 .put("user2@slicingdice.com")
@@ -350,14 +353,14 @@ Count the number of indexed entities. This method corresponds to a [GET request 
 #### Request example
 
 ```java
-import com.slicingdice.jslicer;
-
+import com.slicingdice.jslicer.SlicingDice;
 import java.io.IOException;
+import org.json.JSONObject;
 
 public class Example {
 
     public static void main(String[] args) throws IOException {
-        SlicingDice slicingDice = new SlicingDice("MASTER_OR_READ_API_KEY");
+        SlicingDice slicingDice = new SlicingDice("MASTER_OR_READ_API_KEY", false);
         JSONObject result = slicingDice.countEntityTotal();
         System.out.println(result.toString());
     }
@@ -391,20 +394,20 @@ import java.io.IOException;
 public class Example {
 
     public static void main(String[] args) throws IOException {
-        SlicingDice slicingDice = new SlicingDice("MASTER_OR_READ_API_KEY");
+        SlicingDice slicingDice = new SlicingDice("MASTER_OR_READ_API_KEY", false);
         JSONObject countEntityQuery = new JSONObject()
-                .put("users-from-ny-or-ca", new JSONArray()
+                .put("corolla-or-fit", new JSONArray()
                     .put(new JSONObject()
-                        .put("state", new JSONObject()
-                            .put("equals", "NY")))
+                        .put("car-model", new JSONObject()
+                            .put("equals", "toyota corolla")))
                     .put("or")
                     .put(new JSONObject()
-                        .put("state-origin", new JSONObject()
-                            .put("equals", "CA"))))
-                .put("users-from-ny", new JSONArray()
+                        .put("car-model", new JSONObject()
+                            .put("equals", "honda fit"))))
+                .put("ford-ka", new JSONArray()
                     .put(new JSONObject()
-                        .put("state", new JSONObject()
-                            .put("equals", "NY"))))
+                        .put("car-model", new JSONObject()
+                            .put("equals", "ford ka"))))
                 .put("bypass-cache", false);
         JSONObject result = slicingDice.countEntity(countEntityQuery);
         System.out.println(result.toString());
@@ -416,12 +419,12 @@ public class Example {
 
 ```json
 {
-    "status": "success",
-    "result": {
-        "users-from-ny-or-ca": 175,
-        "users-from-ny": 296
-    },
-    "took": 0.103
+   "result":{
+      "ford-ka":2,
+      "corolla-or-fit":2
+   },
+   "took":0.083,
+   "status":"success"
 }
 ```
 
@@ -431,32 +434,30 @@ Count the number of occurrences for time-series events attending the given query
 #### Request example
 
 ```java
+import com.slicingdice.jslicer.SlicingDice;
+import java.io.IOException;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import com.slicingdice.jslicer;
-
-import java.io.IOException;
 
 public class Example {
 
     public static void main(String[] args) throws IOException {
-        SlicingDice slicingDice = new SlicingDice("MASTER_OR_READ_API_KEY");
+        SlicingDice slicingDice = new SlicingDice("MASTER_OR_READ_API_KEY", false);
         JSONObject countEventQuery = new JSONObject()
-                .put("users-from-ny-in-jan", new JSONArray()
-                    .put(new JSONObject()
-                        .put("test-field", new JSONObject()
-                            .put("equals", "NY")
-                            .put("between", new JSONArray()
-                                .put("2016-01-01T00:00:00Z")
-                                .put("2016-01-31T00:00:00Z"))
-                            .put("minfreq", 2))))
-                .put("users-from-ny-in-feb", new JSONArray()
-                    .put(new JSONObject()
-                        .put("test-field", new JSONObject()
-                            .put("equals", "NY")
-                            .put("between", new JSONArray()
-                                .put("2016-02-01T00:00:00Z")
-                                .put("2016-02-28T00:00:00Z")))))
+                .put("test-drives-in-ny", new JSONArray()
+                        .put(new JSONObject()
+                                .put("test-drives", new JSONObject()
+                                        .put("equals", "NY")
+                                        .put("between", new JSONArray()
+                                                .put("2016-08-16T00:00:00Z")
+                                                .put("2016-08-18T00:00:00Z")))))
+                .put("test-drives-in-ca", new JSONArray()
+                        .put(new JSONObject()
+                                .put("test-drives", new JSONObject()
+                                        .put("equals", "CA")
+                                        .put("between", new JSONArray()
+                                                .put("2016-04-04T00:00:00Z")
+                                                .put("2016-04-06T00:00:00Z")))))
                 .put("bypass-cache", false);
         JSONObject result = slicingDice.countEvent(countEventQuery);
         System.out.println(result.toString());
@@ -468,12 +469,12 @@ public class Example {
 
 ```json
 {
-    "status": "success",
-    "result": {
-        "users-from-ny-in-jan": 175,
-        "users-from-ny-in-feb": 296
-    },
-    "took": 0.103
+   "result":{
+      "test-drives-in-ny":3,
+      "test-drives-in-ca":0
+   },
+   "took":0.063,
+   "status":"success"
 }
 ```
 
@@ -483,26 +484,19 @@ Return the top values for entities attending the given query. This method corres
 #### Request example
 
 ```java
-import org.json.JSONArray;
-import org.json.JSONObject;
-import com.slicingdice.jslicer;
-
+import com.slicingdice.jslicer.SlicingDice;
 import java.io.IOException;
+import org.json.JSONObject;
 
 public class Example {
 
     public static void main(String[] args) throws IOException {
-        SlicingDice slicingDice = new SlicingDice("MASTER_OR_READ_API_KEY");
+        SlicingDice slicingDice = new SlicingDice("MASTER_OR_READ_API_KEY", false);
         JSONObject topValuesQuery = new JSONObject()
-                .put("user-gender", new JSONObject()
-                        .put("gender", 2))
-                .put("operating-systems", new JSONObject()
-                        .put("os", 2))
-                .put("linux-operating-systems", new JSONObject()
-                        .put("os", 3)
-                        .put("contains", new JSONArray()
-                            .put("linux")
-                            .put("unix")));
+                .put("car-year", new JSONObject()
+                        .put("year", 2))
+                .put("car models", new JSONObject()
+                        .put("car-model", 3));
         JSONObject result = slicingDice.topValues(topValuesQuery);
         System.out.println(result.toString());
     }
@@ -513,49 +507,38 @@ public class Example {
 
 ```json
 {
-    "status": "success",
-    "result": {
-        "user-gender": {
-            "gender": [
-                {
-                    "quantity": 6.0,
-                    "value": "male"
-                }, {
-                    "quantity": 4.0,
-                    "value": "female"
-                }
-            ]
-        },
-        "operating-systems": {
-            "os": [
-                {
-                    "quantity": 55.0,
-                    "value": "windows"
-                }, {
-                    "quantity": 25.0,
-                    "value": "macos"
-                }, {
-                    "quantity": 12.0,
-                    "value": "linux"
-                }
-            ]
-        },
-        "linux-operating-systems": {
-            "os": [
-                {
-                    "quantity": 12.0,
-                    "value": "linux"
-                }, {
-                    "quantity": 3.0,
-                    "value": "debian-linux"
-                }, {
-                    "quantity": 2.0,
-                    "value": "unix"
-                }
-            ]
-        }
-    },
-    "took": 0.103
+   "result":{
+      "car models":{
+         "car-model":[
+            {
+               "quantity":2,
+               "value":"ford ka"
+            },
+            {
+               "quantity":1,
+               "value":"honda fit"
+            },
+            {
+               "quantity":1,
+               "value":"toyota corolla"
+            }
+         ]
+      },
+      "car-year":{
+         "year":[
+            {
+               "quantity":2,
+               "value":"2016"
+            },
+            {
+               "quantity":1,
+               "value":"2010"
+            }
+         ]
+      }
+   },
+   "took":0.034,
+   "status":"success"
 }
 ```
 
@@ -565,28 +548,24 @@ Return the aggregation of all fields in the given query. This method corresponds
 #### Request example
 
 ```java
+import com.slicingdice.jslicer.SlicingDice;
+import java.io.IOException;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import com.slicingdice.jslicer;
-
-import java.io.IOException;
 
 public class Example {
 
     public static void main(String[] args) throws IOException {
-        SlicingDice slicingDice = new SlicingDice("MASTER_OR_READ_API_KEY");
+        SlicingDice slicingDice = new SlicingDice("MASTER_OR_READ_API_KEY", false);
         JSONObject aggregationQuery = new JSONObject()
                 .put("query", new JSONArray()
                         .put(new JSONObject()
-                            .put("gender", 2))
+                                .put("year", 2))
                         .put(new JSONObject()
-                            .put("os", 2)
-                            .put("equals", new JSONArray()
-                                .put("linux")
-                                .put("windows")
-                                .put("macos")))
-                        .put(new JSONObject()
-                            .put("browser", 2)));
+                                .put("car-model", 2)
+                                .put("equals", new JSONArray()
+                                        .put("honda fit")
+                                        .put("toyota corolla"))));
         JSONObject result = slicingDice.aggregation(aggregationQuery);
         System.out.println(result.toString());
     }
@@ -597,64 +576,26 @@ public class Example {
 
 ```json
 {
-    "status": "success",
-    "result": {
-        "gender": [
-            {
-                "quantity": 6,
-                "value": "male",
-                "os": [
-                    {
-                        "quantity": 5,
-                        "value": "windows",
-                        "browser": [
-                            {
-                                "quantity": 3,
-                                "value": "safari"
-                            }, {
-                                "quantity": 2,
-                                "value": "internet explorer"
-                            }
-                        ]
-                    }, {
-                        "quantity": 1,
-                        "value": "linux",
-                        "browser": [
-                            {
-                                "quantity": 1,
-                                "value": "chrome"
-                            }
-                        ]
-                    }
-                ]
-            }, {
-                "quantity": 4,
-                "value": "female",
-                "os": [
-                    {
-                        "quantity": 3,
-                        "value": "macos",
-                        "browser": [
-                            {
-                                "quantity": 3,
-                                "value": "chrome"
-                            }
-                        ]
-                    }, {
-                        "quantity": 1,
-                        "value": "linux",
-                        "browser": [
-                            {
-                                "quantity": 1,
-                                "value": "chrome"
-                            }
-                        ]
-                    }
-                ]
-            }
-        ]
-    },
-    "took": 0.103
+   "result":{
+      "year":[
+         {
+            "quantity":2,
+            "value":"2016",
+            "car-model":[
+               {
+                  "quantity":1,
+                  "value":"honda fit"
+               }
+            ]
+         },
+         {
+            "quantity":1,
+            "value":"2005"
+         }
+      ]
+   },
+   "took":0.079,
+   "status":"success"
 }
 ```
 
@@ -664,16 +605,14 @@ Get all saved queries. This method corresponds to a [GET request at /query/saved
 #### Request example
 
 ```java
-import org.json.JSONArray;
-import org.json.JSONObject;
-import com.slicingdice.jslicer;
-
+import com.slicingdice.jslicer.SlicingDice;
 import java.io.IOException;
+import org.json.JSONObject;
 
 public class Example {
 
     public static void main(String[] args) throws IOException {
-        SlicingDice slicingDice = new SlicingDice("MASTER_API_KEY");
+        SlicingDice slicingDice = new SlicingDice("MASTER_API_KEY", false);
         JSONObject result = slicingDice.getSavedQueries();
         System.out.println(result.toString());
     }
@@ -726,27 +665,26 @@ Create a saved query at SlicingDice. This method corresponds to a [POST request 
 #### Request example
 
 ```java
+import com.slicingdice.jslicer.SlicingDice;
+import java.io.IOException;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import com.slicingdice.jslicer;
-
-import java.io.IOException;
 
 public class Example {
 
     public static void main(String[] args) throws IOException {
-        SlicingDice slicingDice = new SlicingDice("MASTER_API_KEY");
+        SlicingDice slicingDice = new SlicingDice("MASTER_API_KEY", false);
         JSONObject savedQuery = new JSONObject()
                 .put("name", "my-saved-query")
                 .put("type", "count/entity")
                 .put("query", new JSONArray()
-                    .put(new JSONObject()
-                        .put("state", new JSONObject()
-                            .put("equals", "NY")))
-                    .put("or")
-                    .put(new JSONObject()
-                        .put("state", new JSONObject()
-                            .put("equals", "CA"))))
+                        .put(new JSONObject()
+                                .put("car-model", new JSONObject()
+                                        .put("equals", "honda fit")))
+                        .put("or")
+                        .put(new JSONObject()
+                                .put("car-model", new JSONObject()
+                                        .put("equals", "toyota corolla"))))
                 .put("cache-period", 100);
         JSONObject result = slicingDice.createSavedQuery(savedQuery);
         System.out.println(result.toString());
@@ -758,24 +696,24 @@ public class Example {
 
 ```json
 {
-    "status": "success",
-    "name": "my-saved-query",
-    "type": "count/entity",
-    "query": [
-        {
-            "state": {
-                "equals": "NY"
-            }
-        },
-        "or",
-        {
-            "state-origin": {
-                "equals": "CA"
-            }
-        }
-    ],
-    "cache-period": 100,
-    "took": 0.103
+   "took":0.053,
+   "query":[
+      {
+         "car-model":{
+            "equals":"honda fit"
+         }
+      },
+      "or",
+      {
+         "car-model":{
+            "equals":"toyota corolla"
+         }
+      }
+   ],
+   "name":"my-saved-query",
+   "type":"count/entity",
+   "cache-period":100,
+   "status":"success"
 }
 ```
 
@@ -785,26 +723,25 @@ Update an existing saved query at SlicingDice. This method corresponds to a [PUT
 #### Request example
 
 ```java
+import com.slicingdice.jslicer.SlicingDice;
+import java.io.IOException;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import com.slicingdice.jslicer;
-
-import java.io.IOException;
 
 public class Example {
 
     public static void main(String[] args) throws IOException {
-        SlicingDice slicingDice = new SlicingDice("MASTER_API_KEY");
+        SlicingDice slicingDice = new SlicingDice("MASTER_API_KEY", false);
         JSONObject newSavedQuery = new JSONObject()
                 .put("type", "count/entity")
                 .put("query", new JSONArray()
-                    .put(new JSONObject()
-                        .put("state", new JSONObject()
-                            .put("equals", "NY")))
-                    .put("or")
-                    .put(new JSONObject()
-                        .put("state", new JSONObject()
-                            .put("equals", "CA"))))
+                        .put(new JSONObject()
+                                .put("car-model", new JSONObject()
+                                        .put("equals", "honda fit")))
+                        .put("or")
+                        .put(new JSONObject()
+                                .put("car-model", new JSONObject()
+                                        .put("equals", "toyota corolla"))))
                 .put("cache-period", 100);
         JSONObject result = slicingDice.updateSavedQuery("my-saved-query", newSavedQuery);
         System.out.println(result.toString());
@@ -816,24 +753,23 @@ public class Example {
 
 ```json
 {
-    "status": "success",
-    "name": "my-saved-query",
-    "type": "count/entity",
-    "query": [
-        {
-            "state": {
-                "equals": "NY"
-            }
-        },
-        "or",
-        {
-            "state-origin": {
-                "equals": "CA"
-            }
-        }
-    ],
-    "cache-period": 100,
-    "took": 0.103
+   "took":0.037,
+   "query":[
+      {
+         "car-model":{
+            "equals":"honda fit"
+         }
+      },
+      "or",
+      {
+         "car-model":{
+            "equals":"toyota corolla"
+         }
+      }
+   ],
+   "type":"count/entity",
+   "cache-period":100,
+   "status":"success"
 }
 ```
 
@@ -843,16 +779,14 @@ Executed a saved query at SlicingDice. This method corresponds to a [GET request
 #### Request example
 
 ```java
-import org.json.JSONArray;
-import org.json.JSONObject;
-import com.slicingdice.jslicer;
-
+import com.slicingdice.jslicer.SlicingDice;
 import java.io.IOException;
+import org.json.JSONObject;
 
 public class Example {
 
     public static void main(String[] args) throws IOException {
-        SlicingDice slicingDice = new SlicingDice("MASTER_OR_READ_API_KEY");
+        SlicingDice slicingDice = new SlicingDice("MASTER_OR_READ_API_KEY", false);
         JSONObject result = slicingDice.getSavedQuery("my-saved-query");
         System.out.println(result.toString());
     }
@@ -863,25 +797,25 @@ public class Example {
 
 ```json
 {
-    "status": "success",
-    "type": "count/entity",
-    "query": [
-        {
-            "state": {
-                "equals": "NY"
-            }
-        },
-        "or",
-        {
-            "state-origin": {
-                "equals": "CA"
-            }
-        }
-    ],
-    "result": {
-        "my-saved-query": 175
-    },
-    "took": 0.103
+   "result":{
+      "query":2
+   },
+   "took":0.035,
+   "query":[
+      {
+         "car-model":{
+            "equals":"honda fit"
+         }
+      },
+      "or",
+      {
+         "car-model":{
+            "equals":"toyota corolla"
+         }
+      }
+   ],
+   "type":"count/entity",
+   "status":"success"
 }
 ```
 
@@ -891,16 +825,14 @@ Delete a saved query at SlicingDice. This method corresponds to a [DELETE reques
 #### Request example
 
 ```java
-import org.json.JSONArray;
-import org.json.JSONObject;
-import com.slicingdice.jslicer;
-
+import com.slicingdice.jslicer.SlicingDice;
 import java.io.IOException;
+import org.json.JSONObject;
 
 public class Example {
 
     public static void main(String[] args) throws IOException {
-        SlicingDice slicingDice = new SlicingDice("MASTER_API_KEY");
+        SlicingDice slicingDice = new SlicingDice("MASTER_API_KEY", false);
         JSONObject result = slicingDice.deleteSavedQuery("my-saved-query");
         System.out.println(result.toString());
     }
@@ -911,23 +843,24 @@ public class Example {
 
 ```json
 {
-    "status": "success",
-    "deleted-query": "my-saved-query",
-    "type": "count/entity",
-    "query": [
-        {
-            "state": {
-                "equals": "NY"
-            }
-        },
-        "or",
-        {
-            "state-origin": {
-                "equals": "CA"
-            }
-        }
-    ],
-    "took": 0.103
+   "took":0.029,
+   "query":[
+      {
+         "car-model":{
+            "equals":"honda fit"
+         }
+      },
+      "or",
+      {
+         "car-model":{
+            "equals":"toyota corolla"
+         }
+      }
+   ],
+   "type":"count/entity",
+   "cache-period":100,
+   "status":"success",
+   "deleted-query":"my-saved-query"
 }
 ```
 
@@ -937,28 +870,27 @@ Retrieve indexed values for entities attending the given query. This method corr
 #### Request example
 
 ```java
+import com.slicingdice.jslicer.SlicingDice;
+import java.io.IOException;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import com.slicingdice.jslicer;
-
-import java.io.IOException;
 
 public class Example {
 
     public static void main(String[] args) throws IOException {
-        SlicingDice slicingDice = new SlicingDice("MASTER_OR_READ_API_KEY");
+        SlicingDice slicingDice = new SlicingDice("MASTER_OR_READ_API_KEY", false);
         JSONObject resultQuery = new JSONObject()
                 .put("query", new JSONArray()
                         .put(new JSONObject()
-                            .put("users-from-ny", new JSONObject()
-                                .put("equals", "NY")))
+                                .put("car-model", new JSONObject()
+                                        .put("equals", "ford ka")))
                         .put("or")
                         .put(new JSONObject()
-                            .put("users-from-ca", new JSONObject()
-                                .put("equals", "CA"))))
+                                .put("car-model", new JSONObject()
+                                        .put("equals", "honda fit"))))
                 .put("fields", new JSONArray()
-                    .put("name")
-                    .put("year"))
+                        .put("car-model")
+                        .put("year"))
                 .put("limit", 2);
         JSONObject result = slicingDice.result(resultQuery);
         System.out.println(result.toString());
@@ -970,18 +902,20 @@ public class Example {
 
 ```json
 {
-    "status": "success",
-    "data": {
-        "user1@slicingdice.com": {
-            "name": "John",
-            "year": 2016
-        },
-        "user2@slicingdice.com": {
-            "name": "Mary",
-            "year": 2005
-        }
-    },
-    "took": 0.103
+   "took":0.113,
+   "next-page":null,
+   "data":{
+      "customer5@mycustomer.com":{
+         "year":"2005",
+         "car-model":"ford ka"
+      },
+      "user1@slicingdice.com":{
+         "year":"2016",
+         "car-model":"ford ka"
+      }
+   },
+   "page":1,
+   "status":"success"
 }
 ```
 
@@ -991,28 +925,27 @@ Retrieve indexed values as well as their relevance for entities attending the gi
 #### Request example
 
 ```java
+import com.slicingdice.jslicer.SlicingDice;
+import java.io.IOException;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import com.slicingdice.jslicer;
-
-import java.io.IOException;
 
 public class Example {
 
     public static void main(String[] args) throws IOException {
-        SlicingDice slicingDice = new SlicingDice("MASTER_OR_READ_API_KEY");
+        SlicingDice slicingDice = new SlicingDice("MASTER_OR_READ_API_KEY", false);
         JSONObject scoreQuery = new JSONObject()
                 .put("query", new JSONArray()
                         .put(new JSONObject()
-                            .put("users-from-ny", new JSONObject()
-                                .put("equals", "NY")))
+                                .put("car-model", new JSONObject()
+                                        .put("equals", "toyota corolla")))
                         .put("or")
                         .put(new JSONObject()
-                            .put("users-from-ca", new JSONObject()
-                                .put("equals", "CA"))))
+                                .put("car-model", new JSONObject()
+                                        .put("equals", "honda fit"))))
                 .put("fields", new JSONArray()
-                    .put("name")
-                    .put("year"))
+                        .put("car-model")
+                        .put("year"))
                 .put("limit", 2);
         JSONObject result = slicingDice.score(scoreQuery);
         System.out.println(result.toString());
@@ -1024,20 +957,22 @@ public class Example {
 
 ```json
 {
-    "status": "success",
-    "data": {
-        "user1@slicingdice.com": {
-            "name": "John",
-            "year": 2016,
-            "score": 2
-        },
-        "user2@slicingdice.com": {
-            "name": "Mary",
-            "year": 2005,
-            "score": 1
-        }
-    },
-    "took": 0.103
+   "took":0.063,
+   "next-page":null,
+   "data":{
+      "user3@slicingdice.com":{
+         "score":1,
+         "year":"2010",
+         "car-model":"toyota corolla"
+      },
+      "user2@slicingdice.com":{
+         "score":1,
+         "year":"2016",
+         "car-model":"honda fit"
+      }
+   },
+   "page":1,
+   "status":"success"
 }
 ```
 
