@@ -263,6 +263,25 @@ public class SlicingDice {
     }
 
     /**
+     * Create field in Slicing Dice
+     *
+     * @param dataArray A JSONArray with many JSONObjects in the Slicing Dice field format
+     * @return A JSONObject with json request result if your field is valid
+     * @throws IOException
+     */
+    public JSONObject createField(final JSONArray dataArray) throws IOException {
+        final String url = this.wrapperTest() + URLResources.FIELD.url;
+        final JSONObject result = new JSONObject();
+        for (int i = 0; i < dataArray.length(); i++) {
+            final JSONObject data = dataArray.getJSONObject(i);
+            final JSONObject partialResult = this.wrapperCreateField(data, url)
+            result.put(String.valueOf(i), partialResult);
+        }
+
+        return result;
+    }
+
+    /**
      * Get all fields.
      *
      * @return All fields(active and inactive).
