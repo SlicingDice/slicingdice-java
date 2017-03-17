@@ -274,7 +274,8 @@ public class SlicingDice {
         final JSONObject result = new JSONObject();
         for (int i = 0; i < dataArray.length(); i++) {
             final JSONObject data = dataArray.getJSONObject(i);
-            result.put(String.valueOf(i), this.wrapperCreateField(data, url));
+            final JSONObject partialResult = this.wrapperCreateField(data, url)
+            result.put(String.valueOf(i), partialResult);
         }
 
         return result;
