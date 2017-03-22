@@ -17,9 +17,22 @@ Whether you want to test the client installation or simply check more examples o
 
 ## Installing
 
-[Click here]() to download our Java client as a `jar` file. After downloading it, you only need to import the `jar` into your project path.
+[Click here](https://github.com/SlicingDice/slicingdice-java/releases) to download our Java client as a `jar` file. After downloading it, you only need to import the `jar` into your project path.
 
 Also, our Java client can be installed via [Maven](https://maven.apache.org/) by adding the following configurations in our pom.xml.
+
+```xml
+<repository>
+    <id>slicingdice-clients</id>
+    <url>https://packagecloud.io/slicingdice/clients/maven2</url>
+    <releases>
+        <enabled>true</enabled>
+    </releases>
+    <snapshots>
+        <enabled>true</enabled>
+    </snapshots>
+</repository>
+```
 
 ```xml
 <dependency>
