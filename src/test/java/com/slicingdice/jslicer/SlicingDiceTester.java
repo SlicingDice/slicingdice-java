@@ -265,7 +265,7 @@ public class SlicingDiceTester {
      * @param queryType - the type of the query
      * @param result the result received from SlicingDice API
      */
-    private void compareResult(final JSONObject expectedObject, String queryType,
+    private void compareResult(final JSONObject expectedObject, final String queryType,
                                final JSONObject result) throws IOException {
         final JSONObject testExpected = expectedObject.getJSONObject("expected");
         final JSONObject expected =

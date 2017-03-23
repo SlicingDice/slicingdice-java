@@ -41,7 +41,7 @@ public class RunQueryTests {
         System.exit(0);
     }
 
-    private static boolean showResults(SlicingDiceTester sdTester){
+    private static boolean showResults(final SlicingDiceTester sdTester) {
         System.out.println();
         System.out.println("Results:");
         System.out.println(String.format("\tSuccesses: %s", sdTester.numberOfSuccesses));
@@ -67,9 +67,8 @@ public class RunQueryTests {
             // exit with error code to indicate failure
             return false;
         }
-        else {
-            System.out.println("SUCCESS: All tests passed");
-            return true;
-        }
+
+        System.out.println("SUCCESS: All tests passed");
+        return true;
     }
 }
