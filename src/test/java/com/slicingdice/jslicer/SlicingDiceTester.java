@@ -4,7 +4,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Scanner;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -279,10 +281,7 @@ public class SlicingDiceTester {
                 continue;
             }
 
-            final int expectedSize = expected.getJSONObject(keyStr).length();
-
-            if(expectedSize != result.getJSONObject(keyStr).length() ||
-                    !expected.getJSONObject(keyStr).similar(result.getJSONObject(keyStr))) {
+            if(!this.compareJson(expected.getJSONObject(keyStr), result.getJSONObject(keyStr))) {
                 // try second time
                 try {
                     TimeUnit.SECONDS.sleep(this.sleepTime * 3);
@@ -291,9 +290,8 @@ public class SlicingDiceTester {
                 }
                 final JSONObject secondResult = this.executeQuery(queryType, expectedObject);
 
-                if(expectedSize == secondResult.getJSONObject(keyStr).length() &&
-                        expected.getJSONObject(keyStr).
-                                similar(secondResult.getJSONObject(keyStr))) {
+                if (this.compareJson(expected.getJSONObject(keyStr),
+                        secondResult.getJSONObject(keyStr))) {
                     System.out.println("\tPassed at second try!");
                     this.numberOfSuccesses += 1;
                     System.out.println("\tStatus: Passed\n");
@@ -314,5 +312,49 @@ public class SlicingDiceTester {
             this.numberOfSuccesses += 1;
             System.out.println("\tStatus: Passed\n");
         }
+    }
+
+    /**
+     * Compare two JSONObjects
+     * @param expected - The json with the expected result
+     * @param got = The json returned by the SlicingDice API
+     * @return - true if the two json's are equal and false otherwise
+     */
+    private boolean compareJson(final JSONObject expected, final JSONObject got) {
+        if (expected.length() != got.length()) {
+            return false;
+        }
+
+        final Set keySet = expected.keySet();
+        final Iterator iterator = keySet.iterator();
+
+        while (iterator.hasNext()) {
+            final String name = (String) iterator.next();
+            final Object valueExpected = expected.get(name);
+            final Object valueGot = got.get(name);
+            if(valueExpected instanceof JSONObject) {
+                if(!this.compareJson((JSONObject) valueExpected, (JSONObject) valueGot)) {
+                    return false;
+                }
+            } else if(valueExpected instanceof JSONArray) {
+                if(!((JSONArray)valueExpected).similar(valueGot)) {
+                    return false;
+                }
+            } else if(!valueExpected.equals(valueGot)) {
+                // avoid errors when Java convert the two objects differently
+                if (valueExpected instanceof Integer && valueGot instanceof Double ||
+                        valueExpected instanceof Double && valueGot instanceof Integer) {
+                    final Number expectedInteger = (Number) valueExpected;
+                    final Number gotInteger = (Number) valueGot;
+                    if (expectedInteger.intValue() != gotInteger.intValue()) {
+                        return false;
+                    }
+                } else {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 }
