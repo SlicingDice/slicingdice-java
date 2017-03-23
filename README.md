@@ -15,11 +15,42 @@ Please refer to the [SlicingDice official documentation](http://panel.slicingdic
 
 Whether you want to test the client installation or simply check more examples on how the client works, take a look at [tests and examples directory](src/test/java/com/slicingdice/jslicer/).
 
+## Requirements
+
+In order to import SlicingDice's client on your application, you'll need
+to setup the following dependencies:
+
+* [gson 2.3.2](https://github.com/google/gson)
+* [okhttp 3.2.0](http://square.github.io/okhttp/)
+
+
+In case you're using [Maven](https://maven.apache.org/) to manage packages,
+ add this to your pom.xml:
+
+```xml
+<dependency>
+    <groupid>com.google.code.gson</groupid>
+    <artifactid>gson</artifactid>
+    <version>2.3.1</version>
+</dependency>
+
+<dependency>
+    <groupid>com.squareup.okhttp3</groupid>
+    <artifactid>okhttp</artifactid>
+    <version>3.3.1</version>
+</dependency>
+```
+
 ## Installing
 
-[Click here](https://github.com/SlicingDice/slicingdice-java/releases) to download our Java client as a `jar` file. After downloading it, you only need to import the `jar` into your project path.
+[Click here](https://github.com/SlicingDice/slicingdice-java/releases) to
+download our Java client as a `jar` file. After downloading it,
+you only need to import the `jar` into your project path.
 
-Also, our Java client can be installed via [Maven](https://maven.apache.org/) by adding the following configurations in our pom.xml.
+Additionally, our Java client can be installed via [Maven](https://maven.apache.org/)
+by adding the following configurations in your pom.xml. Mind that these snippets
+go on different sections of your pom, as the first one sets the repository
+from which to download the package and the second one sets the package itself.
 
 ```xml
 <repository>
@@ -43,28 +74,14 @@ Also, our Java client can be installed via [Maven](https://maven.apache.org/) by
 </dependency>
 ```
 
-Please note the client has the following dependencies:
-
-* [gson 2.3.2](https://github.com/google/gson)
-* [okhttp 3.2.0](http://square.github.io/okhttp/)
-
-[Maven](https://maven.apache.org/) can be used to install the dependencies with the following configurations.
-
-```xml
-<dependency>
-    <groupid>com.google.code.gson</groupid>
-    <artifactid>gson</artifactid>
-    <version>2.3.1</version>
-</dependency>
-
-<dependency>
-    <groupid>com.squareup.okhttp3</groupid>
-    <artifactid>okhttp</artifactid>
-    <version>3.3.1</version>
-</dependency>
-```
-
 ## Usage
+
+The following code snippet is an example of how to add and query data
+using the SlicingDice JAVA client. We entry data informing
+'user1@slicingdice.com' has age 22 and then query the database for
+the number of users with age between 20 and 40 years old.
+If this is the first record ever entered into the system,
+ the answer should be 1.
 
 ```java
 import java.io.IOException;
@@ -393,7 +410,7 @@ public class Example {
 ```
 
 ### `JSONObject countEntity(JSONObject data)`
-Count the number of entities attending the given query. This method corresponds to a [POST request at /query/count/entity](http://panel.slicingdice.com/docs/#api-details-api-endpoints-post-query-count-entity).
+Count the number of entities matching the given query. This method corresponds to a [POST request at /query/count/entity](http://panel.slicingdice.com/docs/#api-details-api-endpoints-post-query-count-entity).
 
 #### Request example
 
@@ -442,7 +459,7 @@ public class Example {
 ```
 
 ### `JSONObject countEvent(JSONObject data)`
-Count the number of occurrences for time-series events attending the given query. This method corresponds to a [POST request at /query/count/event](http://panel.slicingdice.com/docs/#api-details-api-endpoints-post-query-count-event).
+Count the number of occurrences for time-series events matching the given query. This method corresponds to a [POST request at /query/count/event](http://panel.slicingdice.com/docs/#api-details-api-endpoints-post-query-count-event).
 
 #### Request example
 
@@ -492,7 +509,7 @@ public class Example {
 ```
 
 ### `JSONObject topValues(JSONObject data)`
-Return the top values for entities attending the given query. This method corresponds to a [POST request at /query/top_values](http://panel.slicingdice.com/docs/#api-details-api-endpoints-post-query-top-values).
+Return the top values for entities matching the given query. This method corresponds to a [POST request at /query/top_values](http://panel.slicingdice.com/docs/#api-details-api-endpoints-post-query-top-values).
 
 #### Request example
 
@@ -878,7 +895,7 @@ public class Example {
 ```
 
 ### `JSONObject result(JSONObject data)`
-Retrieve indexed values for entities attending the given query. This method corresponds to a [POST request at /data_extraction/result](http://panel.slicingdice.com/docs/#api-details-api-endpoints-post-data-extraction-result).
+Retrieve indexed values for entities matching the given query. This method corresponds to a [POST request at /data_extraction/result](http://panel.slicingdice.com/docs/#api-details-api-endpoints-post-data-extraction-result).
 
 #### Request example
 
@@ -933,7 +950,7 @@ public class Example {
 ```
 
 ### `JSONObject score(JSONObject data)`
-Retrieve indexed values as well as their relevance for entities attending the given query. This method corresponds to a [POST request at /data_extraction/score](http://panel.slicingdice.com/docs/#api-details-api-endpoints-post-data-extraction-score).
+Retrieve indexed values as well as their relevance for entities matching the given query. This method corresponds to a [POST request at /data_extraction/score](http://panel.slicingdice.com/docs/#api-details-api-endpoints-post-data-extraction-score).
 
 #### Request example
 
