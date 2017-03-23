@@ -86,7 +86,11 @@ public class SlicingDiceTester {
                         .put("error", e.toString()));
             }
 
-            this.compareResult(testObject, result);
+            try {
+                this.compareResult(testObject, queryType, result);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -190,6 +194,7 @@ public class SlicingDiceTester {
             this.client.index(indexData, true);
         } catch (IOException e) {
             e.printStackTrace();
+            System.out.println("An error occurred while processing your query on SlicingDice");
         }
 
         try {
@@ -197,6 +202,7 @@ public class SlicingDiceTester {
             TimeUnit.SECONDS.sleep(this.sleepTime);
         } catch (InterruptedException e) {
             e.printStackTrace();
+            System.out.println("An error occurred while processing your query on SlicingDice");
         }
     }
 
@@ -255,11 +261,12 @@ public class SlicingDiceTester {
 
     /**
      * Compare result received from SlicingDice API
-     *
      * @param expectedObject the object with expected result
+     * @param queryType - the type of the query
      * @param result the result received from SlicingDice API
      */
-    private void compareResult(final JSONObject expectedObject, final JSONObject result){
+    private void compareResult(final JSONObject expectedObject, final String queryType,
+                               final JSONObject result) throws IOException {
         final JSONObject testExpected = expectedObject.getJSONObject("expected");
         final JSONObject expected =
                 this.translateFieldNames(expectedObject.getJSONObject("expected"));
@@ -272,8 +279,27 @@ public class SlicingDiceTester {
                 continue;
             }
 
-            if(!expected.getJSONObject(keyStr).toString().
-                    equals(result.getJSONObject(keyStr).toString())) {
+            final int expectedSize = expected.getJSONObject(keyStr).length();
+
+            if(expectedSize != result.getJSONObject(keyStr).length() ||
+                    !expected.getJSONObject(keyStr).similar(result.getJSONObject(keyStr))) {
+                // try second time
+                try {
+                    TimeUnit.SECONDS.sleep(this.sleepTime * 3);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                final JSONObject secondResult = this.executeQuery(queryType, expectedObject);
+
+                if(expectedSize == secondResult.getJSONObject(keyStr).length() &&
+                        expected.getJSONObject(keyStr).
+                                similar(secondResult.getJSONObject(keyStr))) {
+                    System.out.println("\tPassed at second try!");
+                    this.numberOfSuccesses += 1;
+                    System.out.println("\tStatus: Passed\n");
+                    continue;
+                }
+
                 this.numberOfFails += 1;
                 this.failedTests.add(expectedObject.getString("name"));
 

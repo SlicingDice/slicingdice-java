@@ -8,11 +8,7 @@ public class RunQueryTests {
     private static final String DEMO_API_KEY =
             "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfX3NhbHQiOiJkZW1vMG0iLCJwZXJtaXNzaW9uX2xldmVsIjozLCJwcm9qZWN0X2lkIjoxNjEsImNsaWVudF9pZCI6MTB9.vt5eGeQb0AUKu2o075vEzaC5m-XgD4ohgJkDZYBmFu8";
 
-    private static Thread mainThread;
-
     public static void main(final String[] args) {
-        mainThread = Thread.currentThread();
-
         // the query types to use on tests
         final ArrayList<String> queryTypes = new ArrayList<String>() {{
             add("count_entity");
@@ -31,7 +27,6 @@ public class RunQueryTests {
             public void run()
             {
                 showResults(sdTester);
-                mainThread.interrupt();
             }
         });
 
@@ -40,10 +35,13 @@ public class RunQueryTests {
             sdTester.runTests(queryType);
         }
 
-        showResults(sdTester);
+        if (!showResults(sdTester)) {
+            System.exit(1);
+        }
+        System.exit(0);
     }
 
-    private static void showResults(SlicingDiceTester sdTester){
+    private static boolean showResults(final SlicingDiceTester sdTester) {
         System.out.println();
         System.out.println("Results:");
         System.out.println(String.format("\tSuccesses: %s", sdTester.numberOfSuccesses));
@@ -67,10 +65,10 @@ public class RunQueryTests {
             System.out.println(String.format("FAIL: %1$s %2$s failed", sdTester.numberOfFails,
                     testsOrTest));
             // exit with error code to indicate failure
-            System.exit(1);
+            return false;
         }
-        else {
-            System.out.println("SUCCESS: All tests passed");
-        }
+
+        System.out.println("SUCCESS: All tests passed");
+        return true;
     }
 }
