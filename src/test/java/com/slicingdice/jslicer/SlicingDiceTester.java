@@ -86,7 +86,11 @@ public class SlicingDiceTester {
                         .put("error", e.toString()));
             }
 
-            this.compareResult(testObject, result);
+            try {
+                this.compareResult(testObject, queryType, result);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -255,11 +259,12 @@ public class SlicingDiceTester {
 
     /**
      * Compare result received from SlicingDice API
-     *
      * @param expectedObject the object with expected result
+     * @param queryType - the type of the query
      * @param result the result received from SlicingDice API
      */
-    private void compareResult(final JSONObject expectedObject, final JSONObject result){
+    private void compareResult(final JSONObject expectedObject, String queryType,
+                               final JSONObject result) throws IOException {
         final JSONObject testExpected = expectedObject.getJSONObject("expected");
         final JSONObject expected =
                 this.translateFieldNames(expectedObject.getJSONObject("expected"));
@@ -274,6 +279,22 @@ public class SlicingDiceTester {
 
             if(!expected.getJSONObject(keyStr).toString().
                     equals(result.getJSONObject(keyStr).toString())) {
+                // try second time
+                try {
+                    TimeUnit.SECONDS.sleep(this.sleepTime * 3);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                final JSONObject secondResult = this.executeQuery(queryType, expectedObject);
+
+                if(expected.getJSONObject(keyStr).toString().
+                        equals(secondResult.getJSONObject(keyStr).toString())) {
+                    System.out.println("\tPassed at second try!");
+                    this.numberOfSuccesses += 1;
+                    System.out.println("\tStatus: Passed\n");
+                    continue;
+                }
+
                 this.numberOfFails += 1;
                 this.failedTests.add(expectedObject.getString("name"));
 

@@ -41,6 +41,7 @@ public class RunQueryTests {
         }
 
         showResults(sdTester);
+        mainThread.interrupt();
     }
 
     private static void showResults(SlicingDiceTester sdTester){
