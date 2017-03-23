@@ -180,17 +180,21 @@ public class SlicingDice {
     }
 
     private JSONObject handlerResponse(final Response resp) throws IOException {
-        final HandlerResponse responseData = new HandlerResponse(resp.body().string(),
-                resp.headers(), resp.code());
+        try {
+            final HandlerResponse responseData = new HandlerResponse(resp.body().string(),
+                    resp.headers(), resp.code());
 
-        if (responseData.requestSuccessful()) {
-            if (this.checkRequest(resp)) {
-                populateResult(responseData);
-                return new JSONObject(responseData.getResult());
+            if (responseData.requestSuccessful()) {
+                if (this.checkRequest(resp)) {
+                    populateResult(responseData);
+                    return new JSONObject(responseData.getResult());
+                }
             }
-        }
 
-        return null;
+            return null;
+        } finally {
+            resp.close();
+        }
     }
 
     /**

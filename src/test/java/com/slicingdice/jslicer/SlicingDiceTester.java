@@ -194,6 +194,7 @@ public class SlicingDiceTester {
             this.client.index(indexData, true);
         } catch (IOException e) {
             e.printStackTrace();
+            System.out.println("An error occurred while processing your query on SlicingDice");
         }
 
         try {
@@ -201,6 +202,7 @@ public class SlicingDiceTester {
             TimeUnit.SECONDS.sleep(this.sleepTime);
         } catch (InterruptedException e) {
             e.printStackTrace();
+            System.out.println("An error occurred while processing your query on SlicingDice");
         }
     }
 
@@ -277,8 +279,10 @@ public class SlicingDiceTester {
                 continue;
             }
 
-            if(!expected.getJSONObject(keyStr).toString().
-                    equals(result.getJSONObject(keyStr).toString())) {
+            final int expectedSize = expected.getJSONObject(keyStr).length();
+
+            if(expectedSize != result.getJSONObject(keyStr).length() ||
+                    !expected.getJSONObject(keyStr).similar(result.getJSONObject(keyStr))) {
                 // try second time
                 try {
                     TimeUnit.SECONDS.sleep(this.sleepTime * 3);
@@ -287,8 +291,9 @@ public class SlicingDiceTester {
                 }
                 final JSONObject secondResult = this.executeQuery(queryType, expectedObject);
 
-                if(expected.getJSONObject(keyStr).toString().
-                        equals(secondResult.getJSONObject(keyStr).toString())) {
+                if(expectedSize == secondResult.getJSONObject(keyStr).length() &&
+                        expected.getJSONObject(keyStr).
+                                similar(secondResult.getJSONObject(keyStr))) {
                     System.out.println("\tPassed at second try!");
                     this.numberOfSuccesses += 1;
                     System.out.println("\tStatus: Passed\n");
