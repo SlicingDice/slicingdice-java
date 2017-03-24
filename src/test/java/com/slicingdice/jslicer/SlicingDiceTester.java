@@ -281,23 +281,28 @@ public class SlicingDiceTester {
                 continue;
             }
 
-            if(!this.compareJson(expected.getJSONObject(keyStr), result.getJSONObject(keyStr))) {
-                // try second time
-                try {
-                    TimeUnit.SECONDS.sleep(this.sleepTime * 3);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                final JSONObject secondResult = this.executeQuery(queryType, expectedObject);
+            boolean testFailed = false;
 
-                if (this.compareJson(expected.getJSONObject(keyStr),
-                        secondResult.getJSONObject(keyStr))) {
-                    System.out.println("\tPassed at second try!");
-                    this.numberOfSuccesses += 1;
-                    System.out.println("\tStatus: Passed\n");
+            if (!result.has(keyStr)) {
+                // try second time
+                if (testSecondTime(expectedObject, queryType, expected, keyStr)) {
                     continue;
                 }
 
+                testFailed = true;
+            } else {
+                if(!this.compareJson(expected.getJSONObject(keyStr),
+                        result.getJSONObject(keyStr))) {
+                    // try second time
+                    if (testSecondTime(expectedObject, queryType, expected, keyStr)) {
+                        continue;
+                    }
+
+                    testFailed = true;
+                }
+            }
+
+            if (testFailed) {
                 this.numberOfFails += 1;
                 this.failedTests.add(expectedObject.getString("name"));
 
@@ -307,11 +312,38 @@ public class SlicingDiceTester {
                         result.getJSONObject(keyStr).toString()));
                 System.out.println("\tStatus: Failed\n");
                 return;
+            } else {
+                this.numberOfSuccesses += 1;
+                System.out.println("\tStatus: Passed\n");
             }
+        }
+    }
 
+    /**
+     * If first query doesn't return as expected we will try another time
+     * @param expectedObject -
+     * @param queryType - type of the query to send to SlicingDice
+     * @param expected = the expected json
+     * @param key - the json key to test
+     * @return true if second test succeed and false otherwise
+     * @throws IOException
+     */
+    private boolean testSecondTime(final JSONObject expectedObject, final String queryType,
+                                   final JSONObject expected, String key) throws IOException {
+        try {
+            TimeUnit.SECONDS.sleep(this.sleepTime * 3);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        final JSONObject secondResult = this.executeQuery(queryType, expectedObject);
+
+        if (this.compareJson(expected.getJSONObject(key),secondResult.getJSONObject(key))) {
+            System.out.println("\tPassed at second try!");
             this.numberOfSuccesses += 1;
             System.out.println("\tStatus: Passed\n");
+            return true;
         }
+        return false;
     }
 
     /**
@@ -332,27 +364,59 @@ public class SlicingDiceTester {
             final String name = (String) iterator.next();
             final Object valueExpected = expected.get(name);
             final Object valueGot = got.get(name);
-            if(valueExpected instanceof JSONObject) {
-                if(!this.compareJson((JSONObject) valueExpected, (JSONObject) valueGot)) {
-                    return false;
-                }
-            } else if(valueExpected instanceof JSONArray) {
-                if(!((JSONArray)valueExpected).similar(valueGot)) {
-                    return false;
-                }
-            } else if(!valueExpected.equals(valueGot)) {
-                // avoid errors when Java convert the two objects differently
-                if (valueExpected instanceof Integer && valueGot instanceof Double ||
-                        valueExpected instanceof Double && valueGot instanceof Integer) {
-                    final Number expectedInteger = (Number) valueExpected;
-                    final Number gotInteger = (Number) valueGot;
-                    if (expectedInteger.intValue() != gotInteger.intValue()) {
-                        return false;
-                    }
-                } else {
-                    return false;
-                }
+            return this.compareJsonValue(valueExpected, valueGot);
+        }
+
+        return true;
+    }
+
+    /**
+     * Compare two JSONArrays
+     * @param expected - The json with the expected result
+     * @param got = The json returned by the SlicingDice API
+     * @return - true if the two json's are equal and false otherwise
+     */
+    private boolean compareJsonArray(final JSONArray expected, final JSONArray got) {
+        if (expected.length() != got.length()) {
+            return false;
+        }
+
+        for(int i = 0; i < expected.length(); ++i) {
+            final Object valueExpected = expected.get(i);
+            final Object valueGot = got.get(i);
+            this.compareJsonValue(valueExpected, valueGot);
+        }
+
+        return true;
+    }
+
+    /**
+     * Compare two json values
+     * @param valueExpected - the expected value
+     * @param valueGot - the received value
+     * @return true if the two values are equal and false otherwise
+     */
+    private boolean compareJsonValue(final Object valueExpected, final Object valueGot) {
+        if(valueExpected instanceof JSONObject) {
+            if(!this.compareJson((JSONObject) valueExpected, (JSONObject) valueGot)) {
+                return false;
             }
+        } else if(valueExpected instanceof JSONArray) {
+            if(!this.compareJsonArray((JSONArray) valueExpected, (JSONArray) valueGot)) {
+                return false;
+            }
+        } else if(!valueExpected.equals(valueGot)) {
+            if (valueExpected instanceof Integer && valueGot instanceof Double ||
+                    valueExpected instanceof Double && valueGot instanceof Integer) {
+                final Number expectedInteger = (Number) valueExpected;
+                final Number gotInteger = (Number) valueGot;
+                if (expectedInteger.intValue() != gotInteger.intValue()) {
+                    return false;
+                }
+            } else {
+                return false;
+            }
+            return true;
         }
 
         return true;
