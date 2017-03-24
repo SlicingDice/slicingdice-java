@@ -364,7 +364,9 @@ public class SlicingDiceTester {
             final String name = (String) iterator.next();
             final Object valueExpected = expected.get(name);
             final Object valueGot = got.get(name);
-            return this.compareJsonValue(valueExpected, valueGot);
+            if (!this.compareJsonValue(valueExpected, valueGot)) {
+                return false;
+            }
         }
 
         return true;
@@ -384,7 +386,9 @@ public class SlicingDiceTester {
         for(int i = 0; i < expected.length(); ++i) {
             final Object valueExpected = expected.get(i);
             final Object valueGot = got.get(i);
-            this.compareJsonValue(valueExpected, valueGot);
+            if (!this.compareJsonValue(valueExpected, valueGot)) {
+                return false;
+            }
         }
 
         return true;
@@ -397,26 +401,30 @@ public class SlicingDiceTester {
      * @return true if the two values are equal and false otherwise
      */
     private boolean compareJsonValue(final Object valueExpected, final Object valueGot) {
-        if(valueExpected instanceof JSONObject) {
-            if(!this.compareJson((JSONObject) valueExpected, (JSONObject) valueGot)) {
-                return false;
-            }
-        } else if(valueExpected instanceof JSONArray) {
-            if(!this.compareJsonArray((JSONArray) valueExpected, (JSONArray) valueGot)) {
-                return false;
-            }
-        } else if(!valueExpected.equals(valueGot)) {
-            if (valueExpected instanceof Integer && valueGot instanceof Double ||
-                    valueExpected instanceof Double && valueGot instanceof Integer) {
-                final Number expectedInteger = (Number) valueExpected;
-                final Number gotInteger = (Number) valueGot;
-                if (expectedInteger.intValue() != gotInteger.intValue()) {
+        try {
+            if(valueExpected instanceof JSONObject) {
+                if(!this.compareJson((JSONObject) valueExpected, (JSONObject) valueGot)) {
                     return false;
                 }
-            } else {
-                return false;
+            } else if(valueExpected instanceof JSONArray) {
+                if(!this.compareJsonArray((JSONArray) valueExpected, (JSONArray) valueGot)) {
+                    return false;
+                }
+            } else if(!valueExpected.equals(valueGot)) {
+                if (valueExpected instanceof Integer && valueGot instanceof Double ||
+                        valueExpected instanceof Double && valueGot instanceof Integer) {
+                    final Number expectedInteger = (Number) valueExpected;
+                    final Number gotInteger = (Number) valueGot;
+                    if (expectedInteger.intValue() != gotInteger.intValue()) {
+                        return false;
+                    }
+                } else {
+                    return false;
+                }
+                return true;
             }
-            return true;
+        } catch (ClassCastException e) {
+            return false;
         }
 
         return true;
