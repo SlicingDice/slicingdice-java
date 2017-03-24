@@ -115,6 +115,8 @@ public class HandlerResponse {
                 throw new AccountBannedException(message);
             case 33:
                 throw new AccountDisabledException(message);
+            case 39:
+                throw new IndexInvalidRangeException(message);
             // Field errors (40 - 59)
             case 40:
                 throw new FieldMissingParamException(message);
