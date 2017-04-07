@@ -47,9 +47,6 @@ public class QueryDataExtractionValidator {
                 if (!(this.data.get(key) instanceof Integer)) {
                     throw new InvalidQueryException("The key 'limit' in query has a invalid value.");
                 }
-                if (this.data.getInt(key) > 100) {
-                    throw new InvalidQueryException("The field 'limit' has a value max of 100.");
-                }
             } else if (key.equals("fields")) {
                 if (this.data.getJSONArray("fields").length() > 10) {
                     throw new MaxLimitException("The key 'fields' in data extraction result must" +
