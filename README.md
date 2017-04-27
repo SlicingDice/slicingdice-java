@@ -70,7 +70,6 @@ from which to download the package and the second one sets the package itself.
     <groupId>com.slicingdice</groupId>
     <artifactId>jslicer</artifactId>
     <version>1.0.0</version>
-    <scope>test</scope>
 </dependency>
 ```
 
