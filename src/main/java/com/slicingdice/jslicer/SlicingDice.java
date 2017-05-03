@@ -310,22 +310,6 @@ public class SlicingDice {
     }
 
     /**
-     * Index data to existing entities or create new entities, if necessary. This method corresponds
-     * to a POST request at /index.
-     *
-     * @param data A JSON object in the SlicingDice index format
-     * @param autoCreateFields if true the indexation will automatically create non-existent fields
-     * @return A JSONObject with json request result if your indexation is valid
-     * @throws IOException
-     */
-    public JSONObject index(final JSONObject data, final boolean autoCreateFields)
-            throws IOException {
-        data.put("auto-create-fields", autoCreateFields);
-        final String url = this.wrapperTest() + URLResources.INDEX.url;
-        return this.makeRequest(url, data, POST, 1);
-    }
-
-    /**
      * Make a count query in Slicing Dice
      *
      * @param url   A url to make request

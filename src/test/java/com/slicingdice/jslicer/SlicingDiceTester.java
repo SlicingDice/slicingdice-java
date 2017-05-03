@@ -193,7 +193,7 @@ public class SlicingDiceTester {
 
         // call client command to index data
         try {
-            this.client.index(indexData, true);
+            this.client.index(indexData);
         } catch (IOException e) {
             e.printStackTrace();
             System.out.println("An error occurred while processing your query on SlicingDice");
