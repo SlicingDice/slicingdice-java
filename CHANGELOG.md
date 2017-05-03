@@ -2,6 +2,7 @@
 
 ### Updated
 - Update API errors code
+- Remove index method containing the autoCreateFields parameter
 
 ## [1.0.0]
 ### Added
