@@ -104,7 +104,8 @@ public class Example {
 
         // Querying data
         JSONObject queryData = new JSONObject()
-                .put("users-between-20-and-40",
+                .put("query-name", "users-between-20-and-40")
+                .put("query",
                         new JSONArray()
                                 .put(new JSONObject()
                                         .put("age",
@@ -424,21 +425,26 @@ public class Example {
 
     public static void main(String[] args) throws IOException {
         SlicingDice slicingDice = new SlicingDice("MASTER_OR_READ_API_KEY", false);
-        JSONObject countEntityQuery = new JSONObject()
-                .put("corolla-or-fit", new JSONArray()
-                    .put(new JSONObject()
-                        .put("car-model", new JSONObject()
-                            .put("equals", "toyota corolla")))
-                    .put("or")
-                    .put(new JSONObject()
-                        .put("car-model", new JSONObject()
-                            .put("equals", "honda fit"))))
-                .put("ford-ka", new JSONArray()
-                    .put(new JSONObject()
-                        .put("car-model", new JSONObject()
-                            .put("equals", "ford ka"))))
-                .put("bypass-cache", false);
-        JSONObject result = slicingDice.countEntity(countEntityQuery);
+        JSONArray countEntityQuery = new JSONArray()
+                        .put(new JSONObject()
+                                .put("query-name", "corolla-or-fit")
+                                .put("query", new JSONArray()
+                                        .put(new JSONObject()
+                                                .put("car-model", new JSONObject()
+                                                        .put("equals", "toyota corolla")))
+                                        .put("or")
+                                        .put(new JSONObject()
+                                                .put("car-model", new JSONObject()
+                                                        .put("equals", "honda fit"))))
+                                .put("bypass-cache", false))
+                        .put(new JSONObject()
+                                .put("query-name", "ford-ka")
+                                .put("query", new JSONArray()
+                                        .put(new JSONObject()
+                                                .put("car-model", new JSONObject()
+                                                        .put("equals", "ford ka"))))
+                                .put("bypass-cache", false));
+                JSONObject result = slicingDice.countEntity(countEntityQuery);
         System.out.println(result.toString());
     }
 }
@@ -472,23 +478,27 @@ public class Example {
 
     public static void main(String[] args) throws IOException {
         SlicingDice slicingDice = new SlicingDice("MASTER_OR_READ_API_KEY", false);
-        JSONObject countEventQuery = new JSONObject()
-                .put("test-drives-in-ny", new JSONArray()
+        JSONArray countEventQuery = new JSONArray()
                         .put(new JSONObject()
-                                .put("test-drives", new JSONObject()
-                                        .put("equals", "NY")
-                                        .put("between", new JSONArray()
-                                                .put("2016-08-16T00:00:00Z")
-                                                .put("2016-08-18T00:00:00Z")))))
-                .put("test-drives-in-ca", new JSONArray()
+                                .put("query-name", "test-drives-in-ny")
+                                .put("query", new JSONArray()
+                                        .put(new JSONObject()
+                                                .put("test-drives", new JSONObject()
+                                                        .put("equals", "NY")
+                                                        .put("between", new JSONArray()
+                                                                .put("2016-08-16T00:00:00Z")
+                                                                .put("2016-08-18T00:00:00Z")))))
+                                .put("bypass-cache", false))
                         .put(new JSONObject()
-                                .put("test-drives", new JSONObject()
-                                        .put("equals", "CA")
-                                        .put("between", new JSONArray()
-                                                .put("2016-04-04T00:00:00Z")
-                                                .put("2016-04-06T00:00:00Z")))))
-                .put("bypass-cache", false);
-        JSONObject result = slicingDice.countEvent(countEventQuery);
+                                .put("query-name", "test-drives-in-ca")
+                                .put("query", new JSONArray()
+                                        .put(new JSONObject()
+                                                .put("test-drives", new JSONObject()
+                                                        .put("equals", "CA")
+                                                        .put("between", new JSONArray()
+                                                                .put("2016-04-04T00:00:00Z")
+                                                                .put("2016-04-06T00:00:00Z")))))
+                                .put("bypass-cache", false));
         System.out.println(result.toString());
     }
 }

@@ -114,16 +114,16 @@ public class SlicingDice {
         final String key;
         final int keyLevel;
 
-        if (this.masterKey != null){
+        if (this.masterKey != null) {
             key = this.masterKey;
             keyLevel = 2;
-        } else if (this.customKey != null){
+        } else if (this.customKey != null) {
             key = this.customKey;
             keyLevel = 2;
         } else if (this.writeKey != null) {
             key = this.writeKey;
             keyLevel = 1;
-        } else if (this.readKey != null){
+        } else if (this.readKey != null) {
             key = this.readKey;
             keyLevel = 0;
         } else {
@@ -139,24 +139,24 @@ public class SlicingDice {
 
     private String getKey(final int levelKey) throws SlicingDiceKeyException {
         final List<Object> currentLevelKey = this.getCurrentKey();
-        if ((Integer)currentLevelKey.get(1) == 2){
-            return (String)currentLevelKey.get(0);
+        if ((Integer) currentLevelKey.get(1) == 2) {
+            return (String) currentLevelKey.get(0);
         }
-        if ((Integer)currentLevelKey.get(1) != levelKey){
+        if ((Integer) currentLevelKey.get(1) != levelKey) {
             throw new SlicingDiceKeyException("This key is not allowed to perform this operation.");
         }
-        return (String)currentLevelKey.get(0);
+        return (String) currentLevelKey.get(0);
     }
 
     /**
      * Effectively makes the request
      *
      * @param url  A url String to make request
-     * @param data A JSONObject to send in request
+     * @param data An Object to send in request
      * @return A JSONObject with json request result
      * @throws IOException
      */
-    private JSONObject makeRequest(final String url, final JSONObject data, final String reqType,
+    private JSONObject makeRequest(final String url, final Object data, final String reqType,
                                    final int keyLevel) throws IOException {
         final String apiKey = this.getKey(keyLevel);
         Response resp = null;
@@ -313,7 +313,7 @@ public class SlicingDice {
      * Index data to existing entities or create new entities, if necessary. This method corresponds
      * to a POST request at /index.
      *
-     * @param data A JSON object in the SlicingDice index format
+     * @param data             A JSON object in the SlicingDice index format
      * @param autoCreateFields if true the indexation will automatically create non-existent fields
      * @return A JSONObject with json request result if your indexation is valid
      * @throws IOException
@@ -329,11 +329,11 @@ public class SlicingDice {
      * Make a count query in Slicing Dice
      *
      * @param url   A url to make request
-     * @param query A JSONObject count query
+     * @param query An Object count query
      * @return A JSONObject with count query result
      * @throws IOException
      */
-    private JSONObject countQueryWrapper(final String url, final JSONObject query)
+    private JSONObject countQueryWrapper(final String url, final Object query)
             throws IOException {
         final QueryCountValidator queryValidator = new QueryCountValidator(query);
         if (!queryValidator.validator()) {
@@ -373,11 +373,11 @@ public class SlicingDice {
     /**
      * Make a count entity query in Slicing Dice API
      *
-     * @param query A JSONObject count entity query
+     * @param query An Object count entity query
      * @return A JSONObject with count entity query result
      * @throws IOException
      */
-    public JSONObject countEntity(final JSONObject query) throws IOException {
+    public JSONObject countEntity(final Object query) throws IOException {
         final String url = this.wrapperTest() + URLResources.QUERY_COUNT_ENTITY.url;
         return countQueryWrapper(url, query);
     }
@@ -396,11 +396,11 @@ public class SlicingDice {
     /**
      * Make a count event query in Slicing Dice API
      *
-     * @param query A JSONObject count event query
+     * @param query An Object count event query
      * @return A JSONObject with count event query result
      * @throws IOException
      */
-    public JSONObject countEvent(final JSONObject query) throws IOException {
+    public JSONObject countEvent(final Object query) throws IOException {
         final String url = this.wrapperTest() + URLResources.QUERY_COUNT_EVENT.url;
         return countQueryWrapper(url, query);
     }
@@ -562,7 +562,7 @@ public class SlicingDice {
      * Update a saved query in Slicing Dice API
      *
      * @param queryName the name of the saved query that you want to retrieve
-     * @param query A JSONObject saved query
+     * @param query     A JSONObject saved query
      * @return A JSONObject with new saved query if request was successful
      * @throws IOException
      */

@@ -16,6 +16,7 @@
 package com.slicingdice.jslicer.utils.validators;
 
 import com.slicingdice.jslicer.exceptions.client.MaxLimitException;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**
@@ -30,22 +31,28 @@ public class QueryCountValidator {
     /**
      * A String list with all operations supported
      */
-    private final JSONObject data;
+    private final Object data;
 
-    public QueryCountValidator(final JSONObject data) {
+    public QueryCountValidator(final Object data) {
         this.data = data;
     }
 
     /**
      * Validate the count query
+     *
      * @return true if count query is valid and false otherwise
      */
     public boolean validator() {
-        int querySize = this.data.length();
+        int querySize;
+        if (data instanceof JSONArray) {
+            querySize = ((JSONArray) this.data).length();
+        } else {
+            querySize = ((JSONObject) this.data).length();
 
-        // bypass-cache property should not be considered as query;
-        if (this.data.has("bypass-cache")) {
-            querySize--;
+            // bypass-cache property should not be considered as query;
+            if (((JSONObject) this.data).has("bypass-cache")) {
+                querySize--;
+            }
         }
 
         if (querySize > 10) {
