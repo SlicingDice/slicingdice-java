@@ -499,8 +499,10 @@ public class Example {
                                                                 .put("2016-04-04T00:00:00Z")
                                                                 .put("2016-04-06T00:00:00Z")))))
                                 .put("bypass-cache", false));
-        System.out.println(result.toString());
-    }
+
+                JSONObject result = slicingDice.countEvent(countEventQuery);
+                System.out.println(result.toString());
+            }
 }
 ```
 

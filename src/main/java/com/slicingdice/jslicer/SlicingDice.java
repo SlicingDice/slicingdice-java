@@ -329,11 +329,28 @@ public class SlicingDice {
      * Make a count query in Slicing Dice
      *
      * @param url   A url to make request
-     * @param query An Object count query
+     * @param query A JSONObject count query
      * @return A JSONObject with count query result
      * @throws IOException
      */
-    private JSONObject countQueryWrapper(final String url, final Object query)
+    private JSONObject countQueryWrapper(final String url, final JSONObject query)
+            throws IOException {
+        final QueryCountValidator queryValidator = new QueryCountValidator(query);
+        if (!queryValidator.validator()) {
+            return null;
+        }
+        return this.makeRequest(url, query, POST, 0);
+    }
+
+    /**
+     * Make a count query in Slicing Dice
+     *
+     * @param url   A url to make request
+     * @param query A JSONArray count query
+     * @return A JSONObject with count query result
+     * @throws IOException
+     */
+    private JSONObject countQueryWrapper(final String url, final JSONArray query)
             throws IOException {
         final QueryCountValidator queryValidator = new QueryCountValidator(query);
         if (!queryValidator.validator()) {
@@ -373,11 +390,23 @@ public class SlicingDice {
     /**
      * Make a count entity query in Slicing Dice API
      *
-     * @param query An Object count entity query
+     * @param query A JSONObject count entity query
      * @return A JSONObject with count entity query result
      * @throws IOException
      */
-    public JSONObject countEntity(final Object query) throws IOException {
+    public JSONObject countEntity(final JSONObject query) throws IOException {
+        final String url = this.wrapperTest() + URLResources.QUERY_COUNT_ENTITY.url;
+        return countQueryWrapper(url, query);
+    }
+
+    /**
+     * Make a count entity query in Slicing Dice API
+     *
+     * @param query A JSONArray count entity query
+     * @return A JSONObject with count entity query result
+     * @throws IOException
+     */
+    public JSONObject countEntity(final JSONArray query) throws IOException {
         final String url = this.wrapperTest() + URLResources.QUERY_COUNT_ENTITY.url;
         return countQueryWrapper(url, query);
     }
@@ -396,11 +425,23 @@ public class SlicingDice {
     /**
      * Make a count event query in Slicing Dice API
      *
-     * @param query An Object count event query
+     * @param query A JSONObject count event query
      * @return A JSONObject with count event query result
      * @throws IOException
      */
-    public JSONObject countEvent(final Object query) throws IOException {
+    public JSONObject countEvent(final JSONObject query) throws IOException {
+        final String url = this.wrapperTest() + URLResources.QUERY_COUNT_EVENT.url;
+        return countQueryWrapper(url, query);
+    }
+
+    /**
+     * Make a count event query in Slicing Dice API
+     *
+     * @param query A JSONArray count event query
+     * @return A JSONObject with count event query result
+     * @throws IOException
+     */
+    public JSONObject countEvent(final JSONArray query) throws IOException {
         final String url = this.wrapperTest() + URLResources.QUERY_COUNT_EVENT.url;
         return countQueryWrapper(url, query);
     }
