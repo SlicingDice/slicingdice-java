@@ -23,8 +23,8 @@ package com.slicingdice.jslicer.utils;
  * @since 2016-08-10
  */
 public enum URLResources {
-    FIELD("/field/"),
-    INDEX("/index/"),
+    COLUMN("/column/"),
+    INSERT("/insert/"),
     QUERY_COUNT_ENTITY("/query/count/entity/"),
     QUERY_COUNT_ENTITY_TOTAL("/query/count/entity/total/"),
     QUERY_COUNT_EVENT("/query/count/event/"),
@@ -34,7 +34,7 @@ public enum URLResources {
     QUERY_SAVED("/query/saved/"),
     QUERY_DATA_EXTRACTION_RESULT("/data_extraction/result/"),
     QUERY_DATA_EXTRACTION_SCORE("/data_extraction/score/"),
-    PROJECT("/project/");
+    DATABASE("/project/");
 
     public final String url;
 

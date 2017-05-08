@@ -48,16 +48,16 @@ public class TopValuesValidator {
     }
 
     /**
-     * Check if the fields in query exceeds limits per request of Slicing Dice API
-     * @return false if not exceeds field limit
+     * Check if the columns in query exceeds limits per request of Slicing Dice API
+     * @return false if not exceeds column limit
      */
-    private boolean exceedsFieldsLimit() throws MaxLimitException {
+    private boolean exceedsColumnsLimit() throws MaxLimitException {
         final Iterator<?> keys = this.data.keys();
         while (keys.hasNext()) {
             final String key = (String) keys.next();
             if (this.data.getJSONObject(key).length() > 6) {
                 throw new MaxLimitException("The query " +
-                        "exceeds the limit of fields per query in request");
+                        "exceeds the limit of columns per query in request");
             }
         }
         return false;
@@ -71,9 +71,9 @@ public class TopValuesValidator {
         final Iterator<?> keys = this.data.keys();
         while (keys.hasNext()) {
             final String key = (String) keys.next();
-            final JSONObject queryField = this.data.getJSONObject(key);
-            if (queryField.has("contains")) {
-                if (queryField.getJSONArray("contains").length() > 5) {
+            final JSONObject queryColumn = this.data.getJSONObject(key);
+            if (queryColumn.has("contains")) {
+                if (queryColumn.getJSONArray("contains").length() > 5) {
                     throw new MaxLimitException("The query " +
                             "exceeds the limit of contains per query in request");
                 }
@@ -87,6 +87,6 @@ public class TopValuesValidator {
      * @return true if top values query is valid and false otherwise
      */
     public boolean validator() {
-        return !exceedsQueriesLimit() && !exceedsFieldsLimit() && !exceedsValuesContainsLimit();
+        return !exceedsQueriesLimit() && !exceedsColumnsLimit() && !exceedsValuesContainsLimit();
     }
 }

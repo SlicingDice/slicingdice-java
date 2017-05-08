@@ -9,7 +9,7 @@ Official Java client for [SlicingDice](http://www.slicingdice.com/), Data Wareho
 
 If you are new to SlicingDice, check our [quickstart guide](http://panel.slicingdice.com/docs/#quickstart-guide) and learn to use it in 15 minutes.
 
-Please refer to the [SlicingDice official documentation](http://panel.slicingdice.com/docs/) for more information on [analytics databases](http://panel.slicingdice.com/docs/#analytics-concepts), [data modeling](http://panel.slicingdice.com/docs/#data-modeling), [indexing](http://panel.slicingdice.com/docs/#data-indexing), [querying](http://panel.slicingdice.com/docs/#data-querying), [limitations](http://panel.slicingdice.com/docs/#current-slicingdice-limitations) and [API details](http://panel.slicingdice.com/docs/#api-details).
+Please refer to the [SlicingDice official documentation](http://panel.slicingdice.com/docs/) for more information on [analytics databases](http://panel.slicingdice.com/docs/#analytics-concepts), [data modeling](http://panel.slicingdice.com/docs/#data-modeling), [data insertion](http://panel.slicingdice.com/docs/#data-insertion), [querying](http://panel.slicingdice.com/docs/#data-querying), [limitations](http://panel.slicingdice.com/docs/#current-slicingdice-limitations) and [API details](http://panel.slicingdice.com/docs/#api-details).
 
 ## Tests and Examples
 
@@ -93,14 +93,14 @@ public class Example {
     {
         SlicingDice client = new SlicingDice("API_KEY", false);
 
-        // Creating a field
-        // Indexing data
-        JSONObject indexData = new JSONObject()
+        // Creating a column
+        // Inserting data
+        JSONObject insertData = new JSONObject()
                 .put("user1@slicingdice.com",
                         new JSONObject()
                                 .put("age", 22))
-                .put("auto-create-fields", true);
-        System.out.println(client.index(indexData));
+                .put("auto-create-columns", true);
+        System.out.println(client.insert(insertData));
 
         // Querying data
         JSONObject queryData = new JSONObject()
@@ -148,8 +148,8 @@ public class Example {
 * `timeout (int)` - Amount of time, in seconds, to wait for results for each request.
 * `usesTestEndPoint (boolean)` - If false the client will send requests to production end-point, otherwise to tests end-point.
 
-### `JSONObject getProjects()`
-Get all created projects, both active and inactive ones. This method corresponds to a [GET request at /project](http://panel.slicingdice.com/docs/#api-details-api-endpoints-get-project).
+### `JSONObject getDatabase()`
+Get information about current database. This method corresponds to a [GET request at /database](http://panel.slicingdice.com/docs/#api-details-api-endpoints-get-database).
 
 #### Request example
 
@@ -162,7 +162,7 @@ public class Example {
 
     public static void main(String[] args) throws IOException {
         SlicingDice slicingDice = new SlicingDice("MASTER_API_KEY", false);
-        JSONObject result = slicingDice.getProjects();
+        JSONObject result = slicingDice.getDatabase();
         System.out.println(result.toString());
     }
 }
@@ -175,16 +175,16 @@ public class Example {
 {
     "active": [
         {
-            "name": "Project 1",
-            "description": "My first project",
+            "name": "Database 1",
+            "description": "My first database",
             "data-expiration": 30,
             "created-at": "2016-04-05T10:20:30Z"
         }
     ],
     "inactive": [
         {
-            "name": "Project 2",
-            "description": "My second project",
+            "name": "Database 2",
+            "description": "My second database",
             "data-expiration": 90,
             "created-at": "2016-04-05T10:20:30Z"
         }
@@ -192,8 +192,8 @@ public class Example {
 }
 ```
 
-### `JSONObject getFields()`
-Get all created fields, both active and inactive ones. This method corresponds to a [GET request at /field](http://panel.slicingdice.com/docs/#api-details-api-endpoints-get-field).
+### `JSONObject getColumns()`
+Get all created columns, both active and inactive ones. This method corresponds to a [GET request at /column](http://panel.slicingdice.com/docs/#api-details-api-endpoints-get-column).
 
 #### Request example
 
@@ -206,7 +206,7 @@ public class Example {
 
     public static void main(String[] args) throws IOException {
         SlicingDice slicingDice = new SlicingDice("MASTER_API_KEY", false);
-        JSONObject result = slicingDice.getFields();
+        JSONObject result = slicingDice.getColumns();
         System.out.println(result.toString());
     }
 }
@@ -240,8 +240,8 @@ public class Example {
 }
 ```
 
-### `JSONObject createField(JSONObject data)`
-Create a new field. This method corresponds to a [POST request at /field](http://panel.slicingdice.com/docs/#api-details-api-endpoints-post-field).
+### `JSONObject createColumn(JSONObject data)`
+Create a new column. This method corresponds to a [POST request at /column](http://panel.slicingdice.com/docs/#api-details-api-endpoints-post-column).
 
 #### Request example
 
@@ -254,13 +254,13 @@ public class Example {
 
     public static void main(String[] args) throws IOException {
         SlicingDice slicingDice = new SlicingDice("MASTER_API_KEY", false);
-        JSONObject field = new JSONObject()
+        JSONObject column = new JSONObject()
                 .put("name", "Year")
                 .put("api-name", "year")
                 .put("type", "integer")
                 .put("description", "Year of manufacturing")
                 .put("storage", "latest-value");
-        JSONObject result = slicingDice.createField(field);
+        JSONObject result = slicingDice.createColumn(column);
         System.out.println(result.toString());
     }
 }
@@ -277,8 +277,8 @@ public class Example {
 }
 ```
 
-### `JSONObject index(JSONObject data)`
-Index data to existing entities or create new entities, if necessary. This method corresponds to a [POST request at /index](http://panel.slicingdice.com/docs/#api-details-api-endpoints-post-index).
+### `JSONObject insert(JSONObject data)`
+Insert data to existing entities or create new entities, if necessary. This method corresponds to a [POST request at /insert](http://panel.slicingdice.com/docs/#api-details-api-endpoints-post-insert).
 
 #### Request example
 
@@ -292,7 +292,7 @@ public class Example {
 
     public static void main(String[] args) throws IOException {
         SlicingDice slicingDice = new SlicingDice("MASTER_OR_WRITE_API_KEY", false);
-        JSONObject indexData = new JSONObject()
+        JSONObject insertData = new JSONObject()
                 .put("user1@slicingdice.com", new JSONObject()
                         .put("car-model", "Ford Ka")
                         .put("year", 2016))
@@ -318,8 +318,8 @@ public class Example {
                         .put("test-drives", new JSONObject()
                                 .put("value", "NY")
                                 .put("date", "2016-08-17T13:23:47+00:00")))
-                .put("auto-create-fields", true);
-        JSONObject result = slicingDice.index(indexData);
+                .put("auto-create-columns", true);
+        JSONObject result = slicingDice.insert(insertData);
         System.out.println(result.toString());
     }
 }
@@ -330,14 +330,14 @@ public class Example {
 ```json
 {
     "status": "success",
-    "indexed-entities": 4,
-    "indexed-fields": 10,
+    "inserted-entities": 4,
+    "inserted-columns": 10,
     "took": 0.023
 }
 ```
 
 ### `JSONObject existsEntity(ids)`
-Verify which entities exist in a project given a list of entity IDs. This method corresponds to a [POST request at /query/exists/entity](http://panel.slicingdice.com/docs/#api-details-api-endpoints-post-query-exists-entity).
+Verify which entities exist in a database given a list of entity IDs. This method corresponds to a [POST request at /query/exists/entity](http://panel.slicingdice.com/docs/#api-details-api-endpoints-post-query-exists-entity).
 
 #### Request example
 
@@ -378,7 +378,7 @@ public class Example {
 ```
 
 ### `JSONObject countEntityTotal()`
-Count the number of indexed entities. This method corresponds to a [GET request at /query/count/entity/total](http://panel.slicingdice.com/docs/#api-details-api-endpoints-get-query-count-entity-total).
+Count the number of inserted entities. This method corresponds to a [GET request at /query/count/entity/total](http://panel.slicingdice.com/docs/#api-details-api-endpoints-get-query-count-entity-total).
 
 #### Request example
 
@@ -584,7 +584,7 @@ public class Example {
 ```
 
 ### `JSONObject aggregation(JSONObject data)`
-Return the aggregation of all fields in the given query. This method corresponds to a [POST request at /query/aggregation](http://panel.slicingdice.com/docs/#api-details-api-endpoints-post-query-aggregation).
+Return the aggregation of all columns in the given query. This method corresponds to a [POST request at /query/aggregation](http://panel.slicingdice.com/docs/#api-details-api-endpoints-post-query-aggregation).
 
 #### Request example
 
@@ -906,7 +906,7 @@ public class Example {
 ```
 
 ### `JSONObject result(JSONObject data)`
-Retrieve indexed values for entities matching the given query. This method corresponds to a [POST request at /data_extraction/result](http://panel.slicingdice.com/docs/#api-details-api-endpoints-post-data-extraction-result).
+Retrieve inserted values for entities matching the given query. This method corresponds to a [POST request at /data_extraction/result](http://panel.slicingdice.com/docs/#api-details-api-endpoints-post-data-extraction-result).
 
 #### Request example
 
@@ -929,7 +929,7 @@ public class Example {
                         .put(new JSONObject()
                                 .put("car-model", new JSONObject()
                                         .put("equals", "honda fit"))))
-                .put("fields", new JSONArray()
+                .put("columns", new JSONArray()
                         .put("car-model")
                         .put("year"))
                 .put("limit", 2);
@@ -961,7 +961,7 @@ public class Example {
 ```
 
 ### `JSONObject score(JSONObject data)`
-Retrieve indexed values as well as their relevance for entities matching the given query. This method corresponds to a [POST request at /data_extraction/score](http://panel.slicingdice.com/docs/#api-details-api-endpoints-post-data-extraction-score).
+Retrieve inserted values as well as their relevance for entities matching the given query. This method corresponds to a [POST request at /data_extraction/score](http://panel.slicingdice.com/docs/#api-details-api-endpoints-post-data-extraction-score).
 
 #### Request example
 
@@ -984,7 +984,7 @@ public class Example {
                         .put(new JSONObject()
                                 .put("car-model", new JSONObject()
                                         .put("equals", "honda fit"))))
-                .put("fields", new JSONArray()
+                .put("columns", new JSONArray()
                         .put("car-model")
                         .put("year"))
                 .put("limit", 2);
