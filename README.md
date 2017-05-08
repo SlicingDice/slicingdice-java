@@ -99,7 +99,9 @@ public class Example {
                 .put("user1@slicingdice.com",
                         new JSONObject()
                                 .put("age", 22))
-                .put("auto-create-columns", true);
+                .put("auto-create", new JSONArray()
+                        .put("table")
+                        .put("column"));
         System.out.println(client.insert(insertData));
 
         // Querying data
@@ -318,7 +320,9 @@ public class Example {
                         .put("test-drives", new JSONObject()
                                 .put("value", "NY")
                                 .put("date", "2016-08-17T13:23:47+00:00")))
-                .put("auto-create-columns", true);
+                .put("auto-create", new JSONArray()
+                        .put("table")
+                        .put("column"));
         JSONObject result = slicingDice.insert(insertData);
         System.out.println(result.toString());
     }
