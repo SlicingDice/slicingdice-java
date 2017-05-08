@@ -175,22 +175,10 @@ public class Example {
 
 ```json
 {
-    "active": [
-        {
-            "name": "Database 1",
-            "description": "My first database",
-            "data-expiration": 30,
-            "created-at": "2016-04-05T10:20:30Z"
-        }
-    ],
-    "inactive": [
-        {
-            "name": "Database 2",
-            "description": "My second database",
-            "data-expiration": 90,
-            "created-at": "2016-04-05T10:20:30Z"
-        }
-    ]
+    "name": "Database 1",
+    "description": "My first database",
+    "data-expiration": 30,
+    "created-at": "2016-04-05T10:20:30Z"
 }
 ```
 
