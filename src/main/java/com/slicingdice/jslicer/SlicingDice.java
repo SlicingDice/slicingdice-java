@@ -361,9 +361,9 @@ public class SlicingDice {
     }
 
     /**
-     * Get all getDatabase in your account.
+     * Get information about current database.
      *
-     * @return All getDatabase(active and inactive).
+     * @return A JSONObject containing properties of the current database.
      * @throws IOException
      */
     public JSONObject getDatabase() throws IOException {

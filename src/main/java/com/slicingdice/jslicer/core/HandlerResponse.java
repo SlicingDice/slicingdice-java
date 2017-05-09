@@ -105,7 +105,7 @@ public class HandlerResponse {
             case 27:
                 throw new RequestIncorrectHttpException(message);
             case 28:
-                throw new RequestExceedLimitException(message);
+                throw new RequestExceededLimitException(message);
             // Account Errors (30 - 39)
             case 30:
                 throw new AccountMissingPaymentMethodException(message);
@@ -143,7 +143,7 @@ public class HandlerResponse {
             case 51:
                 throw new ColumnInvalidDescriptionException(message);
             case 52:
-                throw new ColumnExceedDescriptionlengthException(message);
+                throw new ColumnExceededDescriptionlengthException(message);
             case 53:
                 throw new ColumnInvalidCardinalityException(message);
             case 54:
