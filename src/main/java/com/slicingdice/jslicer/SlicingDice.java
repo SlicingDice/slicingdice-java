@@ -407,6 +407,18 @@ public class SlicingDice {
     }
 
     /**
+     * Make a total query in Slicing Dice API
+     *
+     * @param tables A JSONObject containing the tables in which the total query will be performed
+     * @return A JSONObject with total query result
+     * @throws IOException
+     */
+    public JSONObject countEntityTotal(final JSONObject tables) throws IOException {
+        final String url = this.wrapperTest() + URLResources.QUERY_COUNT_ENTITY_TOTAL.url;
+        return this.makeRequest(url, tables, POST, 0);
+    }
+
+    /**
      * Make a count event query in Slicing Dice API
      *
      * @param query A JSONObject count event query
