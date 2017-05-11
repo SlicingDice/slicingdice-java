@@ -26,7 +26,7 @@ import com.slicingdice.jslicer.exceptions.client.MaxLimitException;
 import com.slicingdice.jslicer.exceptions.client.SlicingDiceKeyException;
 import com.slicingdice.jslicer.utils.URLResources;
 import com.slicingdice.jslicer.core.Requester;
-import com.slicingdice.jslicer.utils.validators.FieldValidator;
+import com.slicingdice.jslicer.utils.validators.ColumnValidator;
 import com.slicingdice.jslicer.utils.validators.QueryCountValidator;
 import com.slicingdice.jslicer.utils.validators.QueryDataExtractionValidator;
 import com.slicingdice.jslicer.utils.validators.TopValuesValidator;
@@ -114,16 +114,16 @@ public class SlicingDice {
         final String key;
         final int keyLevel;
 
-        if (this.masterKey != null){
+        if (this.masterKey != null) {
             key = this.masterKey;
             keyLevel = 2;
-        } else if (this.customKey != null){
+        } else if (this.customKey != null) {
             key = this.customKey;
             keyLevel = 2;
         } else if (this.writeKey != null) {
             key = this.writeKey;
             keyLevel = 1;
-        } else if (this.readKey != null){
+        } else if (this.readKey != null) {
             key = this.readKey;
             keyLevel = 0;
         } else {
@@ -139,24 +139,24 @@ public class SlicingDice {
 
     private String getKey(final int levelKey) throws SlicingDiceKeyException {
         final List<Object> currentLevelKey = this.getCurrentKey();
-        if ((Integer)currentLevelKey.get(1) == 2){
-            return (String)currentLevelKey.get(0);
+        if ((Integer) currentLevelKey.get(1) == 2) {
+            return (String) currentLevelKey.get(0);
         }
-        if ((Integer)currentLevelKey.get(1) != levelKey){
+        if ((Integer) currentLevelKey.get(1) != levelKey) {
             throw new SlicingDiceKeyException("This key is not allowed to perform this operation.");
         }
-        return (String)currentLevelKey.get(0);
+        return (String) currentLevelKey.get(0);
     }
 
     /**
      * Effectively makes the request
      *
      * @param url  A url String to make request
-     * @param data A JSONObject to send in request
+     * @param data An Object to send in request
      * @return A JSONObject with json request result
      * @throws IOException
      */
-    private JSONObject makeRequest(final String url, final JSONObject data, final String reqType,
+    private JSONObject makeRequest(final String url, final Object data, final String reqType,
                                    final int keyLevel) throws IOException {
         final String apiKey = this.getKey(keyLevel);
         Response resp = null;
@@ -237,17 +237,17 @@ public class SlicingDice {
     }
 
     /**
-     * Create field in Slicing Dice
+     * Create column in Slicing Dice
      *
-     * @param data A JSONObject in the Slicing Dice field format
-     * @return A JSONObject with json request result if your field is valid
+     * @param data A JSONObject in the Slicing Dice column format
+     * @return A JSONObject with json request result if your column is valid
      * @throws IOException
      */
-    private JSONObject wrapperCreateField(final JSONObject data, final String url)
+    private JSONObject wrapperCreateColumn(final JSONObject data, final String url)
             throws IOException {
-        final FieldValidator fieldValidator = new FieldValidator(data);
+        final ColumnValidator columnValidator = new ColumnValidator(data);
 
-        if (fieldValidator.validator()) {
+        if (columnValidator.validator()) {
             return this.makeRequest(url, data, POST, 2);
         }
 
@@ -255,30 +255,30 @@ public class SlicingDice {
     }
 
     /**
-     * Create field in Slicing Dice
+     * Create column in Slicing Dice
      *
-     * @param data A JSONObject in the Slicing Dice field format
-     * @return A JSONObject with json request result if your field is valid
+     * @param data A JSONObject in the Slicing Dice column format
+     * @return A JSONObject with json request result if your column is valid
      * @throws IOException
      */
-    public JSONObject createField(final JSONObject data) throws IOException {
-        final String url = this.wrapperTest() + URLResources.FIELD.url;
-        return this.wrapperCreateField(data, url);
+    public JSONObject createColumn(final JSONObject data) throws IOException {
+        final String url = this.wrapperTest() + URLResources.COLUMN.url;
+        return this.wrapperCreateColumn(data, url);
     }
 
     /**
-     * Create field in Slicing Dice
+     * Create column in Slicing Dice
      *
-     * @param dataArray A JSONArray with many JSONObjects in the Slicing Dice field format
-     * @return A JSONObject with json request result if your field is valid
+     * @param dataArray A JSONArray with many JSONObjects in the Slicing Dice column format
+     * @return A JSONObject with json request result if your column is valid
      * @throws IOException
      */
-    public JSONObject createField(final JSONArray dataArray) throws IOException {
-        final String url = this.wrapperTest() + URLResources.FIELD.url;
+    public JSONObject createColumn(final JSONArray dataArray) throws IOException {
+        final String url = this.wrapperTest() + URLResources.COLUMN.url;
         final JSONObject result = new JSONObject();
         for (int i = 0; i < dataArray.length(); i++) {
             final JSONObject data = dataArray.getJSONObject(i);
-            final JSONObject partialResult = this.wrapperCreateField(data, url);
+            final JSONObject partialResult = this.wrapperCreateColumn(data, url);
             result.put(String.valueOf(i), partialResult);
         }
 
@@ -286,42 +286,26 @@ public class SlicingDice {
     }
 
     /**
-     * Get all fields.
+     * Get all columns.
      *
-     * @return All fields(active and inactive).
+     * @return All columns(active and inactive).
      * @throws IOException
      */
-    public JSONObject getFields() throws IOException {
-        final String url = this.wrapperTest() + URLResources.FIELD.url;
+    public JSONObject getColumns() throws IOException {
+        final String url = this.wrapperTest() + URLResources.COLUMN.url;
         return this.makeRequest(url, 2);
     }
 
     /**
-     * Index data to existing entities or create new entities, if necessary. This method corresponds
-     * to a POST request at /index.
+     * Insert data to existing entities or create new entities, if necessary. This method corresponds
+     * to a POST request at /insert.
      *
-     * @param data A JSON object in the SlicingDice index format
-     * @return A JSONObject with json request result if your indexation is valid
+     * @param data A JSON object in the SlicingDice insert format
+     * @return A JSONObject with json request result if your insertion was valid
      * @throws IOException
      */
-    public JSONObject index(final JSONObject data) throws IOException {
-        final String url = this.wrapperTest() + URLResources.INDEX.url;
-        return this.makeRequest(url, data, POST, 1);
-    }
-
-    /**
-     * Index data to existing entities or create new entities, if necessary. This method corresponds
-     * to a POST request at /index.
-     *
-     * @param data A JSON object in the SlicingDice index format
-     * @param autoCreateFields if true the indexation will automatically create non-existent fields
-     * @return A JSONObject with json request result if your indexation is valid
-     * @throws IOException
-     */
-    public JSONObject index(final JSONObject data, final boolean autoCreateFields)
-            throws IOException {
-        data.put("auto-create-fields", autoCreateFields);
-        final String url = this.wrapperTest() + URLResources.INDEX.url;
+    public JSONObject insert(final JSONObject data) throws IOException {
+        final String url = this.wrapperTest() + URLResources.INSERT.url;
         return this.makeRequest(url, data, POST, 1);
     }
 
@@ -334,6 +318,23 @@ public class SlicingDice {
      * @throws IOException
      */
     private JSONObject countQueryWrapper(final String url, final JSONObject query)
+            throws IOException {
+        final QueryCountValidator queryValidator = new QueryCountValidator(query);
+        if (!queryValidator.validator()) {
+            return null;
+        }
+        return this.makeRequest(url, query, POST, 0);
+    }
+
+    /**
+     * Make a count query in Slicing Dice
+     *
+     * @param url   A url to make request
+     * @param query A JSONArray count query
+     * @return A JSONObject with count query result
+     * @throws IOException
+     */
+    private JSONObject countQueryWrapper(final String url, final JSONArray query)
             throws IOException {
         final QueryCountValidator queryValidator = new QueryCountValidator(query);
         if (!queryValidator.validator()) {
@@ -360,13 +361,13 @@ public class SlicingDice {
     }
 
     /**
-     * Get all getProjects in your account.
+     * Get information about current database.
      *
-     * @return All getProjects(active and inactive).
+     * @return A JSONObject containing properties of the current database.
      * @throws IOException
      */
-    public JSONObject getProjects() throws IOException {
-        final String url = this.wrapperTest() + URLResources.PROJECT.url;
+    public JSONObject getDatabase() throws IOException {
+        final String url = this.wrapperTest() + URLResources.DATABASE.url;
         return this.makeRequest(url, 2);
     }
 
@@ -378,6 +379,18 @@ public class SlicingDice {
      * @throws IOException
      */
     public JSONObject countEntity(final JSONObject query) throws IOException {
+        final String url = this.wrapperTest() + URLResources.QUERY_COUNT_ENTITY.url;
+        return countQueryWrapper(url, query);
+    }
+
+    /**
+     * Make a count entity query in Slicing Dice API
+     *
+     * @param query A JSONArray count entity query
+     * @return A JSONObject with count entity query result
+     * @throws IOException
+     */
+    public JSONObject countEntity(final JSONArray query) throws IOException {
         final String url = this.wrapperTest() + URLResources.QUERY_COUNT_ENTITY.url;
         return countQueryWrapper(url, query);
     }
@@ -406,6 +419,18 @@ public class SlicingDice {
     }
 
     /**
+     * Make a count event query in Slicing Dice API
+     *
+     * @param query A JSONArray count event query
+     * @return A JSONObject with count event query result
+     * @throws IOException
+     */
+    public JSONObject countEvent(final JSONArray query) throws IOException {
+        final String url = this.wrapperTest() + URLResources.QUERY_COUNT_EVENT.url;
+        return countQueryWrapper(url, query);
+    }
+
+    /**
      * Make a aggregation query in Slicing Dice API
      *
      * @param query A JSONObject aggregation query
@@ -418,7 +443,7 @@ public class SlicingDice {
             throw new InvalidQueryException("The aggregation query must have up the key 'query'.");
         }
         if (query.length() > 5) {
-            throw new MaxLimitException("The aggregation query must have up to 5 fields per request.");
+            throw new MaxLimitException("The aggregation query must have up to 5 columns per request.");
         }
         return makeRequest(url, query, POST, 0);
     }
@@ -562,7 +587,7 @@ public class SlicingDice {
      * Update a saved query in Slicing Dice API
      *
      * @param queryName the name of the saved query that you want to retrieve
-     * @param query A JSONObject saved query
+     * @param query     A JSONObject saved query
      * @return A JSONObject with new saved query if request was successful
      * @throws IOException
      */

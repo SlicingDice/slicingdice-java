@@ -47,10 +47,10 @@ public class QueryDataExtractionValidator {
                 if (!(this.data.get(key) instanceof Integer)) {
                     throw new InvalidQueryException("The key 'limit' in query has a invalid value.");
                 }
-            } else if (key.equals("fields")) {
-                if (this.data.getJSONArray("fields").length() > 10) {
-                    throw new MaxLimitException("The key 'fields' in data extraction result must" +
-                            " have up to 10 fields.");
+            } else if (key.equals("columns")) {
+                if (this.data.getJSONArray("columns").length() > 10) {
+                    throw new MaxLimitException("The key 'columns' in data extraction result must" +
+                            " have up to 10 columns.");
                 }
             }
         }

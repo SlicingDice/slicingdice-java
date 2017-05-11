@@ -18,8 +18,8 @@ public class SlicingDiceTester {
 
     private boolean verbose = false;
 
-    // Translation table for fields with timestamp
-    private JSONObject fieldTranslation;
+    // Translation table for columns with timestamp
+    private JSONObject columnTranslation;
 
     // Sleep time in seconds
     private long sleepTime;
@@ -66,7 +66,7 @@ public class SlicingDiceTester {
 
         for(int i = 0; i < numberOfTests; i++) {
             final JSONObject testObject = (JSONObject) testData.get(i);
-            this.emptyFieldTranslation();
+            this.emptyColumnTranslation();
 
             System.out.println(String.format("(%1$d/%2$d) Executing test \"%3$s\"", i + 1,
                     numberOfTests, testObject.getString("name")));
@@ -79,8 +79,8 @@ public class SlicingDiceTester {
             System.out.println(String.format("\tQuery type: %s", queryType));
             JSONObject result = null;
             try{
-                this.createFields(testObject);
-                this.indexData(testObject);
+                this.createColumns(testObject);
+                this.insertData(testObject);
                 result = this.executeQuery(queryType, testObject);
             } catch(Exception e){
                 result =  new JSONObject()
@@ -96,8 +96,8 @@ public class SlicingDiceTester {
         }
     }
 
-    private void emptyFieldTranslation(){
-        this.fieldTranslation = new JSONObject();
+    private void emptyColumnTranslation(){
+        this.columnTranslation = new JSONObject();
     }
 
     /**
@@ -119,50 +119,50 @@ public class SlicingDiceTester {
     }
 
     /**
-     * Create fields on SlicingDice API
-     * @param fieldObject the field object to create
+     * Create columns on SlicingDice API
+     * @param columnObject the column object to create
      */
-    private void createFields(final JSONObject fieldObject){
-        final JSONArray fields = fieldObject.getJSONArray("fields");
-        final boolean isSingular = fields.length() == 1;
-        String fieldOrFields = null;
+    private void createColumns(final JSONObject columnObject){
+        final JSONArray columns = columnObject.getJSONArray("columns");
+        final boolean isSingular = columns.length() == 1;
+        String columnOrColumns = null;
 
         if(isSingular){
-            fieldOrFields = "field";
+            columnOrColumns = "column";
         } else {
-            fieldOrFields = "fields";
+            columnOrColumns = "columns";
         }
 
-        System.out.println(String.format("\tCreating %1$d %2$s", fields.length(), fieldOrFields));
+        System.out.println(String.format("\tCreating %1$d %2$s", columns.length(), columnOrColumns));
 
-        for(final Object field : fields){
-            final JSONObject fieldDict = (JSONObject) field;
-            this.addTimestampToFieldName(fieldDict);
-            // call client command to create fields
+        for(final Object column : columns){
+            final JSONObject columnDict = (JSONObject) column;
+            this.addTimestampToColumnName(columnDict);
+            // call client command to create columns
             try {
-                this.client.createField(fieldDict);
+                this.client.createColumn(columnDict);
             } catch (IOException e) {
                 e.printStackTrace();
             }
             if(this.verbose){
-                System.out.println(String.format("\t\t- %s", fieldDict.getString("api-name")));
+                System.out.println(String.format("\t\t- %s", columnDict.getString("api-name")));
             }
         }
     }
 
     /**
-     * Add timestamp to field name
-     * @param field the field to put timestamp
+     * Add timestamp to column name
+     * @param column the column to put timestamp
      */
-    private void addTimestampToFieldName(final JSONObject field){
-        final String oldName = String.format("\"%s\"", field.getString("api-name"));
+    private void addTimestampToColumnName(final JSONObject column){
+        final String oldName = String.format("\"%s\"", column.getString("api-name"));
 
         final String timestamp = this.getTimestamp();
-        field.put("name", field.get("name") + timestamp);
-        field.put("api-name", field.get("api-name") + timestamp);
+        column.put("name", column.get("name") + timestamp);
+        column.put("api-name", column.get("api-name") + timestamp);
 
-        final String newName = String.format("\"%s\"", field.getString("api-name"));
-        this.fieldTranslation.put(oldName, newName);
+        final String newName = String.format("\"%s\"", column.getString("api-name"));
+        this.columnTranslation.put(oldName, newName);
     }
 
     /**
@@ -175,32 +175,32 @@ public class SlicingDiceTester {
     }
 
     /**
-     * Index data to SlicingDice API
-     * @param indexObject the index object to index on SlicingDice
+     * Insert data to SlicingDice API
+     * @param insertionObject the data to insert on SlicingDice
      */
-    private void indexData(JSONObject indexObject){
-        final JSONObject index = indexObject.getJSONObject("index");
-        final boolean isSingular = index.length() == 1;
-        String entityOrEntities = null;
+    private void insertData(final JSONObject insertionObject){
+        final JSONObject insert = insertionObject.getJSONObject("insert");
+        final boolean isSingular = insert.length() == 1;
+        final String entityOrEntities;
         if(isSingular){
             entityOrEntities = "entity";
         } else {
             entityOrEntities = "entities";
         }
-        System.out.println(String.format("\tIndexing %1$d %2$s", index.length(), entityOrEntities));
+        System.out.println(String.format("\tInserting %1$d %2$s", insert.length(), entityOrEntities));
 
-        final JSONObject indexData = this.translateFieldNames(index);
+        final JSONObject insertData = this.translateColumnNames(insert);
 
-        // call client command to index data
+        // call client command to insert data
         try {
-            this.client.index(indexData, true);
+            this.client.insert(insertData);
         } catch (IOException e) {
             e.printStackTrace();
             System.out.println("An error occurred while processing your query on SlicingDice");
         }
 
         try {
-            // Wait a few seconds so the data can be indexed by SlicingDice
+            // Wait a few seconds so the data can be inserted by SlicingDice
             TimeUnit.SECONDS.sleep(this.sleepTime);
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -209,16 +209,16 @@ public class SlicingDiceTester {
     }
 
     /**
-     * Translate field name to use timestamp
-     * @param field the field to translate
-     * @return the new field translated
+     * Translate column name to use timestamp
+     * @param column the column to translate
+     * @return the new column translated
      */
-    private JSONObject translateFieldNames(final JSONObject field) {
-        String dataString = field.toString();
+    private JSONObject translateColumnNames(final JSONObject column) {
+        String dataString = column.toString();
 
-        for (final Object oldName : this.fieldTranslation.keySet()) {
+        for (final Object oldName : this.columnTranslation.keySet()) {
             final String oldNameStr = (String)oldName;
-            final String newName = this.fieldTranslation.getString(oldNameStr);
+            final String newName = this.columnTranslation.getString(oldNameStr);
 
             dataString = dataString.replaceAll(oldNameStr, newName);
         }
@@ -234,7 +234,7 @@ public class SlicingDiceTester {
      */
     private JSONObject executeQuery(final String queryType, final JSONObject query)
             throws IOException {
-        final JSONObject queryData = this.translateFieldNames(query.getJSONObject("query"));
+        final JSONObject queryData = this.translateColumnNames(query.getJSONObject("query"));
 
         System.out.println("\tQuerying");
 
@@ -271,7 +271,7 @@ public class SlicingDiceTester {
                                final JSONObject result) throws IOException {
         final JSONObject testExpected = expectedObject.getJSONObject("expected");
         final JSONObject expected =
-                this.translateFieldNames(expectedObject.getJSONObject("expected"));
+                this.translateColumnNames(expectedObject.getJSONObject("expected"));
 
         for (final Object key : testExpected.keySet()) {
             final String keyStr = (String)key;
