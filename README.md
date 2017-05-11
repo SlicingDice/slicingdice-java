@@ -370,7 +370,7 @@ public class Example {
 ```
 
 ### `JSONObject countEntityTotal()`
-Count the number of inserted entities. This method corresponds to a [GET request at /query/count/entity/total](http://panel.slicingdice.com/docs/#api-details-api-endpoints-get-query-count-entity-total).
+Count the number of inserted entities. This method corresponds to a [POST request at /query/count/entity/total](http://panel.slicingdice.com/docs/#api-details-api-endpoints-get-query-count-entity-total).
 
 #### Request example
 
@@ -383,7 +383,10 @@ public class Example {
 
     public static void main(String[] args) throws IOException {
         SlicingDice slicingDice = new SlicingDice("MASTER_OR_READ_API_KEY", false);
-        JSONObject result = slicingDice.countEntityTotal();
+        JSONObject tables = new JSONObject()
+                            .put("tables", new JSONArray()
+                            .put("default"));
+        result = slicingDice.countEntityTotal(tables);
         System.out.println(result.toString());
     }
 }
