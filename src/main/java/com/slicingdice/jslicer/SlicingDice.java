@@ -404,7 +404,7 @@ public class SlicingDice {
      */
     public JSONObject countEntityTotal() throws IOException {
         final String url = this.wrapperTest() + URLResources.QUERY_COUNT_ENTITY_TOTAL.url;
-        return this.makeRequest(url, 0);
+        return this.makeRequest(url, new JSONObject(), POST, 0);
     }
 
     /**
