@@ -383,10 +383,42 @@ public class Example {
 
     public static void main(String[] args) throws IOException {
         SlicingDice slicingDice = new SlicingDice("MASTER_OR_READ_API_KEY", false);
-        JSONObject tables = new JSONObject()
-                            .put("tables", new JSONArray()
-                            .put("default"));
-        result = slicingDice.countEntityTotal(tables);
+        JSONObject result = slicingDice.countEntityTotal();
+        System.out.println(result.toString());
+    }
+}
+```
+
+#### Output example
+
+```json
+{
+    "status": "success",
+    "result": {
+        "total": 42
+    },
+    "took": 0.103
+}
+```
+
+### `JSONObject countEntityTotal(Collection<String> tables)`
+Count the total number of inserted entities in the given tables. This method corresponds to a [POST request at /query/count/entity/total](http://panel.slicingdice.com/docs/#api-details-api-endpoints-get-query-count-entity-total).
+
+#### Request example
+
+```java
+import com.slicingdice.jslicer.SlicingDice;
+import java.io.IOException;
+import java.util.ArrayList;
+import org.json.JSONObject;
+
+public class Example {
+
+    public static void main(String[] args) throws IOException {
+        SlicingDice slicingDice = new SlicingDice("MASTER_OR_READ_API_KEY", false);
+        ArrayList<String> tables = new ArrayList<>();
+        tables.add("default");
+        JSONObject result = slicingDice.countEntityTotal(tables);
         System.out.println(result.toString());
     }
 }
