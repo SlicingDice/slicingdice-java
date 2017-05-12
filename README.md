@@ -436,7 +436,7 @@ public class Example {
 }
 ```
 
-### `JSONObject countEntity(JSONObject data)`
+### `JSONObject countEntity(JSONArray data)`
 Count the number of entities matching the given query. This method corresponds to a [POST request at /query/count/entity](http://panel.slicingdice.com/docs/#api-details-api-endpoints-post-query-count-entity).
 
 #### Request example
@@ -471,7 +471,7 @@ public class Example {
                                                 .put("car-model", new JSONObject()
                                                         .put("equals", "ford ka"))))
                                 .put("bypass-cache", false));
-                JSONObject result = slicingDice.countEntity(countEntityQuery);
+        JSONObject result = slicingDice.countEntity(countEntityQuery);
         System.out.println(result.toString());
     }
 }
@@ -490,7 +490,52 @@ public class Example {
 }
 ```
 
-### `JSONObject countEvent(JSONObject data)`
+### `JSONObject countEntity(JSONObject data)`
+Count the number of entities matching the given query. This method corresponds to a [POST request at /query/count/entity](http://panel.slicingdice.com/docs/#api-details-api-endpoints-post-query-count-entity).
+
+#### Request example
+
+```java
+import org.json.JSONArray;
+import org.json.JSONObject;
+import com.slicingdice.jslicer;
+
+import java.io.IOException;
+
+public class Example {
+
+    public static void main(String[] args) throws IOException {
+        SlicingDice slicingDice = new SlicingDice("MASTER_OR_READ_API_KEY", false);
+        JSONObject countEntityQuery = new JSONObject()
+                        .put("query-name", "corolla-or-fit")
+                        .put("query", new JSONArray()
+                                .put(new JSONObject()
+                                        .put("car-model", new JSONObject()
+                                                .put("equals", "toyota corolla")))
+                                .put("or")
+                                .put(new JSONObject()
+                                        .put("car-model", new JSONObject()
+                                                .put("equals", "honda fit"))))
+                        .put("bypass-cache", false);
+        JSONObject result = slicingDice.countEntity(countEntityQuery);
+        System.out.println(result.toString());
+    }
+}
+```
+
+#### Output example
+
+```json
+{
+   "result":{
+      "corolla-or-fit":2
+   },
+   "took":0.018,
+   "status":"success"
+}
+```
+
+### `JSONObject countEvent(JSONArray data)`
 Count the number of occurrences for time-series events matching the given query. This method corresponds to a [POST request at /query/count/event](http://panel.slicingdice.com/docs/#api-details-api-endpoints-post-query-count-event).
 
 #### Request example
@@ -527,9 +572,9 @@ public class Example {
                                                                 .put("2016-04-06T00:00:00Z")))))
                                 .put("bypass-cache", false));
 
-                JSONObject result = slicingDice.countEvent(countEventQuery);
-                System.out.println(result.toString());
-            }
+        JSONObject result = slicingDice.countEvent(countEventQuery);
+        System.out.println(result.toString());
+    }
 }
 ```
 
@@ -540,6 +585,50 @@ public class Example {
    "result":{
       "test-drives-in-ny":3,
       "test-drives-in-ca":0
+   },
+   "took":0.063,
+   "status":"success"
+}
+```
+
+### `JSONObject countEvent(JSONObject data)`
+Count the number of occurrences for time-series events matching the given query. This method corresponds to a [POST request at /query/count/event](http://panel.slicingdice.com/docs/#api-details-api-endpoints-post-query-count-event).
+
+#### Request example
+
+```java
+import com.slicingdice.jslicer.SlicingDice;
+import java.io.IOException;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+public class Example {
+
+    public static void main(String[] args) throws IOException {
+        SlicingDice slicingDice = new SlicingDice("MASTER_OR_READ_API_KEY", false);
+        JSONObject countEventQuery = new JSONObject()
+                        .put("query-name", "test-drives-in-ny")
+                        .put("query", new JSONArray()
+                                .put(new JSONObject()
+                                        .put("test-drives", new JSONObject()
+                                                .put("equals", "NY")
+                                                .put("between", new JSONArray()
+                                                        .put("2016-08-16T00:00:00Z")
+                                                        .put("2016-08-18T00:00:00Z")))))
+                        .put("bypass-cache", false);
+        
+        JSONObject result = slicingDice.countEvent(countEventQuery);
+        System.out.println(result.toString());
+    }
+}
+```
+
+#### Output example
+
+```json
+{
+   "result":{
+      "test-drives-in-ny":3
    },
    "took":0.063,
    "status":"success"
