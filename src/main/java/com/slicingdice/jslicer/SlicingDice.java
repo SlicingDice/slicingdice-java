@@ -18,6 +18,7 @@ package com.slicingdice.jslicer;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import com.slicingdice.jslicer.exceptions.api.SDHttpError;
@@ -403,7 +404,22 @@ public class SlicingDice {
      */
     public JSONObject countEntityTotal() throws IOException {
         final String url = this.wrapperTest() + URLResources.QUERY_COUNT_ENTITY_TOTAL.url;
-        return this.makeRequest(url, 0);
+        return this.makeRequest(url, new JSONObject(), POST, 0);
+    }
+
+    /**
+     * Make a total query in Slicing Dice API
+     *
+     * @param tables A Collection containing the tables in which the total query will be performed
+     * @return A JSONObject with total query result
+     * @throws IOException
+     */
+    public JSONObject countEntityTotal(final Collection<String> tables) throws IOException {
+        JSONObject query = new JSONObject();
+        query.put("tables", tables);
+
+        final String url = this.wrapperTest() + URLResources.QUERY_COUNT_ENTITY_TOTAL.url;
+        return this.makeRequest(url, query, POST, 0);
     }
 
     /**
