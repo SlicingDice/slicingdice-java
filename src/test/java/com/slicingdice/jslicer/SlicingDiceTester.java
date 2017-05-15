@@ -291,7 +291,7 @@ public class SlicingDiceTester {
 
                 testFailed = true;
             } else {
-                if(!this.compareJson(expected.getJSONObject(keyStr),
+                if(!this.compareJsonValue(expected.getJSONObject(keyStr),
                         result.getJSONObject(keyStr))) {
                     // try second time
                     if (testSecondTime(expectedObject, queryType, expected, keyStr)) {
@@ -337,7 +337,7 @@ public class SlicingDiceTester {
         }
         final JSONObject secondResult = this.executeQuery(queryType, expectedObject);
 
-        if (this.compareJson(expected.getJSONObject(key),secondResult.getJSONObject(key))) {
+        if (this.compareJsonValue(expected.getJSONObject(key),secondResult.getJSONObject(key))) {
             System.out.println("\tPassed at second try!");
             this.numberOfSuccesses += 1;
             System.out.println("\tStatus: Passed\n");
