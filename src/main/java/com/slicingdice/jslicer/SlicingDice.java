@@ -507,29 +507,38 @@ public class SlicingDice {
     /**
      * Make a exists entity query in Slicing Dice API
      *
-     * @param ids A JSONArray exists entity query
+     * @param ids    A JSONArray exists entity query
+     * @param table  In which table entities check be checked
      * @return A JSONObject with exists entity query result
      * @throws IOException
      */
-    private JSONObject wrapperExistsEntity(final JSONArray ids, final String url)
+    private JSONObject wrapperExistsEntity(final JSONArray ids, final String table, final String url)
             throws IOException, MaxLimitException {
         if (ids.length() > 100) {
             throw new MaxLimitException("The query exists entity must have up to 100 ids.");
         }
         final JSONObject query = new JSONObject().put("ids", ids);
+        if (table != null) {
+            query.put("table", table);
+        }
         return this.makeRequest(url, query, POST, 0);
     }
 
     /**
      * Make a exists entity query in Slicing Dice API
      *
-     * @param ids A JSONArray exists entity query
+     * @param ids    A JSONArray exists entity query
+     * @param table  In which table entities check be checked
      * @return A JSONObject with exists entity query result
      * @throws IOException
      */
-    public JSONObject existsEntity(final JSONArray ids) throws IOException {
+    public JSONObject existsEntity(final JSONArray ids, final String table) throws IOException {
         final String url = this.wrapperTest() + URLResources.QUERY_EXISTS_ENTITY.url;
-        return this.wrapperExistsEntity(ids, url);
+        return this.wrapperExistsEntity(ids, table, url);
+    }
+
+    public JSONObject existsEntity(final JSONArray ids) throws IOException {
+        return this.existsEntity(ids, null);
     }
 
     /**
