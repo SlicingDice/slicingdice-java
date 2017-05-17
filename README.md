@@ -1,4 +1,4 @@
-# SlicingDice Official Java Client (v1.0)
+# SlicingDice Official Java Client (v2.0.0)
 ### Build Status: [![CircleCI](https://circleci.com/gh/SlicingDice/slicingdice-java.svg?style=svg)](https://circleci.com/gh/SlicingDice/slicingdice-java)
 
 Official Java client for [SlicingDice](http://www.slicingdice.com/), Data Warehouse and Analytics Database as a Service.  
@@ -69,7 +69,7 @@ from which to download the package and the second one sets the package itself.
 <dependency>
     <groupId>com.slicingdice</groupId>
     <artifactId>jslicer</artifactId>
-    <version>1.0.0</version>
+    <version>2.0.0</version>
 </dependency>
 ```
 
