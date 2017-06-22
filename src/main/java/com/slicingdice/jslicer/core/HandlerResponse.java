@@ -25,7 +25,6 @@ import com.slicingdice.jslicer.exceptions.api.InternalException;
 import okhttp3.Headers;
 import org.json.JSONObject;
 import org.json.JSONException;
-import org.omg.CORBA.PRIVATE_MEMBER;
 
 import java.util.logging.Logger;
 
