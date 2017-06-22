@@ -25,6 +25,9 @@ import com.slicingdice.jslicer.exceptions.api.InternalException;
 import okhttp3.Headers;
 import org.json.JSONObject;
 import org.json.JSONException;
+import org.omg.CORBA.PRIVATE_MEMBER;
+
+import java.util.logging.Logger;
 
 /**
  * Find for Slicing Dice internal API errors in JSON result
@@ -34,6 +37,8 @@ import org.json.JSONException;
  * @since 2016-08-10
  */
 public class HandlerResponse {
+
+    private static final Logger logger = Logger.getLogger(HandlerResponse.class.getCanonicalName());
 
     private final String result;
     private final Headers headers;
@@ -92,7 +97,8 @@ public class HandlerResponse {
         try {
             data = new JSONObject(this.result);
         } catch (final JSONException exception) {
-            throw new InternalException("SlicingDice: Internal error.");
+            logger.severe(String.format("Couldn't parse JSON '%s'", this.result));
+            throw new InternalException("SlicingDice: Error while parsing JSON.", exception);
         }
 
         if (data.has("errors")) {
