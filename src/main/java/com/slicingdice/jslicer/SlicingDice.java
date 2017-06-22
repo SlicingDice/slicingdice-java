@@ -187,7 +187,7 @@ public class SlicingDice {
 
             if (responseData.requestSuccessful()) {
                 if (this.checkRequest(resp)) {
-                    populateResult(responseData);
+                    this.populateResult(responseData);
                     return new JSONObject(responseData.getResult());
                 }
             }

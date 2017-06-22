@@ -13,6 +13,10 @@ public class SlicingDiceException extends RuntimeException {
         super(message);
     }
 
+    public SlicingDiceException(final String message, final Throwable cause) {
+        super(message, cause);
+    }
+
     public SlicingDiceException(final JSONObject data) {
         super(data.getString("message"));
 
@@ -29,10 +33,17 @@ public class SlicingDiceException extends RuntimeException {
 
     @Override
     public String toString() {
-        return "SlicingDiceException{" +
-                "code=" + this.code +
-                ", message='" + this.message + '\'' +
-                ", moreInfo=" + this.moreInfo +
-                '}';
+        final Throwable cause = this.getCause();
+        if (cause == null) {
+            return "SlicingDiceException{" +
+                    "code=" + this.code +
+                    ", message='" + this.message + '\'' +
+                    ", moreInfo=" + this.moreInfo +
+                    '}';
+        } else {
+            return "SlicingDiceException{" +
+                    "cause=" + cause +
+                    '}';
+        }
     }
 }
