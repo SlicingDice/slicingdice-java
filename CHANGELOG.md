@@ -1,5 +1,9 @@
 # Change Log
 
+## [2.0.1]
+### Updated
+- Improve exception throwing in case of JSON parsing error.
+
 ## [2.0.0]
 ### Updated
 - Update `existsEntity` to receive `table` as parameter
