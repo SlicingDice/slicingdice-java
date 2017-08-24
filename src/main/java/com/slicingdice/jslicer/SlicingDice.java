@@ -70,7 +70,7 @@ public class SlicingDice {
      * This variable get from enviroment the Slicing Dice API url. If enviroment is
      * empty, his set the url 'https://api.slicingdice.com' how your value.
      */
-    private final String baseURL = (System.getenv("SD_API_ADDRESS") != null) ?
+    private String baseURL = (System.getenv("SD_API_ADDRESS") != null) ?
             System.getenv("SD_API_ADDRESS") : "https://api.slicingdice.com/v1";
 
     private int statusCode;
@@ -101,6 +101,11 @@ public class SlicingDice {
         this.readKey = readKey;
         this.timeout = timeout;
         this.usesTestEndPoint = usesTestEndPoint;
+    }
+
+    @Deprecated
+    public void setBaseURL(final String baseURL) {
+        this.baseURL = baseURL;
     }
 
     public int getStatusCode() {
