@@ -17,6 +17,7 @@ package com.slicingdice.jslicer.utils.validators;
 
 import com.slicingdice.jslicer.exceptions.client.InvalidQueryException;
 import com.slicingdice.jslicer.exceptions.client.MaxLimitException;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.Iterator;
@@ -48,9 +49,20 @@ public class QueryDataExtractionValidator {
                     throw new InvalidQueryException("The key 'limit' in query has a invalid value.");
                 }
             } else if (key.equals("columns")) {
-                if (this.data.getJSONArray("columns").length() > 10) {
-                    throw new MaxLimitException("The key 'columns' in data extraction result must" +
-                            " have up to 10 columns.");
+                final Object columns = this.data.get("columns");
+                if (columns instanceof JSONArray) {
+                    if (((JSONArray) columns).length() > 10) {
+                        throw new MaxLimitException("The key 'columns' in data extraction result" +
+                                " must have up to 10 columns.");
+                    }
+                } else if (columns instanceof String) {
+                    if (!columns.equals("all")) {
+                        throw new InvalidQueryException("The key 'columns' should be a list of" +
+                                " columns or the keyword 'all'");
+                    }
+                } else {
+                    throw new InvalidQueryException("The key 'columns' should be a list of" +
+                            " columns or the keyword 'all'");
                 }
             }
         }
