@@ -55,10 +55,24 @@ public class Requester {
      */
     public static Future<Response> post(final String url, final String data, final String token,
                                         final int timeout) {
+        return post(url, data, token, timeout, false);
+    }
+
+    /**
+     * Makes a POST request
+     *
+     * @param url     A url String to make request
+     * @param data    A JSON to send in request
+     * @param token   A token to access URL
+     * @param timeout A Integer with time max to API response
+     */
+    public static Future<Response> post(final String url, final String data, final String token,
+                                        final int timeout, final boolean sql) {
+        final String contentType = sql ? "application/sql" : "application/json";
         return client.preparePost(url)
                 .setBody(data)
                 .setHeader("Authorization", token)
-                .setHeader("Content-Type", "application/json")
+                .setHeader("Content-Type", contentType)
                 .setReadTimeout(timeout * 1000)
                 .setRequestTimeout(timeout * 1000)
                 .execute();
@@ -75,10 +89,25 @@ public class Requester {
      */
     public static void post(final String url, final String data, final String token,
                             final int timeout, final HandlerResponse handler) {
+        post(url, data, token, timeout, handler, false);
+    }
+
+    /**
+     * Makes a POST request
+     *
+     * @param url     A url String to make request
+     * @param data    A JSON to send in request
+     * @param token   A token to access URL
+     * @param timeout A Integer with time max to API response
+     * @param handler A handler that will call onError or onSuccess when the request finishes
+     */
+    public static void post(final String url, final String data, final String token,
+                            final int timeout, final HandlerResponse handler, final boolean sql) {
+        final String contentType = sql ? "application/sql" : "application/json";
         final ListenableFuture<Response> whenExecute = client.preparePost(url)
                 .setBody(data)
                 .setHeader("Authorization", token)
-                .setHeader("Content-Type", "application/json")
+                .setHeader("Content-Type", contentType)
                 .setReadTimeout(timeout * 1000)
                 .setRequestTimeout(timeout * 1000)
                 .execute();

@@ -960,4 +960,28 @@ public class SlicingDice {
         dataExtractionWrapper(url, query, handler);
     }
 
+    /**
+     * Make a sql query query in Slicing Dice API, will return a JSONObject with result of sql query
+     *
+     * @param query A JSONObject data extraction result query
+     * @return a future to get SlicingDice request result
+     */
+    public Future<Response> sql(final String query) {
+        final String url = this.baseURL + URLResources.QUERY_SQL.url;
+        final String apiKey = this.getKey(0);
+        return Requester.post(url, query, apiKey, timeout, true);
+    }
+
+    /**
+     * Make a sql query query in Slicing Dice API, will return a JSONObject with result of sql query
+     *
+     * @param query   A SQL query
+     * @param handler A handler that will call onError or onSuccess when the request finishes
+     */
+    public void sql(final String query, final HandlerResponse handler) {
+        final String url = this.baseURL + URLResources.QUERY_SQL.url;
+        final String apiKey = this.getKey(0);
+        Requester.post(url, query, apiKey, timeout, handler, true);
+    }
+
 }

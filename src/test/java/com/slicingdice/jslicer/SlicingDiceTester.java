@@ -39,6 +39,8 @@ public class SlicingDiceTester {
 
     public ArrayList<Object> failedTests;
 
+    private boolean perTestInsertion;
+
     public SlicingDiceTester(final String apiKey) {
         this.client = new SlicingDice(apiKey);
         this.loadConfigTest();
@@ -64,9 +66,18 @@ public class SlicingDiceTester {
      *
      * @param queryType the query type
      */
-    public void runTests(final String queryType) {
+    public void runTests(final String queryType) throws ExecutionException, InterruptedException {
         final JSONArray testData = this.loadTestData(queryType);
         final int numberOfTests = testData.length();
+
+        this.perTestInsertion = testData.getJSONObject(0).has("insert");
+        if (!this.perTestInsertion) {
+            final JSONArray insertionData = this.loadInsertionData(queryType);
+            for (final Object insertCommand : insertionData) {
+                this.client.insert((JSONObject) insertCommand).get();
+            }
+            Thread.sleep(this.sleepTime);
+        }
 
         for (int i = 0; i < numberOfTests; i++) {
             final JSONObject testObject = (JSONObject) testData.get(i);
@@ -83,8 +94,10 @@ public class SlicingDiceTester {
             System.out.println(String.format("\tQuery type: %s", queryType));
             JSONObject result = null;
             try {
-                this.createColumns(testObject);
-                this.insertData(testObject);
+                if (this.perTestInsertion) {
+                    this.createColumns(testObject);
+                    this.insertData(testObject);
+                }
                 result = this.executeQuery(queryType, testObject);
             } catch (final Exception e) {
                 result = new JSONObject()
@@ -111,7 +124,22 @@ public class SlicingDiceTester {
      * @return JSONArray with test data
      */
     private JSONArray loadTestData(final String queryType) {
-        final String file = new File(this.path + queryType + this.fileExtension).getAbsolutePath();
+        return loadData(queryType, "");
+    }
+
+    /**
+     * Load insertion data from examples files
+     *
+     * @param queryType the query type
+     * @return JSONArray with insertion data
+     */
+    private JSONArray loadInsertionData(final String queryType) {
+        return loadData(queryType, "_insert");
+    }
+
+    private JSONArray loadData(final String queryType, final String file_suffix) {
+        final String file = new File(this.path + queryType + file_suffix
+                + this.fileExtension).getAbsolutePath();
         String content = null;
         try {
             content = new Scanner(new File(file)).useDelimiter("\\Z").next();
@@ -243,7 +271,12 @@ public class SlicingDiceTester {
      */
     private JSONObject executeQuery(final String queryType, final JSONObject query)
             throws ExecutionException, InterruptedException {
-        final JSONObject queryData = this.translateColumnNames(query.getJSONObject("query"));
+        final JSONObject queryData;
+        if (this.perTestInsertion) {
+            queryData = this.translateColumnNames(query.getJSONObject("query"));
+        } else {
+            queryData = query;
+        }
 
         System.out.println("\tQuerying");
 
@@ -272,6 +305,9 @@ public class SlicingDiceTester {
             case "score":
                 result = Requester.responseToJson(this.client.score(queryData).get());
                 break;
+            case "sql":
+                result = Requester.responseToJson(this.client.sql(queryData.getString("query")).get());
+                break;
         }
 
         return result;
@@ -287,8 +323,12 @@ public class SlicingDiceTester {
     private void compareResult(final JSONObject expectedObject, final String queryType,
                                final JSONObject result) throws IOException {
         final JSONObject testExpected = expectedObject.getJSONObject("expected");
-        final JSONObject expected =
-                this.translateColumnNames(expectedObject.getJSONObject("expected"));
+        final JSONObject expected;
+        if (this.perTestInsertion) {
+            expected = this.translateColumnNames(expectedObject.getJSONObject("expected"));
+        } else {
+            expected = expectedObject.getJSONObject("expected");
+        }
 
         for (final Object key : testExpected.keySet()) {
             final String keyStr = (String) key;
@@ -409,15 +449,21 @@ public class SlicingDiceTester {
             return false;
         }
 
+        if (expected.length() == 0 && got.length() == 0) {
+            return true;
+        }
+
         for (int i = 0; i < expected.length(); ++i) {
             final Object valueExpected = expected.get(i);
-            final Object valueGot = got.get(i);
-            if (!this.compareJsonValue(valueExpected, valueGot)) {
-                return false;
+            for (int j = 0; j < got.length(); j++) {
+                final Object valueGot = got.get(j);
+                if (this.compareJsonValue(valueExpected, valueGot)) {
+                    return true;
+                }
             }
         }
 
-        return true;
+        return false;
     }
 
     /**

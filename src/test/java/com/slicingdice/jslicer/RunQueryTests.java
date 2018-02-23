@@ -1,6 +1,7 @@
 package com.slicingdice.jslicer;
 
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
 public class RunQueryTests {
     // Your demo api key, to get a valid demo API key you can use:
@@ -9,7 +10,7 @@ public class RunQueryTests {
             "TE4NjA3ODQ0NDAzIiwicGVybWlzc2lvbl9sZXZlbCI6MywicHJvamVjdF9pZCI6NDY5NjYsImNsaWVudF9pZ" +
             "CI6OTUxfQ.S6LCWQDcLS1DEFy3lsqk2jTGIe5rJ5fsQIvWuuFBdkw";
 
-    public static void main(final String[] args) {
+    public static void main(final String[] args) throws ExecutionException, InterruptedException {
         // the query types to use on tests
         final ArrayList<String> queryTypes = new ArrayList<String>() {{
             add("count_entity");
