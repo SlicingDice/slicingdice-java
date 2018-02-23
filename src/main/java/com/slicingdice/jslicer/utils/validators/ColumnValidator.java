@@ -42,7 +42,7 @@ public class ColumnValidator {
         this.validTypeColumns = Arrays.asList(
                 "unique-id", "boolean", "string", "integer", "decimal",
                 "enumerated", "date", "integer-time-series",
-                "decimal-time-series", "string-time-series");
+                "decimal-time-series", "string-time-series", "datetime");
     }
 
     /**
