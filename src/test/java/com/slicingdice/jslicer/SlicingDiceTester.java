@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Objects;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
@@ -161,13 +162,13 @@ public class SlicingDiceTester {
      * @param column the column to put timestamp
      */
     private void addTimestampToColumnName(final JSONObject column) {
-        final String oldName = column.getString("api-name");
+        final String oldName = "\"" + column.getString("api-name");
 
         final String timestamp = this.getTimestamp();
         column.put("name", column.get("name") + timestamp);
         column.put("api-name", column.get("api-name") + timestamp);
 
-        final String newName = column.getString("api-name");
+        final String newName = "\"" + column.getString("api-name");
         this.columnTranslation.put(oldName, newName);
     }
 
@@ -445,7 +446,7 @@ public class SlicingDiceTester {
                         return false;
                     }
                 } else {
-                    return false;
+                    return Objects.equals(valueExpected, valueGot);
                 }
                 return true;
             }
