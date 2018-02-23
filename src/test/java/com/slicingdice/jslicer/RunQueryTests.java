@@ -13,15 +13,15 @@ public class RunQueryTests {
         // the query types to use on tests
         final ArrayList<String> queryTypes = new ArrayList<String>() {{
             add("count_entity");
-//            add("count_event");
-//            add("top_values");
-//            add("aggregation");
-//            add("result");
-//            add("score");
+            add("count_event");
+            add("top_values");
+            add("aggregation");
+            add("result");
+            add("score");
         }};
 
         // Testing class with demo API key
-        final SlicingDiceTester sdTester = new SlicingDiceTester(DEMO_API_KEY);
+        final SlicingDiceTester sdTester = new SlicingDiceTester(DEMO_API_KEY, true);
 
         Runtime.getRuntime().addShutdownHook(new Thread()
         {

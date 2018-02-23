@@ -161,13 +161,13 @@ public class SlicingDiceTester {
      * @param column the column to put timestamp
      */
     private void addTimestampToColumnName(final JSONObject column) {
-        final String oldName = String.format("\"%s\"", column.getString("api-name"));
+        final String oldName = column.getString("api-name");
 
         final String timestamp = this.getTimestamp();
         column.put("name", column.get("name") + timestamp);
         column.put("api-name", column.get("api-name") + timestamp);
 
-        final String newName = String.format("\"%s\"", column.getString("api-name"));
+        final String newName = column.getString("api-name");
         this.columnTranslation.put(oldName, newName);
     }
 
@@ -355,8 +355,6 @@ public class SlicingDiceTester {
         final JSONObject secondResult;
         try {
             secondResult = this.executeQuery(queryType, expectedObject);
-
-            System.out.println(secondResult);
 
             if (this.compareJsonValue(expected.get(key), secondResult.get(key))) {
                 System.out.println("\tPassed at second try!");
