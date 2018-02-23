@@ -1,5 +1,6 @@
 package com.slicingdice.jslicer;
 
+import com.slicingdice.jslicer.core.Requester;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -7,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Scanner;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -36,19 +38,19 @@ public class SlicingDiceTester {
 
     public ArrayList<Object> failedTests;
 
-    public SlicingDiceTester(final String apiKey){
-        this.client = new SlicingDice(apiKey, true);
+    public SlicingDiceTester(final String apiKey) {
+        this.client = new SlicingDice(apiKey);
         this.loadConfigTest();
     }
 
-    public SlicingDiceTester(final String apiKey, final boolean verbose){
-        this.client = new SlicingDice(apiKey, true);
+    public SlicingDiceTester(final String apiKey, final boolean verbose) {
+        this.client = new SlicingDice(apiKey);
         this.verbose = verbose;
         this.loadConfigTest();
     }
 
-    private void loadConfigTest(){
-        this.sleepTime = 10;
+    private void loadConfigTest() {
+        this.sleepTime = 5;
         this.path = "src/test/java/com/slicingdice/jslicer/examples/";
         this.fileExtension = ".json";
         this.numberOfSuccesses = 0;
@@ -58,45 +60,46 @@ public class SlicingDiceTester {
 
     /**
      * Run tests
+     *
      * @param queryType the query type
      */
-    public void runTests(final String queryType){
+    public void runTests(final String queryType) {
         final JSONArray testData = this.loadTestData(queryType);
         final int numberOfTests = testData.length();
 
-        for(int i = 0; i < numberOfTests; i++) {
+        for (int i = 0; i < numberOfTests; i++) {
             final JSONObject testObject = (JSONObject) testData.get(i);
             this.emptyColumnTranslation();
 
             System.out.println(String.format("(%1$d/%2$d) Executing test \"%3$s\"", i + 1,
                     numberOfTests, testObject.getString("name")));
 
-            if (testObject.has("description")){
+            if (testObject.has("description")) {
                 System.out.println(String.format("\tDescription: %s",
                         testObject.get("description")));
             }
 
             System.out.println(String.format("\tQuery type: %s", queryType));
             JSONObject result = null;
-            try{
+            try {
                 this.createColumns(testObject);
                 this.insertData(testObject);
                 result = this.executeQuery(queryType, testObject);
-            } catch(Exception e){
-                result =  new JSONObject()
+            } catch (final Exception e) {
+                result = new JSONObject()
                         .put("result", new JSONObject()
-                        .put("error", e.toString()));
+                                .put("error", e.toString()));
             }
 
             try {
                 this.compareResult(testObject, queryType, result);
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 e.printStackTrace();
             }
         }
     }
 
-    private void emptyColumnTranslation(){
+    private void emptyColumnTranslation() {
         this.columnTranslation = new JSONObject();
     }
 
@@ -106,28 +109,30 @@ public class SlicingDiceTester {
      * @param queryType the query type
      * @return JSONArray with test data
      */
-    private JSONArray loadTestData(String queryType){
+    private JSONArray loadTestData(final String queryType) {
         final String file = new File(this.path + queryType + this.fileExtension).getAbsolutePath();
         String content = null;
         try {
             content = new Scanner(new File(file)).useDelimiter("\\Z").next();
-        } catch (FileNotFoundException e) {
+            return new JSONArray(content);
+        } catch (final FileNotFoundException e) {
             e.printStackTrace();
         }
 
-        return new JSONArray(content);
+        return null;
     }
 
     /**
      * Create columns on SlicingDice API
+     *
      * @param columnObject the column object to create
      */
-    private void createColumns(final JSONObject columnObject){
+    private void createColumns(final JSONObject columnObject) {
         final JSONArray columns = columnObject.getJSONArray("columns");
         final boolean isSingular = columns.length() == 1;
         String columnOrColumns = null;
 
-        if(isSingular){
+        if (isSingular) {
             columnOrColumns = "column";
         } else {
             columnOrColumns = "columns";
@@ -135,16 +140,16 @@ public class SlicingDiceTester {
 
         System.out.println(String.format("\tCreating %1$d %2$s", columns.length(), columnOrColumns));
 
-        for(final Object column : columns){
+        for (final Object column : columns) {
             final JSONObject columnDict = (JSONObject) column;
             this.addTimestampToColumnName(columnDict);
             // call client command to create columns
             try {
-                this.client.createColumn(columnDict);
-            } catch (IOException e) {
+                this.client.createColumn(columnDict).get();
+            } catch (final InterruptedException | ExecutionException e) {
                 e.printStackTrace();
             }
-            if(this.verbose){
+            if (this.verbose) {
                 System.out.println(String.format("\t\t- %s", columnDict.getString("api-name")));
             }
         }
@@ -152,9 +157,10 @@ public class SlicingDiceTester {
 
     /**
      * Add timestamp to column name
+     *
      * @param column the column to put timestamp
      */
-    private void addTimestampToColumnName(final JSONObject column){
+    private void addTimestampToColumnName(final JSONObject column) {
         final String oldName = String.format("\"%s\"", column.getString("api-name"));
 
         final String timestamp = this.getTimestamp();
@@ -167,22 +173,24 @@ public class SlicingDiceTester {
 
     /**
      * Get actual timestamp
+     *
      * @return timestamp converted to string
      */
-    private String getTimestamp(){
+    private String getTimestamp() {
         final Long currentTime = System.currentTimeMillis() * 10;
         return currentTime.toString();
     }
 
     /**
      * Insert data to SlicingDice API
+     *
      * @param insertionObject the data to insert on SlicingDice
      */
-    private void insertData(final JSONObject insertionObject){
+    private void insertData(final JSONObject insertionObject) {
         final JSONObject insert = insertionObject.getJSONObject("insert");
         final boolean isSingular = insert.length() == 1;
         final String entityOrEntities;
-        if(isSingular){
+        if (isSingular) {
             entityOrEntities = "entity";
         } else {
             entityOrEntities = "entities";
@@ -193,16 +201,15 @@ public class SlicingDiceTester {
 
         // call client command to insert data
         try {
-            this.client.insert(insertData);
-        } catch (IOException e) {
+            this.client.insert(insertData).get();
+        } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
-            System.out.println("An error occurred while processing your query on SlicingDice");
         }
 
         try {
             // Wait a few seconds so the data can be inserted by SlicingDice
             TimeUnit.SECONDS.sleep(this.sleepTime);
-        } catch (InterruptedException e) {
+        } catch (final InterruptedException e) {
             e.printStackTrace();
             System.out.println("An error occurred while processing your query on SlicingDice");
         }
@@ -210,6 +217,7 @@ public class SlicingDiceTester {
 
     /**
      * Translate column name to use timestamp
+     *
      * @param column the column to translate
      * @return the new column translated
      */
@@ -217,7 +225,7 @@ public class SlicingDiceTester {
         String dataString = column.toString();
 
         for (final Object oldName : this.columnTranslation.keySet()) {
-            final String oldNameStr = (String)oldName;
+            final String oldNameStr = (String) oldName;
             final String newName = this.columnTranslation.getString(oldNameStr);
 
             dataString = dataString.replaceAll(oldNameStr, newName);
@@ -227,35 +235,42 @@ public class SlicingDiceTester {
 
     /**
      * Execute query
+     *
      * @param queryType the type of the query
-     * @param query the query to send to SlicingDice API
+     * @param query     the query to send to SlicingDice API
      * @return the result of the query
-     * @throws IOException
      */
     private JSONObject executeQuery(final String queryType, final JSONObject query)
-            throws IOException {
+            throws ExecutionException, InterruptedException {
         final JSONObject queryData = this.translateColumnNames(query.getJSONObject("query"));
 
         System.out.println("\tQuerying");
 
-        if (this.verbose){
+        if (this.verbose) {
             System.out.println(String.format("\t\t- %s", queryData));
         }
 
         JSONObject result = null;
         // call client command to make a query
-        if (queryType.equals("count_entity")){
-            result = this.client.countEntity(queryData);
-        } else if (queryType.equals("count_event")){
-            result = this.client.countEvent(queryData);
-        } else if (queryType.equals("top_values")){
-            result = this.client.topValues(queryData);
-        } else if (queryType.equals("aggregation")){
-            result = this.client.aggregation(queryData);
-        } else if (queryType.equals("result")){
-            result = this.client.result(queryData);
-        } else if (queryType.equals("score")){
-            result = this.client.score(queryData);
+        switch (queryType) {
+            case "count_entity":
+                result = Requester.responseToJson(this.client.countEntity(queryData).get());
+                break;
+            case "count_event":
+                result = Requester.responseToJson(this.client.countEvent(queryData).get());
+                break;
+            case "top_values":
+                result = Requester.responseToJson(this.client.topValues(queryData).get());
+                break;
+            case "aggregation":
+                result = Requester.responseToJson(this.client.aggregation(queryData).get());
+                break;
+            case "result":
+                result = Requester.responseToJson(this.client.result(queryData).get());
+                break;
+            case "score":
+                result = Requester.responseToJson(this.client.score(queryData).get());
+                break;
         }
 
         return result;
@@ -263,9 +278,10 @@ public class SlicingDiceTester {
 
     /**
      * Compare result received from SlicingDice API
+     *
      * @param expectedObject the object with expected result
-     * @param queryType - the type of the query
-     * @param result the result received from SlicingDice API
+     * @param queryType      - the type of the query
+     * @param result         the result received from SlicingDice API
      */
     private void compareResult(final JSONObject expectedObject, final String queryType,
                                final JSONObject result) throws IOException {
@@ -274,10 +290,10 @@ public class SlicingDiceTester {
                 this.translateColumnNames(expectedObject.getJSONObject("expected"));
 
         for (final Object key : testExpected.keySet()) {
-            final String keyStr = (String)key;
+            final String keyStr = (String) key;
             final Object value = testExpected.get(keyStr);
 
-            if (value.toString().equals("ignore")){
+            if (value.toString().equals("ignore")) {
                 continue;
             }
 
@@ -291,7 +307,7 @@ public class SlicingDiceTester {
 
                 testFailed = true;
             } else {
-                if(!this.compareJsonValue(expected.get(keyStr),
+                if (!this.compareJsonValue(expected.get(keyStr),
                         result.get(keyStr))) {
                     // try second time
                     if (testSecondTime(expectedObject, queryType, expected, keyStr)) {
@@ -321,35 +337,45 @@ public class SlicingDiceTester {
 
     /**
      * If first query doesn't return as expected we will try another time
+     *
      * @param expectedObject -
-     * @param queryType - type of the query to send to SlicingDice
-     * @param expected = the expected json
-     * @param key - the json key to test
+     * @param queryType      - type of the query to send to SlicingDice
+     * @param expected       = the expected json
+     * @param key            - the json key to test
      * @return true if second test succeed and false otherwise
      * @throws IOException
      */
     private boolean testSecondTime(final JSONObject expectedObject, final String queryType,
-                                   final JSONObject expected, String key) throws IOException {
+                                   final JSONObject expected, final String key) {
         try {
             TimeUnit.SECONDS.sleep(this.sleepTime * 3);
-        } catch (InterruptedException e) {
+        } catch (final InterruptedException e) {
             e.printStackTrace();
         }
-        final JSONObject secondResult = this.executeQuery(queryType, expectedObject);
+        final JSONObject secondResult;
+        try {
+            secondResult = this.executeQuery(queryType, expectedObject);
 
-        if (this.compareJsonValue(expected.get(key),secondResult.get(key))) {
-            System.out.println("\tPassed at second try!");
-            this.numberOfSuccesses += 1;
-            System.out.println("\tStatus: Passed\n");
-            return true;
+            System.out.println(secondResult);
+
+            if (this.compareJsonValue(expected.get(key), secondResult.get(key))) {
+                System.out.println("\tPassed at second try!");
+                this.numberOfSuccesses += 1;
+                System.out.println("\tStatus: Passed\n");
+                return true;
+            }
+        } catch (ExecutionException | InterruptedException e) {
+            e.printStackTrace();
         }
+
         return false;
     }
 
     /**
      * Compare two JSONObjects
+     *
      * @param expected - The json with the expected result
-     * @param got = The json returned by the SlicingDice API
+     * @param got      = The json returned by the SlicingDice API
      * @return - true if the two json's are equal and false otherwise
      */
     private boolean compareJson(final JSONObject expected, final JSONObject got) {
@@ -374,8 +400,9 @@ public class SlicingDiceTester {
 
     /**
      * Compare two JSONArrays
+     *
      * @param expected - The json with the expected result
-     * @param got = The json returned by the SlicingDice API
+     * @param got      = The json returned by the SlicingDice API
      * @return - true if the two json's are equal and false otherwise
      */
     private boolean compareJsonArray(final JSONArray expected, final JSONArray got) {
@@ -383,7 +410,7 @@ public class SlicingDiceTester {
             return false;
         }
 
-        for(int i = 0; i < expected.length(); ++i) {
+        for (int i = 0; i < expected.length(); ++i) {
             final Object valueExpected = expected.get(i);
             final Object valueGot = got.get(i);
             if (!this.compareJsonValue(valueExpected, valueGot)) {
@@ -396,21 +423,22 @@ public class SlicingDiceTester {
 
     /**
      * Compare two json values
+     *
      * @param valueExpected - the expected value
-     * @param valueGot - the received value
+     * @param valueGot      - the received value
      * @return true if the two values are equal and false otherwise
      */
     private boolean compareJsonValue(final Object valueExpected, final Object valueGot) {
         try {
-            if(valueExpected instanceof JSONObject) {
-                if(!this.compareJson((JSONObject) valueExpected, (JSONObject) valueGot)) {
+            if (valueExpected instanceof JSONObject) {
+                if (!this.compareJson((JSONObject) valueExpected, (JSONObject) valueGot)) {
                     return false;
                 }
-            } else if(valueExpected instanceof JSONArray) {
-                if(!this.compareJsonArray((JSONArray) valueExpected, (JSONArray) valueGot)) {
+            } else if (valueExpected instanceof JSONArray) {
+                if (!this.compareJsonArray((JSONArray) valueExpected, (JSONArray) valueGot)) {
                     return false;
                 }
-            } else if(!valueExpected.equals(valueGot)) {
+            } else if (!valueExpected.equals(valueGot)) {
                 if (valueExpected instanceof Integer && valueGot instanceof Double ||
                         valueExpected instanceof Double && valueGot instanceof Integer) {
                     final Number expectedInteger = (Number) valueExpected;
@@ -423,7 +451,7 @@ public class SlicingDiceTester {
                 }
                 return true;
             }
-        } catch (ClassCastException e) {
+        } catch (final ClassCastException e) {
             return false;
         }
 

@@ -22,7 +22,7 @@ import com.slicingdice.jslicer.exceptions.RequestBodySizeExceededException;
 import com.slicingdice.jslicer.exceptions.RequestRateLimitException;
 import com.slicingdice.jslicer.exceptions.api.SlicingDiceException;
 import com.slicingdice.jslicer.exceptions.api.InternalException;
-import okhttp3.Headers;
+import io.netty.handler.codec.http.HttpHeaders;
 import org.json.JSONObject;
 import org.json.JSONException;
 
@@ -35,29 +35,27 @@ import java.util.logging.Logger;
  * @version 0.2
  * @since 2016-08-10
  */
-public class HandlerResponse {
+public abstract class HandlerResponse {
 
     private static final Logger logger = Logger.getLogger(HandlerResponse.class.getCanonicalName());
 
-    private final String result;
-    private final Headers headers;
-    private final int statusCode;
+    private String result;
 
-    public HandlerResponse(final String result, final Headers headers, final int statusCode) {
-        this.result = result;
-        this.headers = headers;
-        this.statusCode = statusCode;
-    }
+    private JSONObject data;
 
-    public String getResult() {
-        return this.result;
+    private HttpHeaders headers;
+
+    private int statusCode;
+
+    public JSONObject getData() {
+        return this.data;
     }
 
     public int getStatusCode() {
         return this.statusCode;
     }
 
-    public Headers getHeaders() {
+    public HttpHeaders getHeaders() {
         return this.headers;
     }
 
@@ -87,24 +85,28 @@ public class HandlerResponse {
 
     /**
      * Check if request was a successful
-     *
-     * @return true if the JSON result don't have errors
      */
-    public boolean requestSuccessful() throws SlicingDiceException {
-        final JSONObject data;
+    public void checkRequest(final String result, final HttpHeaders headers,
+                             final int statusCode) throws Exception {
+        this.result = result;
+        this.headers = headers;
+        this.statusCode = statusCode;
 
         try {
-            data = new JSONObject(this.result);
+            this.data = new JSONObject(this.result);
         } catch (final JSONException exception) {
             logger.severe(String.format("Couldn't parse JSON '%s'", this.result));
             throw new InternalException("SlicingDice: Error while parsing JSON.", exception);
         }
 
-        if (data.has("errors")) {
-            final JSONObject error = data.getJSONArray("errors").getJSONObject(0);
-            this.raiseError(error);
+        if (this.data.has("errors")) {
+            this.onError(data);
         }
 
-        return true;
+        this.onSuccess(data);
     }
+
+    public abstract void onSuccess(final JSONObject data) throws Exception;
+
+    public abstract void onError(final JSONObject data) throws Exception;
 }
