@@ -1,4 +1,4 @@
-# SlicingDice Official Java Client (v2.0.1)
+# SlicingDice Official Java Client (v2.0.2)
 ### Build Status: [![CircleCI](https://circleci.com/gh/SlicingDice/slicingdice-java.svg?style=svg)](https://circleci.com/gh/SlicingDice/slicingdice-java)
 
 Official Java client for [SlicingDice](http://www.slicingdice.com/), Data Warehouse and Analytics Database as a Service.  
@@ -20,8 +20,8 @@ Whether you want to test the client installation or simply check more examples o
 In order to import SlicingDice's client on your application, you'll need
 to setup the following dependencies:
 
-* [gson 2.3.2](https://github.com/google/gson)
-* [okhttp 3.2.0](http://square.github.io/okhttp/)
+* [json 20180130](https://github.com/stleary/JSON-java)
+* [async-http-client 2.4.2](https://github.com/AsyncHttpClient/async-http-client)
 
 
 In case you're using [Maven](https://maven.apache.org/) to manage packages,
@@ -29,15 +29,14 @@ In case you're using [Maven](https://maven.apache.org/) to manage packages,
 
 ```xml
 <dependency>
-    <groupid>com.google.code.gson</groupid>
-    <artifactid>gson</artifactid>
-    <version>2.3.1</version>
+    <groupId>org.asynchttpclient</groupId>
+    <artifactId>async-http-client</artifactId>
+    <version>2.4.2</version>
 </dependency>
-
 <dependency>
-    <groupid>com.squareup.okhttp3</groupid>
-    <artifactid>okhttp</artifactid>
-    <version>3.3.1</version>
+    <groupId>org.json</groupId>
+    <artifactId>json</artifactId>
+    <version>20180130</version>
 </dependency>
 ```
 
