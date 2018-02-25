@@ -449,21 +449,22 @@ public class SlicingDiceTester {
             return false;
         }
 
-        if (expected.length() == 0 && got.length() == 0) {
-            return true;
-        }
-
         for (int i = 0; i < expected.length(); ++i) {
             final Object valueExpected = expected.get(i);
+            boolean hasTrue = false;
             for (int j = 0; j < got.length(); j++) {
                 final Object valueGot = got.get(j);
                 if (this.compareJsonValue(valueExpected, valueGot)) {
-                    return true;
+                    hasTrue = true;
                 }
+            }
+
+            if (!hasTrue) {
+                return false;
             }
         }
 
-        return false;
+        return true;
     }
 
     /**
