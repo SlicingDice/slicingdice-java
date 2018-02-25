@@ -3,6 +3,9 @@
 ## [2.0.2]
 ### Updated
 - Correct data extraction validator to accept columns: all
+- Add support  for SQL queries on client
+- Adapt test queries to the changes on SlicingDice API
+- Change HTTP connection to be async
 
 ## [2.0.1]
 ### Updated

@@ -15,16 +15,16 @@
  */
 package com.slicingdice.jslicer.core;
 
+import com.slicingdice.jslicer.exceptions.api.SlicingDiceException;
 import java.io.IOException;
-import java.security.*;
-import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
-import java.util.concurrent.TimeUnit;
-
-import okhttp3.*;
-import sun.rmi.runtime.Log;
-
-import javax.net.ssl.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import org.asynchttpclient.AsyncHttpClient;
+import org.asynchttpclient.Dsl;
+import org.asynchttpclient.ListenableFuture;
+import org.asynchttpclient.Response;
+import org.json.JSONObject;
 
 /**
  * A simple helper to make post requests with okhttp3
@@ -34,7 +34,16 @@ import javax.net.ssl.*;
  * @since 2016-08-10
  */
 public class Requester {
-    static OkHttpClient client;
+    private static final AsyncHttpClient client = Dsl.asyncHttpClient();
+
+    private static final ExecutorService executor = Executors.newFixedThreadPool(
+            Runtime.getRuntime().availableProcessors());
+
+
+    public static void close() throws IOException {
+        executor.shutdown();
+        client.close();
+    }
 
     /**
      * Makes a POST request
@@ -43,26 +52,67 @@ public class Requester {
      * @param data    A JSON to send in request
      * @param token   A token to access URL
      * @param timeout A Integer with time max to API response
-     * @return A request response
-     * @throws IOException
      */
-    public static Response post(final String url, final String data, final String token,
-                                final int timeout) throws IOException {
-        final OkHttpClient clientConfigured = getConfiguredClient()
-                .newBuilder()
-                .connectTimeout(timeout, TimeUnit.SECONDS)
-                .writeTimeout(timeout, TimeUnit.SECONDS)
-                .readTimeout(timeout, TimeUnit.SECONDS)
-                .build();
-        final RequestBody body = RequestBody.create(null, data);
-        final Request request = new Request.Builder()
-                .url(url)
-                .header("Authorization", token)
-                .header("Content-Type", "application/json")
-                .post(body)
-                .build();
-        final Response response = clientConfigured.newCall(request).execute();
-        return response;
+    public static Future<Response> post(final String url, final String data, final String token,
+                                        final int timeout) {
+        return post(url, data, token, timeout, false);
+    }
+
+    /**
+     * Makes a POST request
+     *
+     * @param url     A url String to make request
+     * @param data    A JSON to send in request
+     * @param token   A token to access URL
+     * @param timeout A Integer with time max to API response
+     */
+    public static Future<Response> post(final String url, final String data, final String token,
+                                        final int timeout, final boolean sql) {
+        final String contentType = sql ? "application/sql" : "application/json";
+        return client.preparePost(url)
+                .setBody(data)
+                .setHeader("Authorization", token)
+                .setHeader("Content-Type", contentType)
+                .setReadTimeout(timeout * 1000)
+                .setRequestTimeout(timeout * 1000)
+                .execute();
+    }
+
+    /**
+     * Makes a POST request
+     *
+     * @param url     A url String to make request
+     * @param data    A JSON to send in request
+     * @param token   A token to access URL
+     * @param timeout A Integer with time max to API response
+     * @param handler A handler that will call onError or onSuccess when the request finishes
+     */
+    public static void post(final String url, final String data, final String token,
+                            final int timeout, final HandlerResponse handler) {
+        post(url, data, token, timeout, handler, false);
+    }
+
+    /**
+     * Makes a POST request
+     *
+     * @param url     A url String to make request
+     * @param data    A JSON to send in request
+     * @param token   A token to access URL
+     * @param timeout A Integer with time max to API response
+     * @param handler A handler that will call onError or onSuccess when the request finishes
+     */
+    public static void post(final String url, final String data, final String token,
+                            final int timeout, final HandlerResponse handler, final boolean sql) {
+        final String contentType = sql ? "application/sql" : "application/json";
+        final ListenableFuture<Response> whenExecute = client.preparePost(url)
+                .setBody(data)
+                .setHeader("Authorization", token)
+                .setHeader("Content-Type", contentType)
+                .setReadTimeout(timeout * 1000)
+                .setRequestTimeout(timeout * 1000)
+                .execute();
+
+        addListener(handler, whenExecute);
     }
 
     /**
@@ -72,27 +122,38 @@ public class Requester {
      * @param data    A JSON to send in request
      * @param token   A token to access URL
      * @param timeout A Integer with time max to API response
-     * @return A request response
-     * @throws IOException
      */
-    public static Response put(final String url, final String data, final String token,
-                               final int timeout) throws IOException {
-        final OkHttpClient clientConfigured = getConfiguredClient()
-                .newBuilder()
-                .connectTimeout(timeout, TimeUnit.SECONDS)
-                .writeTimeout(timeout, TimeUnit.SECONDS)
-                .readTimeout(timeout, TimeUnit.SECONDS)
-                .build();
+    public static Future<Response> put(final String url, final String data, final String token,
+                                       final int timeout) {
+        return client.preparePut(url)
+                .setBody(data)
+                .setHeader("Authorization", token)
+                .setHeader("Content-Type", "application/json")
+                .setReadTimeout(timeout * 1000)
+                .setRequestTimeout(timeout * 1000)
+                .execute();
+    }
 
-        final RequestBody body = RequestBody.create(null, data);
-        final Request request = new Request.Builder()
-                .url(url)
-                .header("Authorization", token)
-                .header("Content-Type", "application/json")
-                .put(body)
-                .build();
-        final Response response = clientConfigured.newCall(request).execute();
-        return response;
+    /**
+     * Makes a PUT request
+     *
+     * @param url     A url String to make request
+     * @param data    A JSON to send in request
+     * @param token   A token to access URL
+     * @param timeout A Integer with time max to API response
+     * @param handler A handler that will call onError or onSuccess when the request finishes
+     */
+    public static void put(final String url, final String data, final String token,
+                           final int timeout, final HandlerResponse handler) {
+        final ListenableFuture<Response> whenExecute = client.preparePut(url)
+                .setBody(data)
+                .setHeader("Authorization", token)
+                .setHeader("Content-Type", "application/json")
+                .setReadTimeout(timeout * 1000)
+                .setRequestTimeout(timeout * 1000)
+                .execute();
+
+        addListener(handler, whenExecute);
     }
 
     /**
@@ -101,25 +162,34 @@ public class Requester {
      * @param url     A url String to make request
      * @param token   A token to access URL
      * @param timeout A Integer with time max to API response
-     * @return A request response
-     * @throws IOException
      */
-    public static Response delete(final String url, final String token, final int timeout)
-            throws IOException {
-        final OkHttpClient clientConfigured = getConfiguredClient()
-                .newBuilder()
-                .connectTimeout(timeout, TimeUnit.SECONDS)
-                .writeTimeout(timeout, TimeUnit.SECONDS)
-                .readTimeout(timeout, TimeUnit.SECONDS)
-                .build();
-        final Request request = new Request.Builder()
-                .url(url)
-                .header("Authorization", token)
-                .header("Content-Type", "application/json")
-                .delete()
-                .build();
-        final Response response = clientConfigured.newCall(request).execute();
-        return response;
+    public static Future<Response> delete(final String url, final String token, final int timeout) {
+        return client.prepareDelete(url)
+                .setHeader("Authorization", token)
+                .setHeader("Content-Type", "application/json")
+                .setReadTimeout(timeout * 1000)
+                .setRequestTimeout(timeout * 1000)
+                .execute();
+    }
+
+    /**
+     * Makes a DELETE request
+     *
+     * @param url     A url String to make request
+     * @param token   A token to access URL
+     * @param timeout A Integer with time max to API response
+     * @param handler A handler that will call onError or onSuccess when the request finishes
+     */
+    public static void delete(final String url, final String token, final int timeout,
+                              final HandlerResponse handler) {
+        final ListenableFuture<Response> whenExecute = client.prepareDelete(url)
+                .setHeader("Authorization", token)
+                .setHeader("Content-Type", "application/json")
+                .setReadTimeout(timeout * 1000)
+                .setRequestTimeout(timeout * 1000)
+                .execute();
+
+        addListener(handler, whenExecute);
     }
 
     /**
@@ -128,54 +198,51 @@ public class Requester {
      * @param url     A url String to make request
      * @param token   A token to access URL
      * @param timeout A Integer with time max to API response
-     * @return A request response
-     * @throws IOException
      */
-    public static Response get(final String url, final String token, final int timeout)
-            throws IOException {
-        final OkHttpClient clientConfigured = getConfiguredClient()
-                .newBuilder()
-                .connectTimeout(timeout, TimeUnit.SECONDS)
-                .writeTimeout(timeout, TimeUnit.SECONDS)
-                .readTimeout(timeout, TimeUnit.SECONDS)
-                .build();
-        final Request request = new Request.Builder()
-                .url(url)
-                .header("Authorization", token)
-                .header("Content-Type", "application/json")
-                .build();
-        final Response response = clientConfigured.newCall(request).execute();
-        return response;
+    public static Future<Response> get(final String url, final String token, final int timeout) {
+        return client.prepareGet(url)
+                .setHeader("Authorization", token)
+                .setHeader("Content-Type", "application/json")
+                .setReadTimeout(timeout * 1000)
+                .setRequestTimeout(timeout * 1000)
+                .execute();
     }
 
-    private static OkHttpClient getConfiguredClient() {
-        Security.setProperty("jdk.certpath.disabledAlgorithms", "MD2, RSA keySize < 1024");
-        Security.setProperty("jdk.tls.disabledAlgorithms", "SSLv3, RC4, DH keySize < 768");
-        SSLContext ctx = null;
-        try {
-            ctx = SSLContext.getInstance("TLS");
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
-        try {
-            ctx.init(null, new TrustManager[] {
-                    new X509TrustManager() {
-                        public void checkClientTrusted(X509Certificate[] chain, String authType) {}
-                        public void checkServerTrusted(X509Certificate[] chain, String authType) {}
-                        public X509Certificate[] getAcceptedIssuers() { return new X509Certificate[0]; }
-                    }
-            }, null);
-        } catch (KeyManagementException e) {
-            e.printStackTrace();
-        }
-        client = new OkHttpClient().newBuilder()
-                .sslSocketFactory(ctx.getSocketFactory())
-                .hostnameVerifier(new HostnameVerifier() {
-                    public boolean verify(String hostname, SSLSession session) {
-                        return true;
-                    }
-                })
-                .build();
-        return client;
+    /**
+     * Makes a GET request
+     *
+     * @param url     A url String to make request
+     * @param token   A token to access URL
+     * @param timeout A Integer with time max to API response
+     * @param handler A handler that will call onError or onSuccess when the request finishes
+     */
+    public static void get(final String url, final String token, final int timeout,
+                           final HandlerResponse handler) {
+        final ListenableFuture<Response> whenExecute = client.prepareGet(url)
+                .setHeader("Authorization", token)
+                .setHeader("Content-Type", "application/json")
+                .setReadTimeout(timeout * 1000)
+                .setRequestTimeout(timeout * 1000)
+                .execute();
+
+        addListener(handler, whenExecute);
+    }
+
+    private static void addListener(final HandlerResponse handler,
+                                    final ListenableFuture<Response> whenExecute) {
+        whenExecute.addListener(() -> {
+            try {
+                final Response response = whenExecute.get();
+
+                handler.checkRequest(response.getResponseBody(), response.getHeaders(),
+                        response.getStatusCode());
+            } catch (final Exception e) {
+                throw new SlicingDiceException("An error occurred while requesting SlicingDice");
+            }
+        }, executor);
+    }
+
+    public static JSONObject responseToJson(final Response response) {
+        return new JSONObject(response.getResponseBody());
     }
 }

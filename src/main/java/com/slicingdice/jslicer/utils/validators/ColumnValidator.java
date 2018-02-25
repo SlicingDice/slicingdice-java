@@ -19,10 +19,11 @@ import com.slicingdice.jslicer.exceptions.client.InvalidColumnDescriptionExcepti
 import com.slicingdice.jslicer.exceptions.client.InvalidColumnException;
 import com.slicingdice.jslicer.exceptions.client.InvalidColumnNameException;
 import com.slicingdice.jslicer.exceptions.client.InvalidColumnTypeException;
-import org.json.JSONObject;
 
 import java.util.Arrays;
 import java.util.List;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 /**
  * Slicing Dice validator to column JSONObject.
@@ -33,26 +34,26 @@ import java.util.List;
  */
 public class ColumnValidator {
 
-    private final JSONObject data;
+    private final Object data;
     private final List<String> validTypeColumns;
 
-    public ColumnValidator(final JSONObject data) {
+    public ColumnValidator(final Object data) {
         this.data = data;
         this.validTypeColumns = Arrays.asList(
                 "unique-id", "boolean", "string", "integer", "decimal",
                 "enumerated", "date", "integer-time-series",
-                "decimal-time-series", "string-time-series");
+                "decimal-time-series", "string-time-series", "datetime");
     }
-
 
     /**
      * Checks if column has a name and if name has a length less than 80 chars.
      */
-    private void validateColumnName() throws InvalidColumnException, InvalidColumnNameException {
-        if (!this.data.has("name")) {
+    private void validateColumnName(final JSONObject json)
+            throws InvalidColumnException, InvalidColumnNameException {
+        if (!json.has("name")) {
             throw new InvalidColumnException("The column should have a name.");
         } else {
-            final String name = this.data.getString("name");
+            final String name = json.getString("name");
             if (name.trim().length() == 0) {
                 throw new InvalidColumnNameException("The column's name can't be empty/None.");
             } else if (name.length() > 80) {
@@ -65,11 +66,12 @@ public class ColumnValidator {
     /**
      * Checks if column has a type valid.
      */
-    private void validateColumnType() throws InvalidColumnException, InvalidColumnTypeException {
-        if (!this.data.has("type")) {
+    private void validateColumnType(final JSONObject json)
+            throws InvalidColumnException, InvalidColumnTypeException {
+        if (!json.has("type")) {
             throw new InvalidColumnException("The column should have a type.");
         }
-        final String typeColumn = this.data.getString("type");
+        final String typeColumn = json.getString("type");
         if (!this.validTypeColumns.contains(typeColumn)) {
             throw new InvalidColumnTypeException("This column have a invalid type.");
         }
@@ -78,8 +80,9 @@ public class ColumnValidator {
     /**
      * Checks if column has a description and if description has a length less than 300 chars.
      */
-    private void validateColumnDescription() throws InvalidColumnDescriptionException {
-        final String description = this.data.getString("description");
+    private void validateColumnDescription(final JSONObject json)
+            throws InvalidColumnDescriptionException {
+        final String description = json.getString("description");
         if (description.trim().length() == 0) {
             throw new InvalidColumnDescriptionException(
                     "The column's description can't be empty/None.");
@@ -91,11 +94,10 @@ public class ColumnValidator {
 
     /**
      * Check the decimal type
-     * @throws InvalidColumnException
      */
-    private void validateColumnDecimalType() throws InvalidColumnException {
+    private void validateColumnDecimalType(final JSONObject json) throws InvalidColumnException {
         final List<String> decimalTypes = Arrays.asList("decimal", "decimal-time-series");
-        if (!decimalTypes.contains(this.data.getString("type"))) {
+        if (!decimalTypes.contains(json.getString("type"))) {
             throw new InvalidColumnException("The decimal type is not a valid one");
         }
     }
@@ -103,8 +105,8 @@ public class ColumnValidator {
     /**
      * Checks if enumerated column is valid
      */
-    private void validateEnumeratedType() throws InvalidColumnException {
-        if (!this.data.has("range")) {
+    private void validateEnumeratedType(final JSONObject json) throws InvalidColumnException {
+        if (!json.has("range")) {
             throw new InvalidColumnException("The 'enumerate' type needs of the 'range' parameter.");
         }
     }
@@ -112,14 +114,14 @@ public class ColumnValidator {
     /**
      * Checks if a column of type 'string' has the key 'cardinality'.
      */
-    private void checkStringTypeIntegrity() throws InvalidColumnException {
-        if (!this.data.has("cardinality")) {
+    private void checkStringTypeIntegrity(final JSONObject json) throws InvalidColumnException {
+        if (!json.has("cardinality")) {
             throw new InvalidColumnException(
                     "The column with type string should have 'cardinality' key.");
         }
         final List<String> cardinalityTypes = Arrays.asList("high", "low");
 
-        if (!cardinalityTypes.contains(this.data.getString("cardinality"))) {
+        if (!cardinalityTypes.contains(json.getString("cardinality"))) {
             throw new InvalidColumnException("The column 'cardinality' has invalid value.");
         }
     }
@@ -130,21 +132,37 @@ public class ColumnValidator {
      * @return true if column is valid and false otherwise
      */
     public boolean validator() {
-        this.validateColumnName();
-        this.validateColumnType();
-        final String type = this.data.getString("type");
+        if (this.data instanceof JSONObject) {
+            validateJsonObject((JSONObject) this.data);
+        } else if (this.data instanceof JSONArray) {
+            final JSONArray jsonArray = (JSONArray) this.data;
+
+            for (int i = 0; i < jsonArray.length(); i++) {
+                final JSONObject json = jsonArray.getJSONObject(i);
+                validateJsonObject(json);
+            }
+        } else {
+            return false;
+        }
+
+        return true;
+    }
+
+    private void validateJsonObject(final JSONObject jsonObject) {
+        this.validateColumnName(jsonObject);
+        this.validateColumnType(jsonObject);
+        final String type = jsonObject.getString("type");
         if (type.equals("string")) {
-            this.checkStringTypeIntegrity();
+            this.checkStringTypeIntegrity(jsonObject);
         }
         if (type.equals("enumerated")) {
-            this.validateEnumeratedType();
+            this.validateEnumeratedType(jsonObject);
         }
-        if (this.data.has("description")) {
-            this.validateColumnDescription();
+        if (jsonObject.has("description")) {
+            this.validateColumnDescription(jsonObject);
         }
-        if (this.data.has("decimal-place")) {
-            this.validateColumnDecimalType();
+        if (jsonObject.has("decimal-place")) {
+            this.validateColumnDecimalType(jsonObject);
         }
-        return true;
     }
 }
