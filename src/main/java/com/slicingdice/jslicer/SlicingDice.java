@@ -505,12 +505,12 @@ public class SlicingDice {
     /**
      * Make a total query in Slicing Dice API, will return a JSONObject with total query result
      *
-     * @param tables A Collection containing the tables in which the total query will be performed
+     * @param dimensions A Collection containing the dimensions in which the total query will be performed
      * @return a future to get SlicingDice request result
      */
-    public Future<Response> countEntityTotal(final Collection<String> tables) {
+    public Future<Response> countEntityTotal(final Collection<String> dimensions) {
         final JSONObject query = new JSONObject();
-        query.put("tables", tables);
+        query.put("dimensions", dimensions);
 
         final String url = this.baseURL + URLResources.QUERY_COUNT_ENTITY_TOTAL.url;
         return this.makeRequest(url, query, POST, 0);
@@ -519,13 +519,13 @@ public class SlicingDice {
     /**
      * Make a total query in Slicing Dice API, will return a JSONObject with total query result
      *
-     * @param tables  A Collection containing the tables in which the total query will be performed
+     * @param dimensions  A Collection containing the dimensions in which the total query will be performed
      * @param handler A handler that will call onError or onSuccess when the request finishes
      */
-    public void countEntityTotal(final Collection<String> tables,
+    public void countEntityTotal(final Collection<String> dimensions,
                                  final HandlerResponse handler) {
         final JSONObject query = new JSONObject();
-        query.put("tables", tables);
+        query.put("dimensions", dimensions);
 
         final String url = this.baseURL + URLResources.QUERY_COUNT_ENTITY_TOTAL.url;
         this.makeRequest(url, query, POST, 0, handler);
@@ -687,18 +687,18 @@ public class SlicingDice {
      * Make a exists entity query in Slicing Dice API, will return a JSONObject with exists entity query result
      *
      * @param ids   A JSONArray exists entity query
-     * @param table In which table entities check be checked
+     * @param dimension In which dimension entities check be checked
      * @return a future to get SlicingDice request result
      */
-    private Future<Response> wrapperExistsEntity(final JSONArray ids, final String table,
+    private Future<Response> wrapperExistsEntity(final JSONArray ids, final String dimension,
                                                  final String url)
             throws MaxLimitException {
         if (ids.length() > 100) {
             throw new MaxLimitException("The query exists entity must have up to 100 ids.");
         }
         final JSONObject query = new JSONObject().put("ids", ids);
-        if (table != null) {
-            query.put("table", table);
+        if (dimension != null) {
+            query.put("dimension", dimension);
         }
         return this.makeRequest(url, query, POST, 0);
     }
@@ -707,18 +707,18 @@ public class SlicingDice {
      * Make a exists entity query in Slicing Dice API, will return a JSONObject with exists entity query result
      *
      * @param ids     A JSONArray exists entity query
-     * @param table   In which table entities check be checked
+     * @param dimension   In which dimension entities check be checked
      * @param handler A handler that will call onError or onSuccess when the request finishes
      */
-    private void wrapperExistsEntity(final JSONArray ids, final String table,
+    private void wrapperExistsEntity(final JSONArray ids, final String dimension,
                                      final String url, final HandlerResponse handler)
             throws MaxLimitException {
         if (ids.length() > 100) {
             throw new MaxLimitException("The query exists entity must have up to 100 ids.");
         }
         final JSONObject query = new JSONObject().put("ids", ids);
-        if (table != null) {
-            query.put("table", table);
+        if (dimension != null) {
+            query.put("dimension", dimension);
         }
         this.makeRequest(url, query, POST, 0, handler);
     }
@@ -727,25 +727,25 @@ public class SlicingDice {
      * Make a exists entity query in Slicing Dice API, will return A JSONObject with exists entity query result
      *
      * @param ids   A JSONArray exists entity query
-     * @param table In which table entities check be checked
+     * @param dimension In which dimension entities check be checked
      * @return a future to get SlicingDice request result
      */
-    public Future<Response> existsEntity(final JSONArray ids, final String table) {
+    public Future<Response> existsEntity(final JSONArray ids, final String dimension) {
         final String url = this.baseURL + URLResources.QUERY_EXISTS_ENTITY.url;
-        return this.wrapperExistsEntity(ids, table, url);
+        return this.wrapperExistsEntity(ids, dimension, url);
     }
 
     /**
      * Make a exists entity query in Slicing Dice API, will return A JSONObject with exists entity query result
      *
      * @param ids     A JSONArray exists entity query
-     * @param table   In which table entities check be checked
+     * @param dimension   In which dimension entities check be checked
      * @param handler A handler that will call onError or onSuccess when the request finishes
      */
-    public void existsEntity(final JSONArray ids, final String table,
+    public void existsEntity(final JSONArray ids, final String dimension,
                              final HandlerResponse handler) {
         final String url = this.baseURL + URLResources.QUERY_EXISTS_ENTITY.url;
-        this.wrapperExistsEntity(ids, table, url, handler);
+        this.wrapperExistsEntity(ids, dimension, url, handler);
     }
 
     /**
@@ -754,7 +754,7 @@ public class SlicingDice {
      * @param ids A JSONArray exists entity query
      * @return a future to get SlicingDice request result
      */
-    public Future<Response> existsEntityWithoutTable(final JSONArray ids) {
+    public Future<Response> existsEntityWithoutDimension(final JSONArray ids) {
         return this.existsEntity(ids, null);
     }
 
@@ -764,7 +764,7 @@ public class SlicingDice {
      * @param ids     A JSONArray exists entity query
      * @param handler A handler that will call onError or onSuccess when the request finishes
      */
-    public void existsEntityWithoutTable(final JSONArray ids, final HandlerResponse handler) {
+    public void existsEntityWithoutDimension(final JSONArray ids, final HandlerResponse handler) {
         this.existsEntity(ids, null, handler);
     }
 
