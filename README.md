@@ -101,7 +101,7 @@ public class Example {
                 .put("auto-create", new JSONArray()
                         .put("dimension")
                         .put("column"));
-        System.out.println(client.insert(insertData));
+        System.out.println(client.insert(insertData).get().getResponseBody());
 
         // Querying data
         JSONObject queryData = new JSONObject()
@@ -115,7 +115,7 @@ public class Example {
                                                                 new JSONArray()
                                                                         .put(20)
                                                                         .put(40)))));
-        System.out.println(client.countEntity(queryData));
+        System.out.println(client.countEntity(queryData).get().getResponseBody());
     }
 }
 ```
@@ -155,8 +155,8 @@ import org.asynchttpclient.Response;
 
 public class Example {
 
-    public static void main(String[] args) throws IOException {
-        final SlicingDice slicingDice = new SlicingDice("MASTER_API_KEY", false);
+    public static void main(String[] args) throws InterruptedException, ExecutionException, IOException {
+        final SlicingDice slicingDice = new SlicingDice("MASTER_API_KEY");
         final Future<Response> result = slicingDice.getDatabase();
         System.out.println(result.get().getResponseBody());
 
@@ -194,7 +194,7 @@ import org.asynchttpclient.Response;
 
 public class Example {
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws InterruptedException, ExecutionException, IOException {
         final SlicingDice slicingDice = new SlicingDice("MASTER_API_KEY");
         final Future<Response> result = slicingDice.getColumns();
         System.out.println(result.get().getResponseBody());
@@ -246,7 +246,7 @@ import org.asynchttpclient.Response;
 
 public class Example {
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws InterruptedException, ExecutionException, IOException {
         final SlicingDice slicingDice = new SlicingDice("MASTER_API_KEY");
         final JSONObject column = new JSONObject()
                 .put("name", "Year")
@@ -288,7 +288,7 @@ import org.asynchttpclient.Response;
 
 public class Example {
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws InterruptedException, ExecutionException, IOException {
         final SlicingDice slicingDice = new SlicingDice("MASTER_OR_WRITE_API_KEY");
         final SONObject insertData = new JSONObject()
                 .put("user1@slicingdice.com", new JSONObject()
@@ -353,7 +353,7 @@ import org.json.JSONObject;
 
 public class Example {
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws InterruptedException, ExecutionException, IOException {
         final SlicingDice slicingDice = new SlicingDice("MASTER_OR_READ_API_KEY");
         final JSONArray ids = new JSONArray()
                 .put("user1@slicingdice.com")
@@ -397,8 +397,8 @@ import org.json.JSONObject;
 
 public class Example {
 
-    public static void main(String[] args) throws IOException {
-        final SlicingDice slicingDice = new SlicingDice("MASTER_OR_READ_API_KEY", false);
+    public static void main(String[] args) throws InterruptedException, ExecutionException, IOException {
+        final SlicingDice slicingDice = new SlicingDice("MASTER_OR_READ_API_KEY");
         final Future<Response> result = slicingDice.countEntityTotal();
         System.out.println(result.get().getResponseBody());
 
@@ -434,7 +434,7 @@ import org.json.JSONObject;
 
 public class Example {
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws InterruptedException, ExecutionException, IOException {
         final SlicingDice slicingDice = new SlicingDice("MASTER_OR_READ_API_KEY");        
         final Set<String> dimensions = Collections.singleton("default");
         final Future<Response> result = slicingDice.countEntityTotal(dimensions);
@@ -472,7 +472,7 @@ import org.asynchttpclient.Response;
 
 public class Example {
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws InterruptedException, ExecutionException, IOException {
         final SlicingDice slicingDice = new SlicingDice("MASTER_OR_READ_API_KEY");
         final JSONArray countEntityQuery = new JSONArray()
                         .put(new JSONObject()
@@ -529,7 +529,7 @@ import org.asynchttpclient.Response;
 
 public class Example {
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws InterruptedException, ExecutionException, IOException {
         final SlicingDice slicingDice = new SlicingDice("MASTER_OR_READ_API_KEY");
         final JSONObject countEntityQuery = new JSONObject()
                         .put("query-name", "corolla-or-fit")
@@ -577,8 +577,8 @@ import org.json.JSONObject;
 
 public class Example {
 
-    public static void main(String[] args) throws IOException {
-        final SlicingDice slicingDice = new SlicingDice("MASTER_OR_READ_API_KEY", false);
+    public static void main(String[] args) throws InterruptedException, ExecutionException, IOException {
+        final SlicingDice slicingDice = new SlicingDice("MASTER_OR_READ_API_KEY");
         final JSONArray countEventQuery = new JSONArray()
                         .put(new JSONObject()
                                 .put("query-name", "test-drives-in-ny")
@@ -637,8 +637,8 @@ import org.json.JSONObject;
 
 public class Example {
 
-    public static void main(String[] args) throws IOException {
-        final SlicingDice slicingDice = new SlicingDice("MASTER_OR_READ_API_KEY", false);
+    public static void main(String[] args) throws InterruptedException, ExecutionException, IOException {
+        final SlicingDice slicingDice = new SlicingDice("MASTER_OR_READ_API_KEY");
         final JSONObject countEventQuery = new JSONObject()
                         .put("query-name", "test-drives-in-ny")
                         .put("query", new JSONArray()
@@ -684,7 +684,7 @@ import org.json.JSONObject;
 
 public class Example {
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws InterruptedException, ExecutionException, IOException {
         final SlicingDice slicingDice = new SlicingDice("MASTER_OR_READ_API_KEY");
         final JSONObject topValuesQuery = new JSONObject()
                 .put("car-year", new JSONObject()
@@ -753,7 +753,7 @@ import org.json.JSONObject;
 
 public class Example {
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws InterruptedException, ExecutionException, IOException {
         final SlicingDice slicingDice = new SlicingDice("MASTER_OR_READ_API_KEY");
         final JSONObject aggregationQuery = new JSONObject()
                 .put("query", new JSONArray()
@@ -812,7 +812,7 @@ import org.asynchttpclient.Response;
 
 public class Example {
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws InterruptedException, ExecutionException, IOException {
         final SlicingDice slicingDice = new SlicingDice("MASTER_API_KEY");
         final Future<Response> result = slicingDice.getSavedQueries();
         System.out.println(result.get().getResponseBody());
@@ -877,7 +877,7 @@ import org.json.JSONObject;
 
 public class Example {
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws InterruptedException, ExecutionException, IOException {
         final SlicingDice slicingDice = new SlicingDice("MASTER_API_KEY");
         final JSONObject savedQuery = new JSONObject()
                 .put("name", "my-saved-query")
@@ -939,7 +939,7 @@ import org.json.JSONObject;
 
 public class Example {
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws InterruptedException, ExecutionException, IOException {
        final  SlicingDice slicingDice = new SlicingDice("MASTER_API_KEY");
         final JSONObject newSavedQuery = new JSONObject()
                 .put("type", "count/entity")
@@ -997,7 +997,7 @@ import org.asynchttpclient.Response;
 
 public class Example {
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws InterruptedException, ExecutionException, IOException {
         final SlicingDice slicingDice = new SlicingDice("MASTER_OR_READ_API_KEY");
         final Future<Response> result = slicingDice.getSavedQuery("my-saved-query");
         System.out.println(result.get().getResponseBody());
@@ -1046,7 +1046,7 @@ import org.asynchttpclient.Response;
 
 public class Example {
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) InterruptedException, ExecutionException, throws IOException {
         final SlicingDice slicingDice = new SlicingDice("MASTER_API_KEY");
         final Future<Response> result = slicingDice.deleteSavedQuery("my-saved-query");
         System.out.println(result.get().getResponseBody());
@@ -1096,7 +1096,7 @@ import org.json.JSONObject;
 
 public class Example {
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws InterruptedException, ExecutionException, IOException {
         final SlicingDice slicingDice = new SlicingDice("MASTER_OR_READ_API_KEY");
         final JSONObject resultQuery = new JSONObject()
                 .put("query", new JSONArray()
@@ -1155,7 +1155,7 @@ import org.json.JSONObject;
 
 public class Example {
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws InterruptedException, ExecutionException, IOException {
         final SlicingDice slicingDice = new SlicingDice("MASTER_OR_READ_API_KEY");
         final JSONObject scoreQuery = new JSONObject()
                 .put("query", new JSONArray()
@@ -1212,7 +1212,7 @@ import org.asynchttpclient.Response;
 
 public class Example {
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws InterruptedException, ExecutionException, IOException {
         final SlicingDice slicingDice = new SlicingDice("MASTER_OR_READ_API_KEY");
         final Future<Response> result = slicingDice.sql("SELECT COUNT(*) FROM default WHERE age BETWEEN 0 AND 49");
         System.out.println(result.get().getResponseBody());
@@ -1233,6 +1233,31 @@ public class Example {
    "count":1,
    "status":"success"
 }
+```
+
+## `close()`
+Use this method when you're done with SlicingDice client, this method will properly close http threads.
+
+## Using callback instead of Future
+The programmer can define callbacks instead of using returned Futures, to create a callback you'll need to extend the class HandlerResponse and implement the methods `onError` and `onSuccess`. See the example below.
+
+```java
+public static class MyHandler extends HandlerResponse {
+    @Override
+    public void onSuccess(final JSONObject data) throws Exception {
+        System.out.println(data.toString());
+    }
+
+    @Override
+    public void onError(final JSONObject data) throws Exception {
+        System.out.println(data.toString());
+    }
+}
+```
+
+And you can use the handler this way:
+```java
+slicingDice.sql("SELECT COUNT(*) FROM default WHERE age BETWEEN 0 AND 49", new MyHandler());
 ```
 
 ## License
