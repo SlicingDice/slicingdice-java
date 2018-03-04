@@ -1202,9 +1202,7 @@ public class Example {
 ## `Future<Response> sql(String query)`
 Retrieve inserted values using a SQL syntax. This method corresponds to a POST request at /query/sql.
 
-#### Request example
-
-**Query statement**
+#### Query statement
 
 ```java
 import java.io.IOException;
@@ -1224,7 +1222,7 @@ public class Example {
 }
 ```
 
-**Insert statement**
+#### Insert statement
 ```java
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
