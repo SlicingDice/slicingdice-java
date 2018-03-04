@@ -1204,6 +1204,8 @@ Retrieve inserted values using a SQL syntax. This method corresponds to a POST r
 
 #### Request example
 
+**Query statement**
+
 ```java
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
@@ -1215,6 +1217,25 @@ public class Example {
     public static void main(String[] args) throws InterruptedException, ExecutionException, IOException {
         final SlicingDice slicingDice = new SlicingDice("MASTER_OR_READ_API_KEY");
         final Future<Response> result = slicingDice.sql("SELECT COUNT(*) FROM default WHERE age BETWEEN 0 AND 49");
+        System.out.println(result.get().getResponseBody());
+
+        slicingDice.close();
+    }
+}
+```
+
+**Insert statement**
+```java
+import java.io.IOException;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import org.asynchttpclient.Response;
+
+public class Example {
+
+    public static void main(String[] args) throws InterruptedException, ExecutionException, IOException {
+        final SlicingDice slicingDice = new SlicingDice("MASTER_OR_READ_API_KEY");
+        final Future<Response> result = slicingDice.sql("INSERT INTO default([entity-id], name, age) VALUES(1, 'john', 10)");
         System.out.println(result.get().getResponseBody());
 
         slicingDice.close();
