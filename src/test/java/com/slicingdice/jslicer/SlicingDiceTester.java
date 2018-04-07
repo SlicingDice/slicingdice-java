@@ -41,6 +41,8 @@ public class SlicingDiceTester {
 
     private boolean perTestInsertion;
 
+    private boolean insertSqlData;
+
     public SlicingDiceTester(final String apiKey) {
         this.client = new SlicingDice(apiKey);
         this.loadConfigTest();
@@ -71,7 +73,7 @@ public class SlicingDiceTester {
         final int numberOfTests = testData.length();
 
         this.perTestInsertion = testData.getJSONObject(0).has("insert");
-        if (!this.perTestInsertion) {
+        if (!this.perTestInsertion && this.insertSqlData) {
             final JSONArray insertionData = this.loadInsertionData(queryType);
             for (final Object insertCommand : insertionData) {
                 this.client.insert((JSONObject) insertCommand).get();
