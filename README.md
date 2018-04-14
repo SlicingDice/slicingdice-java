@@ -1,9 +1,12 @@
 # SlicingDice Official Java Client (v2.0.2)
-### Build Status: [![CircleCI](https://circleci.com/gh/SlicingDice/slicingdice-java.svg?style=svg)](https://circleci.com/gh/SlicingDice/slicingdice-java)
 
-Official Java client for [SlicingDice](http://www.slicingdice.com/), Data Warehouse and Analytics Database as a Service.  
+Official Java client for [SlicingDice - Data Warehouse and Analytics Database as a Service](http://www.slicingdice.com/).
 
-[SlicingDice](http://www.slicingdice.com/) is a serverless, API-based, easy-to-use and really cost-effective alternative to Amazon Redshift and Google BigQuery.
+[SlicingDice](http://www.slicingdice.com/) is a serverless, SQL & API-based, easy-to-use and really cost-effective alternative to Amazon Redshift and Google BigQuery.
+
+### Build Status: [![CircleCI](https://circleci.com/gh/SlicingDice/slicingdice-java/tree/master.svg?style=svg)](https://circleci.com/gh/SlicingDice/slicingdice-java/tree/master)
+
+### Code Quality: [![Codacy Badge](https://api.codacy.com/project/badge/Grade/4cec6b2eae354fc7b3ff0fa2b2268391)](https://www.codacy.com/app/SimbioseVentures/slicingdice-java?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=SlicingDice/slicingdice-java&amp;utm_campaign=Badge_Grade)
 
 ## Documentation
 
