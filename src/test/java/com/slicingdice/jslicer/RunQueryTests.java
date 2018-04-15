@@ -6,7 +6,7 @@ import java.util.concurrent.ExecutionException;
 public class RunQueryTests {
     // Your demo api key, to get a valid demo API key you can use:
     // http://panel.slicingdice.com/docs/#api-details-api-connection-api-keys-demo-key
-    private static final String DEMO_API_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfX3NhbHQiOiJkZW1vMzMwMm0iLCJwZXJtaXNzaW9uX2xldmVsIjozLCJwcm9qZWN0X2lkIjoyMzMwMiwiY2xpZW50X2lkIjoxMH0.7sgBUBNvKLR3ukQ1x2QeW2Twn1YdPQgVNMENsv9SyN8";
+    private static final String DEMO_API_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfX3NhbHQiOiJkZW1vNzAzM20iLCJwZXJtaXNzaW9uX2xldmVsIjozLCJwcm9qZWN0X2lkIjoyNzAzMywiY2xpZW50X2lkIjoxMH0.8lLB7vDAj8SecpHUsgCyZm4yRoizqggKPRm4Q9BfEu8";
 
     public static void main(final String[] args) throws ExecutionException, InterruptedException {
         // the query types to use on tests
