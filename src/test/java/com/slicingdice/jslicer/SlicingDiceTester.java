@@ -55,7 +55,7 @@ public class SlicingDiceTester {
     }
 
     private void loadConfigTest() {
-        this.sleepTime = 5;
+        this.sleepTime = 10;
         this.path = "src/test/java/com/slicingdice/jslicer/examples/";
         this.fileExtension = ".json";
         this.numberOfSuccesses = 0;
