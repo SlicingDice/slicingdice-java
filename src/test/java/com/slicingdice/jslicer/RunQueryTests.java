@@ -6,13 +6,22 @@ import java.util.concurrent.ExecutionException;
 public class RunQueryTests {
     // Your demo api key, to get a valid demo API key you can use:
     // http://panel.slicingdice.com/docs/#api-details-api-connection-api-keys-demo-key
-    private static final String DEMO_API_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfX3NhbHQiOiIxN" +
-            "TE4NjA3ODQ0NDAzIiwicGVybWlzc2lvbl9sZXZlbCI6MywicHJvamVjdF9pZCI6NDY5NjYsImNsaWVudF9pZ" +
-            "CI6OTUxfQ.S6LCWQDcLS1DEFy3lsqk2jTGIe5rJ5fsQIvWuuFBdkw";
+    private static final String DEMO_API_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfX3NhbHQiOiJkZW1vNzAzM20iLCJwZXJtaXNzaW9uX2xldmVsIjozLCJwcm9qZWN0X2lkIjoyNzAzMywiY2xpZW50X2lkIjoxMH0.8lLB7vDAj8SecpHUsgCyZm4yRoizqggKPRm4Q9BfEu8";
+
+    private static String getDemoKey() {
+        String demoApiKey = System.getenv("SD_API_KEY");
+
+        if (demoApiKey == null) {
+            demoApiKey = DEMO_API_KEY;
+        }
+
+        return demoApiKey;
+    }
 
     public static void main(final String[] args) throws ExecutionException, InterruptedException {
         // the query types to use on tests
         final ArrayList<String> queryTypes = new ArrayList<String>() {{
+            add("sql");
             add("count_entity");
             add("count_event");
             add("top_values");
@@ -22,7 +31,7 @@ public class RunQueryTests {
         }};
 
         // Testing class with demo API key
-        final SlicingDiceTester sdTester = new SlicingDiceTester(DEMO_API_KEY, true);
+        final SlicingDiceTester sdTester = new SlicingDiceTester(getDemoKey(), true);
 
         Runtime.getRuntime().addShutdownHook(new Thread()
         {
