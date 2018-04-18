@@ -8,6 +8,16 @@ public class RunQueryTests {
     // http://panel.slicingdice.com/docs/#api-details-api-connection-api-keys-demo-key
     private static final String DEMO_API_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfX3NhbHQiOiJkZW1vNzAzM20iLCJwZXJtaXNzaW9uX2xldmVsIjozLCJwcm9qZWN0X2lkIjoyNzAzMywiY2xpZW50X2lkIjoxMH0.8lLB7vDAj8SecpHUsgCyZm4yRoizqggKPRm4Q9BfEu8";
 
+    private static String getDemoKey() {
+        String demoApiKey = System.getenv("SD_API_KEY");
+
+        if (demoApiKey == null) {
+            demoApiKey = DEMO_API_KEY;
+        }
+
+        return demoApiKey;
+    }
+
     public static void main(final String[] args) throws ExecutionException, InterruptedException {
         // the query types to use on tests
         final ArrayList<String> queryTypes = new ArrayList<String>() {{
@@ -20,7 +30,7 @@ public class RunQueryTests {
         }};
 
         // Testing class with demo API key
-        final SlicingDiceTester sdTester = new SlicingDiceTester(DEMO_API_KEY, true);
+        final SlicingDiceTester sdTester = new SlicingDiceTester(getDemoKey(), true);
 
         Runtime.getRuntime().addShutdownHook(new Thread()
         {

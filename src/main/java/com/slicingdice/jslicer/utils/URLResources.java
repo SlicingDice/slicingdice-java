@@ -35,7 +35,7 @@ public enum URLResources {
     QUERY_DATA_EXTRACTION_RESULT("/data_extraction/result/"),
     QUERY_DATA_EXTRACTION_SCORE("/data_extraction/score/"),
     DATABASE("/database/"),
-    QUERY_SQL("/query/sql/");
+    QUERY_SQL("/sql/");
 
     public final String url;
 
