@@ -365,8 +365,14 @@ public class SlicingDiceTester {
                 this.numberOfFails += 1;
                 this.failedTests.add(expectedObject.getString("name"));
 
-                System.out.println(String.format("\tExpected: \"%1$s\": %2$s", keyStr,
-                        expected.getJSONObject(keyStr).toString()));
+                try {
+                    System.out.println(String.format("\tExpected: \"%1$s\": %2$s", keyStr,
+                            expected.getJSONObject(keyStr).toString()));
+                } catch (final Exception e) {
+                    System.out.println(String.format("\tExpected: \"%1$s\": %2$s", keyStr,
+                            e.getMessage()));
+                }
+
                 try {
                     System.out.println(String.format("\tResult: \"%1$s\": %2$s", keyStr,
                             result.getJSONObject(keyStr).toString()));
