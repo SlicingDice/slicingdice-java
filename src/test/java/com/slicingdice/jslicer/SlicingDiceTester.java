@@ -192,13 +192,13 @@ public class SlicingDiceTester {
      * @param column the column to put timestamp
      */
     private void addTimestampToColumnName(final JSONObject column) {
-        final String oldName = "\"" + column.getString("api-name");
+        final String oldName = "\"" + column.getString("api-name") + "\"";
 
         final String timestamp = this.getTimestamp();
         column.put("name", column.get("name") + timestamp);
         column.put("api-name", column.get("api-name") + timestamp);
 
-        final String newName = "\"" + column.getString("api-name");
+        final String newName = "\"" + column.getString("api-name") + "\"";
         this.columnTranslation.put(oldName, newName);
     }
 
@@ -367,8 +367,13 @@ public class SlicingDiceTester {
 
                 System.out.println(String.format("\tExpected: \"%1$s\": %2$s", keyStr,
                         expected.getJSONObject(keyStr).toString()));
-                System.out.println(String.format("\tResult: \"%1$s\": %2$s", keyStr,
-                        result.getJSONObject(keyStr).toString()));
+                try {
+                    System.out.println(String.format("\tResult: \"%1$s\": %2$s", keyStr,
+                            result.getJSONObject(keyStr).toString()));
+                } catch (final Exception e) {
+                    System.out.println(String.format("\tResult: \"%1$s\": %2$s", keyStr,
+                            e.getMessage()));
+                }
                 System.out.println("\tStatus: Failed\n");
                 return;
             } else {
@@ -405,7 +410,7 @@ public class SlicingDiceTester {
                 System.out.println("\tStatus: Passed\n");
                 return true;
             }
-        } catch (ExecutionException | InterruptedException e) {
+        } catch (final Exception e) {
             e.printStackTrace();
         }
 
@@ -499,7 +504,7 @@ public class SlicingDiceTester {
                 }
                 return true;
             }
-        } catch (final ClassCastException e) {
+        } catch (final Exception e) {
             return false;
         }
 
