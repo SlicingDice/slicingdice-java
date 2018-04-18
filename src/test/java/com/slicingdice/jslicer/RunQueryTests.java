@@ -21,6 +21,7 @@ public class RunQueryTests {
     public static void main(final String[] args) throws ExecutionException, InterruptedException {
         // the query types to use on tests
         final ArrayList<String> queryTypes = new ArrayList<String>() {{
+            add("sql");
             add("count_entity");
             add("count_event");
             add("top_values");
