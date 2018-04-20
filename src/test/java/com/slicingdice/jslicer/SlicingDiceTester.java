@@ -502,18 +502,24 @@ public class SlicingDiceTester {
                         valueExpected instanceof Double && valueGot instanceof Integer) {
                     final Number expectedInteger = (Number) valueExpected;
                     final Number gotInteger = (Number) valueGot;
-                    if (expectedInteger.intValue() != gotInteger.intValue()) {
-                        return false;
-                    }
+                    return expectedInteger.intValue() == gotInteger.intValue();
+                } else if (valueExpected instanceof Double || valueExpected instanceof Float) {
+                    return this.compareNumbersClose((Number) valueExpected, (Number) valueGot);
                 } else {
                     return Objects.equals(valueExpected, valueGot);
                 }
-                return true;
             }
         } catch (final Exception e) {
             return false;
         }
 
         return true;
+    }
+
+    private boolean compareNumbersClose(final Number expected, final Number result) {
+        final double expectedDouble = expected.doubleValue();
+        final double resultDouble = result.doubleValue();
+        return Math.abs(expectedDouble - resultDouble) <= Math.max(
+                (1e-09) * Math.max(Math.abs(expectedDouble), Math.abs(resultDouble)), 0.0);
     }
 }
