@@ -82,6 +82,7 @@ public class SlicingDiceTester {
         }
 
         for (int i = 0; i < numberOfTests; i++) {
+            String queryType_ = queryType;
             final JSONObject testObject = (JSONObject) testData.get(i);
             this.emptyColumnTranslation();
 
@@ -100,19 +101,114 @@ public class SlicingDiceTester {
                     this.createColumns(testObject);
                     this.insertData(testObject);
                 }
-                result = this.executeQuery(queryType, testObject);
+                if (queryType.equals("delete") || queryType.equals("update")) {
+                    final boolean additionalResult = this.runAdditionalOperations(queryType, testObject);
+                    if (!additionalResult) {
+                        continue;
+                    }
+                    queryType_ = "count_entity";
+                }
+
+                result = this.executeQuery(queryType_, testObject);
             } catch (final Exception e) {
                 result = new JSONObject()
                         .put("result", new JSONObject()
                                 .put("error", e.toString()));
+
+                if (queryType.equals("delete") || queryType.equals("update")) {
+                    this.numberOfFails += 1;
+                    this.failedTests.add(testObject.getString("name"));
+
+                    System.out.println(String.format("\tResult: %1$s", result.toString()));
+                    System.out.println("\tStatus: Failed\n");
+                    continue;
+                }
             }
 
             try {
-                this.compareResult(testObject, queryType, result);
+                this.compareResult(testObject, queryType_, result);
             } catch (final IOException e) {
                 e.printStackTrace();
             }
         }
+    }
+
+    /**
+     * Method used to run delete and update operations, these operations are executed before the
+     * query and the result comparison.
+     */
+    private boolean runAdditionalOperations(final String queryType, final JSONObject testObject)
+            throws ExecutionException, InterruptedException {
+        final JSONObject queryData = this.translateColumnNames(testObject.getJSONObject(
+                "additional_operation"));
+        if (queryType.equals("update")) {
+            System.out.println("\tUpdating");
+        } else {
+            System.out.println("\tDeleting");
+        }
+
+        if (this.verbose) {
+            System.out.println(String.format("\t\t- %s", queryData));
+        }
+
+        JSONObject response = null;
+
+        if (queryType.equals("update")) {
+            response = Requester.responseToJson(this.client.update(queryData).get());
+        } else if (queryType.equals("delete")) {
+            response = Requester.responseToJson(this.client.delete(queryData).get());
+        }
+
+        final JSONObject expected = this.translateColumnNames(testObject.getJSONObject(
+                "result_additional"));
+
+        for (final Object key : expected.keySet()) {
+            final String keyStr = (String) key;
+            final Object value = expected.get(keyStr);
+
+            if (value.toString().equals("ignore")) {
+                continue;
+            }
+
+            boolean testFailed = false;
+
+            if (!response.has(keyStr)) {
+                testFailed = true;
+            } else {
+                if (!this.compareJsonValue(expected.get(keyStr), response.get(keyStr))) {
+                    testFailed = true;
+                }
+            }
+
+            if (testFailed) {
+                this.numberOfFails += 1;
+                this.failedTests.add(testObject.getString("name"));
+
+                try {
+                    System.out.println(String.format("\tExpected: \"%1$s\": %2$s", keyStr,
+                            expected.getJSONObject(keyStr).toString()));
+                } catch (final Exception e) {
+                    System.out.println(String.format("\tExpected: \"%1$s\": %2$s", keyStr,
+                            e.getMessage()));
+                }
+
+                try {
+                    System.out.println(String.format("\tResult: \"%1$s\": %2$s", keyStr,
+                            response.getJSONObject(keyStr).toString()));
+                } catch (final Exception e) {
+                    System.out.println(String.format("\tResult: \"%1$s\": %2$s", keyStr,
+                            e.getMessage()));
+                }
+                System.out.println("\tStatus: Failed\n");
+                return false;
+            } else {
+                this.numberOfSuccesses += 1;
+                System.out.println("\tStatus: Passed\n");
+                return true;
+            }
+        }
+
+        return true;
     }
 
     private void emptyColumnTranslation() {

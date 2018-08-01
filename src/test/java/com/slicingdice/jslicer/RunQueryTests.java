@@ -28,6 +28,8 @@ public class RunQueryTests {
             add("aggregation");
             add("result");
             add("score");
+            add("delete");
+            add("update");
         }};
 
         // Testing class with demo API key

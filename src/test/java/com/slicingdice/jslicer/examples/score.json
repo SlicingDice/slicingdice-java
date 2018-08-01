@@ -337,346 +337,346 @@
         "name": "Test for a \"SCORE\" query using columns \"STRING\", \"BOOLEAN\", \"INTEGER\", \"DATETIME\", \"STRING-TIME-SERIES\" and \"STRING-TIME-SERIES\", operators \"AND\", \"OR\" and \"FREQGROUP\" and parameters \"EQUALS\", \"BETWEEN\" and \"MINFREQ\".",
         "columns": [
             {
-                "storage": "latest-value", 
-                "cardinality": "high", 
-                "type": "string", 
-                "name": "string_test_column", 
+                "storage": "latest-value",
+                "cardinality": "high",
+                "type": "string",
+                "name": "string_test_column",
                 "api-name": "string-test-column"
-            }, 
+            },
             {
-                "type": "boolean", 
-                "storage": "latest-value", 
-                "name": "boolean_test_column", 
+                "type": "boolean",
+                "storage": "latest-value",
+                "name": "boolean_test_column",
                 "api-name": "boolean-test-column"
-            }, 
+            },
             {
-                "type": "integer", 
-                "storage": "latest-value", 
-                "name": "numeric_test_column", 
+                "type": "integer",
+                "storage": "latest-value",
+                "name": "numeric_test_column",
                 "api-name": "numeric-test-column"
-            }, 
+            },
             {
                 "type": "datetime",
                 "storage": "latest-value",
-                "api-name": "datetime-test-column", 
+                "api-name": "datetime-test-column",
                 "name": "datetime_test_column"
-            }, 
+            },
             {
-                "type": "string-time-series", 
-                "api-name": "time-series-string-test-column", 
+                "type": "string-time-series",
+                "api-name": "time-series-string-test-column",
                 "name": "time_series_string_test_column"
-            }, 
+            },
             {
-                "type": "string-time-series", 
-                "api-name": "time-series-string-test-second-column", 
+                "type": "string-time-series",
+                "api-name": "time-series-string-test-second-column",
                 "name": "time_series_string_test_column_2"
             }
-        ], 
+        ],
         "insert": {
             "24": {
                 "time-series-string-test-column": [
                     {
-                        "date": "2016-01-01", 
+                        "date": "2016-01-01",
                         "value": "value:matched_value"
-                    }, 
+                    },
                     {
-                        "date": "2016-01-01", 
+                        "date": "2016-01-01",
                         "value": "value:matched_value"
-                    }, 
+                    },
                     {
-                        "date": "2016-01-01", 
+                        "date": "2016-01-01",
                         "value": "value:matched_value"
-                    }, 
+                    },
                     {
-                        "date": "2016-01-01", 
+                        "date": "2016-01-01",
                         "value": "value:matched_value"
                     }
-                ], 
-                "datetime-test-column": "2018-02-02t00:00:31z", 
-                "boolean-test-column": "false", 
+                ],
+                "datetime-test-column": "2018-02-02t00:00:31z",
+                "boolean-test-column": "false",
                 "time-series-string-test-second-column": [
                     {
-                        "date": "2016-01-01", 
+                        "date": "2016-01-01",
                         "value": "value:matched_value"
-                    }, 
+                    },
                     {
-                        "date": "2016-01-01", 
+                        "date": "2016-01-01",
                         "value": "value:matched_value"
                     }
-                ], 
+                ],
                 "numeric-test-column": 1000001
-            }, 
+            },
             "25": {
                 "time-series-string-test-column": [
                     {
-                        "date": "2016-01-01", 
+                        "date": "2016-01-01",
                         "value": "value:matched_value"
-                    }, 
+                    },
                     {
-                        "date": "2016-01-01", 
+                        "date": "2016-01-01",
                         "value": "value:matched_value"
-                    }, 
+                    },
                     {
-                        "date": "2016-01-01", 
+                        "date": "2016-01-01",
                         "value": "value:matched_value"
                     }
-                ], 
-                "datetime-test-column": "2018-02-02t00:00:31z", 
-                "boolean-test-column": "false", 
+                ],
+                "datetime-test-column": "2018-02-02t00:00:31z",
+                "boolean-test-column": "false",
                 "time-series-string-test-second-column": [
                     {
-                        "date": "2016-01-01", 
+                        "date": "2016-01-01",
                         "value": "value:matched_value"
                     }
-                ], 
+                ],
                 "numeric-test-column": 100000
-            }, 
+            },
             "26": {
                 "time-series-string-test-column": [
                     {
-                        "date": "2016-01-01", 
+                        "date": "2016-01-01",
                         "value": "value:matched_value"
-                    }, 
+                    },
                     {
-                        "date": "2016-01-01", 
+                        "date": "2016-01-01",
                         "value": "value:matched_value"
                     }
-                ], 
-                "datetime-test-column": "2018-02-02t00:00:31z", 
-                "boolean-test-column": "false", 
+                ],
+                "datetime-test-column": "2018-02-02t00:00:31z",
+                "boolean-test-column": "false",
                 "time-series-string-test-second-column": [
                     {
-                        "date": "2016-01-01", 
+                        "date": "2016-01-01",
                         "value": "value:matched_value"
-                    }, 
+                    },
                     {
-                        "date": "2016-01-01", 
+                        "date": "2016-01-01",
                         "value": "value:matched_value"
                     }
-                ], 
+                ],
                 "numeric-test-column": 1000001
-            }, 
+            },
             "27": {
                 "time-series-string-test-column": [
                     {
-                        "date": "2016-01-01", 
+                        "date": "2016-01-01",
                         "value": "value:matched_value"
-                    }, 
+                    },
                     {
-                        "date": "2016-01-01", 
+                        "date": "2016-01-01",
                         "value": "value:matched_value"
                     }
-                ], 
-                "datetime-test-column": "2018-02-02t00:00:31z", 
-                "boolean-test-column": "false", 
+                ],
+                "datetime-test-column": "2018-02-02t00:00:31z",
+                "boolean-test-column": "false",
                 "time-series-string-test-second-column": [
                     {
-                        "date": "2016-01-01", 
+                        "date": "2016-01-01",
                         "value": "value:matched_value"
                     }
-                ], 
+                ],
                 "numeric-test-column": 1000001
-            }, 
+            },
             "20": {
                 "time-series-string-test-column": [
                     {
-                        "date": "2016-01-01", 
+                        "date": "2016-01-01",
                         "value": "value:matched_value"
-                    }, 
+                    },
                     {
-                        "date": "2016-01-01", 
+                        "date": "2016-01-01",
                         "value": "value:matched_value"
                     }
-                ], 
-                "datetime-test-column": "2018-02-02t00:00:31z", 
-                "boolean-test-column": "false", 
+                ],
+                "datetime-test-column": "2018-02-02t00:00:31z",
+                "boolean-test-column": "false",
                 "time-series-string-test-second-column": [
                     {
-                        "date": "2016-01-01", 
+                        "date": "2016-01-01",
                         "value": "value:matched_value"
                     }
-                ], 
+                ],
                 "numeric-test-column": 100000
-            }, 
+            },
             "21": {
                 "time-series-string-test-column": [
                     {
-                        "date": "2016-01-01", 
+                        "date": "2016-01-01",
                         "value": "value:matched_value"
-                    }, 
+                    },
                     {
-                        "date": "2016-01-01", 
+                        "date": "2016-01-01",
                         "value": "value:matched_value"
                     }
-                ], 
-                "datetime-test-column": "2018-02-02t00:00:31z", 
-                "boolean-test-column": "true", 
+                ],
+                "datetime-test-column": "2018-02-02t00:00:31z",
+                "boolean-test-column": "true",
                 "time-series-string-test-second-column": [
                     {
-                        "date": "2016-01-01", 
+                        "date": "2016-01-01",
                         "value": "value:matched_value"
                     }
-                ], 
+                ],
                 "numeric-test-column": 1000001
-            }, 
+            },
             "22": {
                 "time-series-string-test-column": [
                     {
-                        "date": "2016-01-01", 
+                        "date": "2016-01-01",
                         "value": "value:matched_value"
-                    }, 
+                    },
                     {
-                        "date": "2016-01-01", 
+                        "date": "2016-01-01",
                         "value": "value:matched_value"
                     }
-                ], 
-                "datetime-test-column": "2018-02-02t00:00:31z", 
-                "boolean-test-column": "true", 
+                ],
+                "datetime-test-column": "2018-02-02t00:00:31z",
+                "boolean-test-column": "true",
                 "time-series-string-test-second-column": [
                     {
-                        "date": "2016-01-01", 
+                        "date": "2016-01-01",
                         "value": "value:matched_value"
                     }
-                ], 
+                ],
                 "numeric-test-column": 1000001
-            }, 
+            },
             "23": {
                 "time-series-string-test-column": [
                     {
-                        "date": "2016-01-01", 
+                        "date": "2016-01-01",
                         "value": "value:matched_value"
-                    }, 
+                    },
                     {
-                        "date": "2016-01-01", 
+                        "date": "2016-01-01",
                         "value": "value:matched_value"
                     }
-                ], 
-                "datetime-test-column": "2018-02-02t00:00:31z", 
-                "boolean-test-column": "true", 
+                ],
+                "datetime-test-column": "2018-02-02t00:00:31z",
+                "boolean-test-column": "true",
                 "time-series-string-test-second-column": [
                     {
-                        "date": "2016-01-01", 
+                        "date": "2016-01-01",
                         "value": "value:matched_value"
                     }
-                ], 
+                ],
                 "numeric-test-column": 1000001
-            }, 
+            },
             "28": {
                 "time-series-string-test-column": [
                     {
-                        "date": "2016-01-01", 
+                        "date": "2016-01-01",
                         "value": "value:matched_value"
-                    }, 
+                    },
                     {
-                        "date": "2016-01-01", 
+                        "date": "2016-01-01",
                         "value": "value:matched_value"
                     }
-                ], 
-                "datetime-test-column": "2018-02-02t00:00:31z", 
-                "boolean-test-column": "true", 
+                ],
+                "datetime-test-column": "2018-02-02t00:00:31z",
+                "boolean-test-column": "true",
                 "time-series-string-test-second-column": [
                     {
-                        "date": "2016-01-01", 
+                        "date": "2016-01-01",
                         "value": "value:matched_value"
                     }
-                ], 
+                ],
                 "numeric-test-column": 1000001
-            }, 
+            },
             "29": {
                 "time-series-string-test-column": [
                     {
-                        "date": "2016-01-01", 
+                        "date": "2016-01-01",
                         "value": "value:matched_value"
-                    }, 
+                    },
                     {
-                        "date": "2016-01-01", 
+                        "date": "2016-01-01",
                         "value": "value:matched_value"
                     }
-                ], 
-                "datetime-test-column": "2018-02-02t00:00:31z", 
-                "boolean-test-column": "true", 
+                ],
+                "datetime-test-column": "2018-02-02t00:00:31z",
+                "boolean-test-column": "true",
                 "time-series-string-test-second-column": [
                     {
-                        "date": "2016-01-01", 
+                        "date": "2016-01-01",
                         "value": "value:matched_value"
                     }
-                ], 
+                ],
                 "numeric-test-column": 1000001
-            }, 
+            },
             "0": {
                 "time-series-string-test-column": [
                     {
-                        "date": "2016-01-01", 
+                        "date": "2016-01-01",
                         "value": "value:matched_value"
-                    }, 
+                    },
                     {
-                        "date": "2016-01-01", 
+                        "date": "2016-01-01",
                         "value": "value:matched_value"
                     }
-                ], 
-                "datetime-test-column": "2018-02-02t00:00:31z", 
-                "boolean-test-column": "true", 
+                ],
+                "datetime-test-column": "2018-02-02t00:00:31z",
+                "boolean-test-column": "true",
                 "time-series-string-test-second-column": [
                     {
-                        "date": "2016-01-01", 
+                        "date": "2016-01-01",
                         "value": "value:matched_value"
                     }
-                ], 
+                ],
                 "numeric-test-column": 1000001
-            }, 
+            },
             "4": {
                 "time-series-string-test-column": [
                     {
-                        "date": "2016-01-01", 
+                        "date": "2016-01-01",
                         "value": "value:matched_value"
-                    }, 
+                    },
                     {
-                        "date": "2016-01-01", 
+                        "date": "2016-01-01",
                         "value": "value:matched_value"
                     }
-                ], 
-                "datetime-test-column": "2018-02-02t00:00:31z", 
-                "boolean-test-column": "true", 
+                ],
+                "datetime-test-column": "2018-02-02t00:00:31z",
+                "boolean-test-column": "true",
                 "time-series-string-test-second-column": [
                     {
-                        "date": "2016-01-01", 
+                        "date": "2016-01-01",
                         "value": "value:matched_value"
                     }
-                ], 
+                ],
                 "numeric-test-column": 1000001
-            }, 
+            },
             "8": {
                 "time-series-string-test-column": [
                     {
-                        "date": "2016-01-01", 
+                        "date": "2016-01-01",
                         "value": "value:matched_value"
-                    }, 
+                    },
                     {
-                        "date": "2016-01-01", 
+                        "date": "2016-01-01",
                         "value": "value:matched_value"
                     }
-                ], 
-                "datetime-test-column": "2018-02-02t00:00:31z", 
-                "boolean-test-column": "true", 
+                ],
+                "datetime-test-column": "2018-02-02t00:00:31z",
+                "boolean-test-column": "true",
                 "time-series-string-test-second-column": [
                     {
-                        "date": "2016-01-01", 
+                        "date": "2016-01-01",
                         "value": "value:matched_value"
                     }
-                ], 
+                ],
                 "numeric-test-column": 1000001
-            }, 
+            },
             "59": {
                 "time-series-string-test-column": [
                     {
-                        "date": "2016-01-01", 
+                        "date": "2016-01-01",
                         "value": "value:hclpzugjdv"
-                    }, 
+                    },
                     {
-                        "date": "2016-01-01", 
+                        "date": "2016-01-01",
                         "value": "value:lreqqtsclt"
                     }
-                ], 
+                ],
                 "datetime-test-column": "2018-02-10t00:00:31z",
                 "boolean-test-column": "false",
                 "time-series-string-test-second-column": [
@@ -4782,7 +4782,7 @@
             "status": "ignore",
             "next-page": "ignore",
             "data": [{"datetime-test-column": "2018-02-02t00:00:31z", "score": 2, "entity-id": "0", "numeric-test-column": "1000001", "boolean-test-column": "true"}, {"datetime-test-column": "2018-02-02t00:00:31z", "score": 2, "entity-id": "1", "numeric-test-column": "1000001", "boolean-test-column": "true"}, {"datetime-test-column": "2018-02-02t00:00:31z", "score": 2, "entity-id": "10", "numeric-test-column": "1000001", "boolean-test-column": "true"}, {"datetime-test-column": "2018-02-02t00:00:31z", "score": 2, "entity-id": "11", "numeric-test-column": "1000001", "boolean-test-column": "true"}, {"datetime-test-column": "2018-02-02t00:00:31z", "score": 2, "entity-id": "12", "numeric-test-column": "1000001", "boolean-test-column": "true"}, {"datetime-test-column": "2018-02-02t00:00:31z", "score": 2, "entity-id": "13", "numeric-test-column": "1000001", "boolean-test-column": "true"}, {"datetime-test-column": "2018-02-02t00:00:31z", "score": 2, "entity-id": "14", "numeric-test-column": "1000001", "boolean-test-column": "true"}, {"datetime-test-column": "2018-02-02t00:00:31z", "score": 2, "entity-id": "15", "numeric-test-column": "1000001", "boolean-test-column": "true"}, {"datetime-test-column": "2018-02-02t00:00:31z", "score": 2, "entity-id": "16", "numeric-test-column": "1000001", "boolean-test-column": "true"}, {"datetime-test-column": "2018-02-02t00:00:31z", "score": 2, "entity-id": "17", "numeric-test-column": "1000001", "boolean-test-column": "true"}, {"datetime-test-column": "2018-02-02t00:00:31z", "score": 2, "entity-id": "18", "numeric-test-column": "1000001", "boolean-test-column": "true"}, {"datetime-test-column": "2018-02-02t00:00:31z", "score": 2, "entity-id": "19", "numeric-test-column": "1000001", "boolean-test-column": "true"}, {"datetime-test-column": "2018-02-02t00:00:31z", "score": 2, "entity-id": "2", "numeric-test-column": "1000001", "boolean-test-column": "true"}, {"datetime-test-column": "2018-02-02t00:00:31z", "score": 2, "entity-id": "20", "numeric-test-column": "1000001", "boolean-test-column": "true"}, {"datetime-test-column": "2018-02-02t00:00:31z", "score": 2, "entity-id": "21", "numeric-test-column": "1000001", "boolean-test-column": "true"}, {"datetime-test-column": "2018-02-02t00:00:31z", "score": 2, "entity-id": "22", "numeric-test-column": "1000001", "boolean-test-column": "true"}, {"datetime-test-column": "2018-02-02t00:00:31z", "score": 2, "entity-id": "23", "numeric-test-column": "1000001", "boolean-test-column": "true"}, {"datetime-test-column": "2018-02-02t00:00:31z", "score": 3, "entity-id": "24", "numeric-test-column": "1000001", "boolean-test-column": "true"}, {"datetime-test-column": "2018-02-02t00:00:31z", "score": 3, "entity-id": "25", "numeric-test-column": "1000001", "boolean-test-column": "true"}, {"datetime-test-column": "2018-02-02t00:00:31z", "score": 2, "entity-id": "26", "numeric-test-column": "1000001", "boolean-test-column": "true"}, {"datetime-test-column": "2018-02-02t00:00:31z", "score": 2, "entity-id": "27", "numeric-test-column": "1000001", "boolean-test-column": "true"}, {"datetime-test-column": "2018-02-02t00:00:31z", "score": 1, "entity-id": "28", "numeric-test-column": "1000001", "boolean-test-column": "false"}, {"datetime-test-column": "2018-02-02t00:00:31z", "score": 1, "entity-id": "29", "numeric-test-column": "1000001", "boolean-test-column": "false"}, {"datetime-test-column": "2018-02-02t00:00:31z", "score": 2, "entity-id": "3", "numeric-test-column": "1000001", "boolean-test-column": "true"}, {"datetime-test-column": "2018-02-02t00:00:31z", "score": 2, "entity-id": "30", "numeric-test-column": "1000001", "boolean-test-column": "true"}, {"datetime-test-column": "2018-02-02t00:00:31z", "score": 2, "entity-id": "31", "numeric-test-column": "1000001", "boolean-test-column": "true"}, {"datetime-test-column": "2018-02-02t00:00:31z", "score": 2, "entity-id": "32", "numeric-test-column": "1000001", "boolean-test-column": "true"}, {"datetime-test-column": "2018-02-02t00:00:31z", "score": 2, "entity-id": "33", "numeric-test-column": "1000001", "boolean-test-column": "true"}, {"datetime-test-column": "2018-02-02t00:00:31z", "score": 2, "entity-id": "34", "numeric-test-column": "1000001", "boolean-test-column": "true"}, {"datetime-test-column": "2018-02-02t00:00:31z", "score": 2, "entity-id": "35", "numeric-test-column": "1000001", "boolean-test-column": "true"}, {"datetime-test-column": "2018-02-02t00:00:31z", "score": 2, "entity-id": "36", "numeric-test-column": "1000001", "boolean-test-column": "true"}, {"datetime-test-column": "2018-02-02t00:00:31z", "score": 2, "entity-id": "37", "numeric-test-column": "1000001", "boolean-test-column": "true"}, {"datetime-test-column": "2018-02-02t00:00:31z", "score": 2, "entity-id": "38", "numeric-test-column": "1000001", "boolean-test-column": "true"}, {"datetime-test-column": "2018-02-02t00:00:31z", "score": 2, "entity-id": "39", "numeric-test-column": "1000001", "boolean-test-column": "true"}, {"datetime-test-column": "2018-02-02t00:00:31z", "score": 2, "entity-id": "4", "numeric-test-column": "1000001", "boolean-test-column": "true"}, {"datetime-test-column": "2018-02-02t00:00:31z", "score": 2, "entity-id": "40", "numeric-test-column": "1000001", "boolean-test-column": "true"}, {"datetime-test-column": "2018-02-02t00:00:31z", "score": 2, "entity-id": "41", "numeric-test-column": "1000001", "boolean-test-column": "true"}, {"datetime-test-column": "2018-02-02t00:00:31z", "score": 1, "entity-id": "42", "numeric-test-column": "1000001", "boolean-test-column": "false"}, {"datetime-test-column": "2018-02-02t00:00:31z", "score": 2, "entity-id": "43", "numeric-test-column": "1000001", "boolean-test-column": "true"}, {"datetime-test-column": "2018-02-02t00:00:31z", "score": 2, "entity-id": "44", "numeric-test-column": "1000001", "boolean-test-column": "true"}, {"datetime-test-column": "2018-02-02t00:00:31z", "score": 2, "entity-id": "45", "numeric-test-column": "1000001", "boolean-test-column": "true"}, {"datetime-test-column": "2018-02-02t00:00:31z", "score": 2, "entity-id": "46", "numeric-test-column": "1000001", "boolean-test-column": "true"}, {"datetime-test-column": "2018-02-02t00:00:31z", "score": 2, "entity-id": "47", "numeric-test-column": "1000001", "boolean-test-column": "true"}, {"datetime-test-column": "2018-02-02t00:00:31z", "score": 2, "entity-id": "48", "numeric-test-column": "1000001", "boolean-test-column": "true"}, {"datetime-test-column": "2018-02-02t00:00:31z", "score": 3, "entity-id": "49", "numeric-test-column": "1000001", "boolean-test-column": "true"}, {"datetime-test-column": "2018-02-02t00:00:31z", "score": 2, "entity-id": "5", "numeric-test-column": "1000001", "boolean-test-column": "true"}, {"datetime-test-column": "2018-02-02t00:00:31z", "score": 2, "entity-id": "6", "numeric-test-column": "1000001", "boolean-test-column": "true"}, {"datetime-test-column": "2018-02-02t00:00:31z", "score": 2, "entity-id": "7", "numeric-test-column": "1000001", "boolean-test-column": "true"}, {"datetime-test-column": "2018-02-02t00:00:31z", "score": 2, "entity-id": "8", "numeric-test-column": "1000001", "boolean-test-column": "true"}, {"datetime-test-column": "2018-02-02t00:00:31z", "score": 2, "entity-id": "9", "numeric-test-column": "1000001", "boolean-test-column": "true"}],
-            "page": 1, 
+            "page": 1,
             "took": "ignore"
         }
     },
