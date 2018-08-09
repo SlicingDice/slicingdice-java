@@ -1,4 +1,4 @@
-# SlicingDice Official Java Client (v2.0.3)
+# SlicingDice Official Java Client (v2.1.0)
 
 Official Java client for [SlicingDice - Data Warehouse and Analytics Database as a Service](http://www.slicingdice.com/).
 

@@ -984,4 +984,46 @@ public class SlicingDice {
         Requester.post(url, query, apiKey, timeout, handler, true);
     }
 
+    /**
+     * Make a delete request
+     *
+     * @param query A JSONObject that represents the query to delete
+     * @return a future to get SlicingDice request result
+     */
+    public Future<Response> delete(final JSONObject query) {
+        final String url = this.baseURL + URLResources.DELETE.url;
+        return this.makeRequest(url, query, POST, 2);
+    }
+
+    /**
+     * Make a delete request
+     *
+     * @param query A JSONObject that represents the query to delete
+     */
+    public void delete(final JSONObject query, final HandlerResponse handler) {
+        final String url = this.baseURL + URLResources.DELETE.url;
+        this.makeRequest(url, query, POST, 2, handler);
+    }
+
+    /**
+     * Make a update request
+     *
+     * @param query A JSONObject that represents the query to update
+     * @return a future to get SlicingDice request result
+     */
+    public Future<Response> update(final JSONObject query) {
+        final String url = this.baseURL + URLResources.UPDATE.url;
+        return this.makeRequest(url, query, POST, 2);
+    }
+
+    /**
+     * Make a update request
+     *
+     * @param query A JSONObject that represents the query to delete
+     */
+    public void update(final JSONObject query, final HandlerResponse handler) {
+        final String url = this.baseURL + URLResources.UPDATE.url;
+        this.makeRequest(url, query, POST, 2, handler);
+    }
+
 }
