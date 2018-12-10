@@ -41,8 +41,8 @@ public class ColumnValidator {
         this.data = data;
         this.validTypeColumns = Arrays.asList(
                 "unique-id", "boolean", "string", "integer", "decimal",
-                "enumerated", "date", "integer-time-series",
-                "decimal-time-series", "string-time-series", "datetime");
+                "enumerated", "date", "integer-event",
+                "decimal-event", "string-event", "datetime");
     }
 
     /**
@@ -96,7 +96,7 @@ public class ColumnValidator {
      * Check the decimal type
      */
     private void validateColumnDecimalType(final JSONObject json) throws InvalidColumnException {
-        final List<String> decimalTypes = Arrays.asList("decimal", "decimal-time-series");
+        final List<String> decimalTypes = Arrays.asList("decimal", "decimal-event");
         if (!decimalTypes.contains(json.getString("type"))) {
             throw new InvalidColumnException("The decimal type is not a valid one");
         }
